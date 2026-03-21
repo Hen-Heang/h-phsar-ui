@@ -38,7 +38,7 @@ const RestockNotification = () => {
   return (
     <div className="mt-3 -mx-4">
       {data.map((item) => (
-        <div className={`mt-[2px] flex  w-full h-14 px-1 ${item.status =="now" ? "bg-[#fcddd1]" : null} cursor-pointer`}>
+        <div className={`mt-[2px] flex  w-full h-14 px-1 ${item.status ==="now" ? "bg-[#fcddd1]" : null} cursor-pointer`}>
           <div className="w-10 self-center">
             <img
               src={item.image}
@@ -47,13 +47,13 @@ const RestockNotification = () => {
             />
           </div>
           <div className="flex flex-col align-middle justify-center p-2 w-60">
-            <div className={`${item.description == "has rejected your order" ? "text-red-500" : null} font-medium text-sm`}>{item.title}</div>
+            <div className={`${item.description === "has rejected your order" ? "text-red-500" : null} font-medium text-sm`}>{item.title}</div>
             <div className="text-xs">{item.description}</div>
           </div>
 
           <div className="flex flex-col items-center justify-center px-2 ">
             <div>{item.status}</div>
-            {item.status =="now" ? <div>
+            {item.status ==="now" ? <div>
               <div className="p-1 bg-[#F15B22] rounded-full "></div>
             </div> : null}
             

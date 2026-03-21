@@ -2,7 +2,13 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { Modal, Button } from "flowbite-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import {
   create_retailer_profile,
   edit_retailer_profile,
@@ -14,6 +20,8 @@ import { v4 } from "uuid";
 import { PulseLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import AccountProfileSkeleton from "../../components/retailler/skeletons/AccountProfileSkeleton";
+import noImage from "../../assets/images/retailer/No_image_available.png";
+import { applyImageFallback, getSafeImageSrc } from "@/lib/images";
 export default function AccountRetailer() {
   // Show Popup
   const [showSave, setShowsave] = useState(false);
@@ -58,7 +66,7 @@ export default function AccountRetailer() {
   // const [isProfileExist, setProfilExist] = useState(false);
   // useEffect(() => {
   //   get_retailer_profile().then((res) => {
-  //     if (res.status == 404) {
+  //     if (res.status === 404) {
   //       setProfilExist(false)
   //       console.log("error", res.status)
   //       dispatch(
@@ -79,7 +87,7 @@ export default function AccountRetailer() {
   //       );
 
   //     }
-  //     if (res.status == 200) {
+  //     if (res.status === 200) {
   //       setProfilExist(true);
   //       console.log("ttttttttttttt", res.data.data);
   //       dispatch(getRetailerInfo(res.data.data));
@@ -285,7 +293,7 @@ export default function AccountRetailer() {
   //         inputNewPhoneNumber.length < 1 ? [] : additionalPhoneArray,
   //     };
   //     console.log(updatedFields);
-  //     if (targetImage == null) {
+  //     if (targetImage === null) {
   //       // setNewProfile({...newProfile, primaryPhoneNumber: primaryPhone})
   //       // setNewProfile({...newProfile, additionalPhoneNumber: inputNewPhoneNumber.phone})
   //       // console.log("Input number : ", inputNewPhoneNumber);
@@ -371,9 +379,9 @@ export default function AccountRetailer() {
   const submit = async (e) => {
     setLoadingConfirm(true);
     e.preventDefault();
-    // console.log("profile :", targetImage == null);
+    // console.log("profile :", targetImage === null);
     // console.log("profile :", !validateForm());
-    // console.log("profile :", !validateForm() || targetImage == null);
+    // console.log("profile :", !validateForm() || targetImage === null);
     if (!validateForm()) {
       console.log("error ");
       setLoadingConfirm(false);
@@ -381,7 +389,7 @@ export default function AccountRetailer() {
      
     }
     // condition if store data null
-    console.log("first : ", validateForm() && targetImage != null);
+    console.log("first : ", validateForm() && targetImage !== null);
     if (validateForm()) {
       setErrorNoImage(false);
       // Perform form submission logic
@@ -389,28 +397,11 @@ export default function AccountRetailer() {
         console.log("No data shop : ");
         // if shop doesn't have
         console.log("image url : ", targetImage);
-        if (targetImage == null || targetImage == "" || errorExtension) {
+        if (targetImage === null || targetImage === "" || errorExtension) {
           setErrorNoImage(true);
           setLoadingConfirm(false);
           setShowsave(false);
           return;
-          console.log("No Image url ...");
-          // if user did not input image
-          create_retailer_profile(newProfile).then((res) => {
-            if (res.status == 401 || res.status == 409) {
-              console.log("Hello");
-              setLoadingConfirm(false);
-              setShowsave(!showSave);
-              toast.error("Something went wrong");
-            } else {
-              dispatch(getRetailerInfo(res.data.data));
-              setEdit(true);
-              setIsDisabled(true);
-              setCancel(false);
-              setSave(false);
-              setLoadingConfirm(false);
-            }
-          });
         } else {
           // if use input image
           const imageRef = ref(
@@ -426,7 +417,7 @@ export default function AccountRetailer() {
               // Submit the form data after the image upload is complete
               create_retailer_profile(updatedFields)
                 .then((res) => {
-                  if (res.status == 401 || res.status == 409) {
+                  if (res.status === 401 || res.status === 409) {
                     console.log("Hello");
                     setLoadingConfirm(false);
                     setShowsave(!showSave);
@@ -454,11 +445,11 @@ export default function AccountRetailer() {
       } else {
         console.log("Already have account...!");
         // if shop already create, so update shop
-        if (targetImage == null || targetImage == "") {
+        if (targetImage === null || targetImage === "") {
           // if user did not input image
           console.log("No target image");
           edit_retailer_profile(newProfile).then((res) => {
-            if (res.status == 409 || res.status == 404 || res.status == 401) {
+            if (res.status === 409 || res.status === 404 || res.status === 401) {
               setLoadingConfirm(false);
               setShowsave(false);
             } else {
@@ -488,9 +479,9 @@ export default function AccountRetailer() {
               edit_retailer_profile(updatedFields)
                 .then((res) => {
                   if (
-                    res.status == 409 ||
-                    res.status == 404 ||
-                    res.status == 401
+                    res.status === 409 ||
+                    res.status === 404 ||
+                    res.status === 401
                   ) {
                     setLoadingConfirm(false);
                     setShowsave(false);
@@ -607,12 +598,14 @@ export default function AccountRetailer() {
               <div className="flex m-auto flex-row justify-start gap-5 items-center">
                 <img
                   className="rounded w-32 h-32 lg:w-48 lg:h-48"
-                  src={
-                    imageUrl == "" || imageUrl == null
+                  src={getSafeImageSrc(
+                    imageUrl === "" || imageUrl === null
                       ? profile?.profileImage
-                      : imageUrl
-                  }
+                      : imageUrl,
+                    noImage
+                  )}
                   alt=""
+                  onError={(e) => applyImageFallback(e, noImage)}
                 ></img>
                 <div className="w-full">
                   <h1 className="text-base sm:text-lg lg:text-4xl font-medium leading-tight">
@@ -648,10 +641,19 @@ export default function AccountRetailer() {
                       </button>
                     ) : null}
                     {/* Popup */}
-                    <React.Fragment>
-                      <Modal show={showSave} size="md" popup={true}>
-                        <Modal.Header className="mt-[50%] sm:m-auto" />
-                        <Modal.Body>
+                    <Dialog
+                      open={showSave}
+                      onOpenChange={(open) => {
+                        if (!open) setShowsave(false);
+                      }}
+                    >
+                      <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                          <DialogTitle className="sr-only">
+                            Update Confirmation
+                          </DialogTitle>
+                        </DialogHeader>
+                        <div className="p-4">
                           <div className="absolute bg-white top-2 right-0 h-14 w-12"></div>
                           <div className="w-full mx-auto text-center -mt-6">
                             <div className="mx-auto rounded-full w-20 h-20 justify-center">
@@ -660,12 +662,12 @@ export default function AccountRetailer() {
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
                                 viewBox="0 0 24 24"
-                                stroke-width="1.5"
+                                strokeWidth="1.5"
                                 stroke="currentColor"
                               >
                                 <path
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
                                   d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"
                                 />
                               </svg>
@@ -682,18 +684,18 @@ export default function AccountRetailer() {
                               </p>
                               <div className="flex flex-col justify-center gap-3 w-full">
                                 <Button
-                                  className="relative mt-5 w-3/4 mx-auto hover:bg-primaryColorRetailer bg-primaryColorRetailer border-gray-300 justify-center"
+                                  className="relative mt-5 w-3/4 mx-auto hover:bg-primaryColorRetailer bg-primaryColorRetailer text-white border-gray-300 justify-center"
                                   type="submit"
                                   onClick={submit}
                                 >
                                   {loadingConfirm ? (
                                     <>
                                       <span
-                                        class="animate-spin inline-block w-4 h-4 border-[3px] border-current border-t-transparent text-white rounded-full"
+                                        className="animate-spin inline-block w-4 h-4 border-[3px] border-current border-t-transparent text-white rounded-full"
                                         role="status"
                                         aria-label="loading"
                                       >
-                                        <span class="sr-only">
+                                        <span className="sr-only">
                                           Conforming...
                                         </span>
                                       </span>
@@ -719,9 +721,9 @@ export default function AccountRetailer() {
                               </div>
                             </div>
                           </div>
-                        </Modal.Body>
-                      </Modal>
-                    </React.Fragment>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
                   </div>
                 </div>
               </div>
@@ -742,7 +744,7 @@ export default function AccountRetailer() {
                     <div className="w-full md:w-1/2 pr-3 -mb-1 lg:mb-6 md:mb-0">
                       <label
                         className="block tracking-wide text-primaryColorRetailer text-sm font-medium"
-                        for="grid-first-name"
+                        htmlFor="grid-first-name"
                       >
                         First Name
                       </label>
@@ -765,7 +767,7 @@ export default function AccountRetailer() {
                     <div className="w-full  lg:mb-0 md:w-1/2">
                       <label
                         className="block tracking-wide text-primaryColorRetailer text-sm font-medium"
-                        for="lastName"
+                        htmlFor="lastName"
                       >
                         Last Name
                       </label>
@@ -789,7 +791,7 @@ export default function AccountRetailer() {
                   <div className="flex flex-wrap lg:-mx-3 sm:mb-1 lg:mb-6">
                     <label
                       className="block tracking-wide text-primaryColorRetailer text-sm font-medium"
-                      for="grid-gender"
+                      htmlFor="grid-gender"
                     >
                       Gender
                     </label>
@@ -810,8 +812,9 @@ export default function AccountRetailer() {
                         id="grid-gender"
                         onChange={handleFormChange}
                         disabled={isDisabled}
+                        defaultValue=""
                       >
-                        <option value="" selected disabled>
+                        <option value="" disabled>
                           Select Gender
                         </option>
                         <option value="Female">Female</option>
@@ -825,13 +828,13 @@ export default function AccountRetailer() {
                   {/* Address */}
                   <div className="flex flex-wrap lg:-mx-3 mb-2 relative">
                     <img
-                      src={require("../../assets/images/address retailer (2).png")}
+                      src={(require("../../assets/images/address retailer (2).png")?.default || require("../../assets/images/address retailer (2).png"))}
                       alt=""
                       className="absolute left-16 top-1"
                     />
                     <label
                       className="tracking-wide text-primaryColorRetailer text-sm font-medium"
-                      for="grid-address"
+                      htmlFor="grid-address"
                     >
                       Address
                     </label>
@@ -869,11 +872,13 @@ export default function AccountRetailer() {
                         className="rounded w-24 h-24 lg:w-32"
                         name="objectImage"
                         alt=""
-                        src={
-                          imageUrl == "" || imageUrl == null
+                        src={getSafeImageSrc(
+                          imageUrl === "" || imageUrl === null
                             ? profile?.profileImage
-                            : imageUrl
-                        }
+                            : imageUrl,
+                          noImage
+                        )}
+                        onError={(e) => applyImageFallback(e, noImage)}
                       />
                       {errorNoImage && (
                         <p className="text-primary text-sm">Image is require</p>
@@ -885,13 +890,13 @@ export default function AccountRetailer() {
                     <div className=" h-40 w-4/6  lg:ml-0  sm:w-3/5 justify-end">
                       <label
                         className="flex flex-col items-center justify-center w-full h-40 border border-gray-300 rounded-lg cursor-pointer bg-gray-200 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
-                        for="dropzone-file"
+                        htmlFor="dropzone-file"
                       >
                         <div className="flex flex-col items-center justify-center pt-5 pb-6">
                           <img
                             className="h-12 w-12"
                             alt=""
-                            src={require("../../assets/images/image retailer (1).png")}
+                            src={(require("../../assets/images/image retailer (1).png")?.default || require("../../assets/images/image retailer (1).png"))}
                           />
                           <p className="my-2  text-center text-gray-500 dark:text-gray-400 text-sm">
                             <span className="font-semibold underline text-primaryColorRetailer">
@@ -932,7 +937,7 @@ export default function AccountRetailer() {
                 <div className="w-full max-w-lg">
                   <div className="flex flex-wrap lg:-mx-3 relative sm:mb-2">
                     <label
-                      for="phone"
+                      htmlFor="phone"
                       className="block mb-1 tracking-wide text-sm font-medium text-primaryColorRetailer dark:text-white"
                     >
                       Primary Phone number
@@ -946,8 +951,8 @@ export default function AccountRetailer() {
                       disabled={isDisabled}
                       className={isDisabled ? noProfile : hasProfile}
                       placeholder={
-                        profile?.primaryPhoneNumber == "" ||
-                        profile?.primaryPhoneNumber == null
+                        profile?.primaryPhoneNumber === "" ||
+                        profile?.primaryPhoneNumber === null
                           ? "0xxxxxxxxx"
                           : profile?.primaryPhoneNumber
                       }
@@ -973,7 +978,7 @@ export default function AccountRetailer() {
                     </button>
 
                     <label
-                      for="phone"
+                      htmlFor="phone"
                       className="block mb-1 tracking-wide text-sm font-medium text-primaryColorRetailer dark:text-white"
                     >
                       Phone number
@@ -991,8 +996,8 @@ export default function AccountRetailer() {
                             disabled={isDisabled}
                             className={isDisabled ? noProfile : hasProfile}
                             placeholder={
-                              profile?.additionalPhoneNumber == "" ||
-                              profile?.additionalPhoneNumber == null
+                              profile?.additionalPhoneNumber === "" ||
+                              profile?.additionalPhoneNumber === null
                                 ? "0xxxxxxxxx"
                                 : profile.additionalPhoneNumber
                             }
@@ -1030,7 +1035,7 @@ export default function AccountRetailer() {
                     </button>
                    
                     <label
-                      for="phone"
+                      htmlFor="phone"
                       className="block tracking-wide text-sm font-medium text-primaryColorRetailer dark:text-white"
                     >
                       Additional Phone number
@@ -1065,7 +1070,7 @@ export default function AccountRetailer() {
                   <div className="flex flex-wrap   lg:-mx-3 mt-5 mb-5 sm:mb-10">
                     <label
                       className="block tracking-wide text-sm font-medium text-primaryColorRetailer dark:text-white"
-                      for="email"
+                      htmlFor="email"
                     >
                       Email address
                     </label>

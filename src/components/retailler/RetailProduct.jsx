@@ -1,7 +1,8 @@
 import React from 'react'
-import { Modal } from 'flowbite-react'
 import { useState } from 'react'
 import { useSelector } from 'react-redux';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 export default function RetailProduct(props) {
     const [isOpen,setOpen]=useState(false);
     const orderList=useSelector((state)=>state.orderDetail.data);
@@ -11,7 +12,7 @@ export default function RetailProduct(props) {
         <React.Fragment>
             {/* <button onClick={() => setOpen(!isOpen)}>
                 <svg
-                    class="w-6 h-6"
+                    className="w-6 h-6"
                     aria-hidden="true"
                     fill="currentColor"
                     viewBox="0 0 20 20"
@@ -20,37 +21,16 @@ export default function RetailProduct(props) {
                     <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z"></path>
                 </svg>
             </button> */}
-            <Modal
-                show={props.isOpen}
-                size="xl"
-                popup={true}
-                onClose={props.handleOpen}
+            <Dialog
+                open={props.isOpen}
+                onOpenChange={(open) => { if(!open) props.handleOpen() }}
             >
-                <Modal />
-                <Modal.Header className=" bg-retailerPrimary w-full">
-                    <h1 className=" text-white font-semiblod ml-56 text-xl py-2">
-                        Products
-                    </h1>
-                    <p onClick={props.handleOpen}
-                        className="text-white float-right absolute right-2 top-0 bg-retailerPrimary w-18 p-4 h-12"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke-width="1.5"
-                            stroke="currentColor"
-                            class="w-6 h-6 font-bold text-white"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M6 18L18 6M6 6l12 12"
-                            />
-                        </svg>
-                    </p>
-                </Modal.Header>
-                <Modal.Body>
+                <DialogContent className="max-w-2xl">
+                    <DialogHeader className="bg-retailerPrimary w-full p-4">
+                        <DialogTitle className="text-center text-white font-semibold w-full text-xl">
+                            Products
+                        </DialogTitle>
+                    </DialogHeader>
                     <div>
                         {/* {pro.map((item)=>( */}
                          <div>   
@@ -67,12 +47,12 @@ export default function RetailProduct(props) {
                             <hr className='bg-gray-500' />
                             <div className='flex flex-wrap p-4'>
                                 <div className='w-4/5 flex'>
-                                    <img class="w-20 h-20 " src={require("../../assets/images/login.jpg")} alt="Jese image" />
-                                    <div class="pl-3">
-                                        <div class="text-base font-semibold text-black">
+                                    <img className="w-20 h-20 " src={(require("../../assets/images/login.jpg")?.default || require("../../assets/images/login.jpg"))} alt="Jese image" />
+                                    <div className="pl-3">
+                                        <div className="text-base font-semibold text-black">
                                             {/* {itename} */}
                                         </div>
-                                        <div class="text-sm text-newGray">
+                                        <div className="text-sm text-newGray">
                                             {/* {itemcate} */}
                                         </div>
                                     </div>
@@ -118,7 +98,7 @@ export default function RetailProduct(props) {
                         <div className='w-full rounded-lg border border-gray-400 mt-3'>
                             <div className='flex flex-wrap w-full'>
                                 <div className='w-2/12  p-4'>
-                                    <img className='w-16' src={require("../../assets/images/rating 1.png")} alt="" />
+                                    <img className='w-16' src={(require("../../assets/images/rating 1.png")?.default || require("../../assets/images/rating 1.png"))} alt="" />
                                 </div>
                                 <div className='w-7/12 p-4'>
                                     <div className=''>
@@ -140,8 +120,8 @@ export default function RetailProduct(props) {
                         </div>
                         {/* ))} */}
                     </div>
-                </Modal.Body>
-            </Modal>
+                </DialogContent>
+            </Dialog>
         </React.Fragment>
     </div>
   )

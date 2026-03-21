@@ -1,9 +1,8 @@
-
-
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import oggy from "../../../assets/images/profile_acc.png";
+import noNotification from "../../../assets/images/distributor/no_notification.png";
 import { get_all_notification } from "../../../redux/services/distributor/notification.service";
 import { getAllNotificationsDistributor } from "../../../redux/slices/distributor/notification/notificationSlice";
 export const OutofStockNotification = () => {
@@ -84,33 +83,37 @@ export const OutofStockNotification = () => {
           <div className="w-full h-full">
             <div className="flex mx-auto justify-center items-center flex-col h-full gap-2">
               <img
-                src={require("../../../assets/images/distributor/no_notification.png")}
-                className=""
-                alt="loading.."
+                src={noNotification}
+                alt="no notifications"
+                className="max-w-full h-auto"
               />
               No notifications
             </div>
           </div>
         ) : (
       allNotifications.map((item) => (
-        (item.notificationType == "OUT_OF_STOCK_NOTIFICATION" ? 
+        (item.notificationType === "OUT_OF_STOCK_NOTIFICATION" ? 
         <div
           key={item.id}
           className={`${
-            item.seen == false ? "bg-blue-100" : null
+            item.seen === false ? "bg-blue-100" : null
           } w-full rounded-xl cursor-pointer`}
           onClick={() => handleGetDataNotification(item)}
         >
           <div className="flex mx-auto justify-evenly items-center w-[95%] py-2">
-            <img
-              src={item.image}
-              alt=""
-              className=" w-12 h-12 rounded-full"
-            />
+              <img
+                src={item.image || oggy}
+                alt="notification avatar"
+                className="w-12 h-12 rounded-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = oggy;
+                }}
+              />
             <div className="w-72 ml-5">
               <h2
                 className={`text-lg font-medium ${
-                  item.name == "Notice product unavailable"
+                  item.name === "Notice product unavailable"
                     ? "text-red-600"
                     : null
                 }`}
@@ -119,7 +122,7 @@ export const OutofStockNotification = () => {
               </h2>
               <p
                 className={`text-xs ${
-                  item.title == "Out of stock." ? "text-red-600" : null
+                  item.title === "Out of stock." ? "text-red-600" : null
                 }`}
               >
                 {item.title}
@@ -149,13 +152,13 @@ export const OutofStockNotification = () => {
       >
         {allNotifications.map((item) => (
           <ListItem  className={`${
-            item.seen == false ? "bg-blue-100" : null
+            item.seen === false ? "bg-blue-100" : null
           } w-full rounded-xl cursor-pointer`}>
             <ListItemAvatar>
             <img src={item.image} alt="" className=" w-10 h-10 rounded-full" />
             </ListItemAvatar>
             <ListItemText primary={item.store} secondary={item.title}  className={`text-xs ${
-                  item.title == "Out of stock."
+                  item.title === "Out of stock."
                     ? "text-red-600"
                     : null
                 }`}/>

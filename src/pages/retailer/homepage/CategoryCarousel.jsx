@@ -1,29 +1,20 @@
-import Carousel from "react-grid-carousel";
-import React, { useEffect, useState } from "react";
-import {
-  get_all_category_by_storeId,
-  get_all_highest_rate,
-  get_all_product_by_storeId,
-  get_store_by_id,
-} from "../../../redux/services/retailer/retailerHomepage.service";
+import React, { useEffect, useMemo, useState } from "react";
+import { get_all_highest_rate } from "../../../redux/services/retailer/retailerHomepage.service";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  getAllCategoryByStoreId,
-  getAllProductByStoreId,
   getHighestRate,
-  getShopById,
   setStoreId,
 } from "../../../redux/slices/retailer/homepageSlice/allShopSlice";
 import noImage from "../../../assets/images/no_image.jpg";
 import { useNavigate } from "react-router-dom";
 import Top10highestRated from "../../../components/retailler/skeletons/Top10highestRated";
+import {
+  applyImageFallback,
+  getSafeImageSrc,
+  isInvalidImageSrc,
+} from "@/lib/images";
 const CategoryCarousel = () => {
   const dispatch = useDispatch();
-  // const [highRateLoading, setHighRateLoading]=useEffect(false);
-  // useEffect(() => {
-  //   setHighRateLoading(true);
-  //   get_all_highest_rate().then((e)=> dispatch(getHighestRate(e.data.data)));
-  // },[])
 
   const [loading, setLoading] = useState(false);
 
@@ -32,34 +23,20 @@ const CategoryCarousel = () => {
     get_all_highest_rate()
       .then((e) => {
         dispatch(getHighestRate(e.data.data));
-        console.log(e);
         setLoading(false);
       })
-      .catch((error) => {
-        // Handle error here
+      .catch(() => {
         setLoading(false);
       });
-  }, []);
+  }, [dispatch]);
 
   const { highestRateData } = useSelector((state) => state.getDataAllShop);
-  // console.log("put in store : ",highestRateData)
+  const topShops = useMemo(() => highestRateData.slice(0, 5), [highestRateData]);
   const navigate = useNavigate();
 
-  // const onClickGetDataShop = (id) => {
-  //   // get_store_by_id(id).then((e) => dispatch(getShopById(e.data.data)));
-
 const onClickGetDataShop = (id,storeName) => {
-
-  // get_store_by_id(id).then((e) => dispatch(getShopById(e.data.data)));
-
-  // get_all_product_by_storeId(id).then((e) =>
-  //   dispatch(getAllProductByStoreId(e.data.data))
-  // );
-  // get_all_category_by_storeId(id).then((e)=> dispatch(getAllCategoryByStoreId(e.data.data)));
-  // // const storeId= id;
   dispatch(setStoreId(id));
 
-  // navigate(`/retailer/distributor-shop/${id}`);
   navigate(`/retailer/distributor-shop?storeId=${id}&storeName=${encodeURIComponent(storeName)}`);
 
   window.scrollTo(0, 0);
@@ -85,21 +62,18 @@ const onClickGetDataShop = (id,storeName) => {
           </div>
 
           <div className="flex flex-row justify-between ">
-            {highestRateData.slice(0, 5).map((item) => (
+            {topShops.map((item) => (
               <div
                 onClick={() => onClickGetDataShop(item.id,item.name)}
                 key={item.id}
-                class="flex bg-white flex-col lg:w-60  lg:h-60 sm:w-28 sm:h-28 w-16 h-16 rounded-xl dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7] border border-solid border-slate-200"
+                className="flex bg-white flex-col lg:w-60  lg:h-60 sm:w-28 sm:h-28 w-16 h-16 rounded-xl dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7] border border-solid border-slate-200"
               >
                 <div className="w-full flex flex-row justify-center">
                   <div className="w-full flex justify-center items-center overflow-hidden rounded-t-lg">
                     <img
-                      src={
-                        item.bannerImage === "" || item.bannerImage === null
-                          ? noImage
-                          : item.bannerImage
-                      }
-                      class="lg:h-48 lg:w-full sm:w-28 sm:h-28 w-16 h-16 rounded-t-md lg:rounded-t-xl max-w-xs transition duration-300 ease-in-out hover:scale-110"
+                      src={getSafeImageSrc(item.bannerImage, noImage)}
+                      className="lg:h-48 lg:w-full sm:w-28 sm:h-28 w-16 h-16 rounded-t-md lg:rounded-t-xl max-w-xs transition duration-300 ease-in-out hover:scale-110"
+                      onError={(e) => applyImageFallback(e, noImage)}
                     />
                   </div>
                 </div>
@@ -109,8 +83,7 @@ const onClickGetDataShop = (id,storeName) => {
                       {item.name}
                     </span>
                   </div>
-                  {item.bannerImage === "" ||
-                  item.bannerImage === null ? null : (
+                  {isInvalidImageSrc(item.bannerImage) ? null : (
                     <div className=" bottom-2  invisible lg:visible">
                       {/*rate  */}
                       <div className="w-14 h-5 flex items-center  ">

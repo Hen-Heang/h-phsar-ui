@@ -1,13 +1,5 @@
-import { api } from "../../../utils/api"
-
+import { apiGet } from "@/lib/http/api-client";
 
 export const get_all_activity = async () => {
-    try {
-        const response = await api.get(`/distributor/order_activities`)
-        return response
-        
-    } catch (error) {
-        console.log("error:", error)
-        
-    }
-}
+  return apiGet("/api/v1/distributor/order_activities");
+};

@@ -1,11 +1,15 @@
 # Modern UI Upgrade Guide (2026)
 
-This workspace is currently a CRA React app (`react-scripts`), not Next.js.  
-You now have a modern UI starter implemented in `src/components/modern` and `src/components/ui`.
+This workspace now runs on Next.js (`next dev`, `next build`, `next start`).
+Current architecture is a migration bridge:
+- Next App Router shell in `src/app`
+- Legacy client app mounted via `src/app/[[...slug]]/page.next.jsx` and `src/App.js` (`react-router-dom`)
+
+You have a modern UI starter implemented in `src/components/modern` and `src/components/ui`.
 
 ## 1) Tailwind in Next.js
 
-If you migrate to Next.js, use:
+For new greenfield projects, use:
 
 ```bash
 npx create-next-app@latest my-app --ts --tailwind --eslint --app --src-dir
@@ -114,7 +118,7 @@ export function Example() {
 ## 9) SEO + Responsive Best Practices
 
 - Use semantic tags: `header`, `main`, `section`, `article`, `footer`.
-- Add unique `title` and `meta description` per page (Next.js `metadata` API when migrated).
+- Add unique `title` and `meta description` per page (Next.js `metadata` API).
 - Ensure headings follow hierarchy (`h1` once per page).
 - Add descriptive `alt` text on images.
 - Prefer responsive utility classes (`sm: md: lg:`) and fluid widths.

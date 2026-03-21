@@ -1,8 +1,11 @@
+"use client";
+
 import { Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import React from "react";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   change_password,
   forget_password,
@@ -14,28 +17,12 @@ import { toast, ToastContainer } from "react-toastify";
 import Swal from "sweetalert2";
 import OTPInput from "react-otp-input";
 import { useEffect } from "react";
-import OneSignal from "react-onesignal";
 import { useDispatch } from "react-redux";
 import { setDataLogin } from "../../redux/slices/auth/authSlice";
-import { Modal } from "flowbite-react";
 import { PulseLoader, RingLoader } from "react-spinners";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 export default function SignInPage() {
   const dispatch = useDispatch();
-
-  // ==================== set external id to one signal ====================
-  const setUserId = (userId) => {
-    OneSignal.setExternalUserId(userId)
-      .then(() => {
-        console.log("User ID set successfully:", userId);
-      })
-      .catch((error) => {
-        console.log("Error setting user ID:", error);
-      });
-  };
-
-  // Call the setUserId function with the user's ID
-
-  // Call the setUserId function with the user's ID
 
   // 1. Yup
   const LoginSchema = Yup.object().shape({
@@ -102,7 +89,7 @@ export default function SignInPage() {
     setIsPasswordVisible((prevState) => !prevState);
   }
 
-  const navigate = useNavigate();
+  const router = useRouter();
   // ======================= login =========================
   const [loading, setLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
@@ -128,7 +115,7 @@ export default function SignInPage() {
       .then((response) => {
         // console.log("useID : " + response.data.data.userId);
         // console.log(response.data);
-        if (response.data == "") {
+        if (response.data === "") {
           toast.error(`Something went wrong`, {
             position: "top-right",
             autoClose: 5000,
@@ -140,7 +127,7 @@ export default function SignInPage() {
             theme: "light",
           });
         }
-        if (response.data.detail == "Email does not exist.") {
+        if (response.data.detail === "Email does not exist.") {
           toast.error(`Email does not exit..!`, {
             position: "top-right",
             autoClose: 5000,
@@ -154,7 +141,7 @@ export default function SignInPage() {
           setLoading(false);
         }
         if (
-          response.data.detail ==
+          response.data.detail ===
           "INVALID_PASSWORD. Please input correct password."
         ) {
           {
@@ -171,36 +158,34 @@ export default function SignInPage() {
             setLoading(false);
           }
         }
-        if (response.status == 409) {
+        if (response.status === 409) {
           toast.error("Email is not verified");
         }
-        if (response.status == 200) {
+        if (response.status === 200) {
           // console.log("response : ",response.data.data);
           dispatch(setDataLogin(response.data.data));
-          setUserId(response.data.data.userId);
           localStorage.setItem("token", response.data.data.token);
           localStorage.setItem("role", response.data.data.roleId);
           localStorage.setItem("email", data.email);
           localStorage.setItem("userId", response.data.data.userId);
           setShowAlert(true);
           // សិក្សា condition between dis and retail
-          if (response.data.data.roleId == 1) {
-            navigate("/distributor/home");
+          if (response.data.data.roleId === 1) {
+            router.push("/distributor/home");
           } else {
-            navigate("/retailer/home");
+            router.push("/retailer/home");
           }
-          if (response.status == 200) {
+          if (response.status === 200) {
             // console.log("response : ",response.data.data);
-            setUserId(response.data.data.userId);
             localStorage.setItem("token", response.data.data.token);
             localStorage.setItem("role", response.data.data.roleId);
             localStorage.setItem("email", data.email);
             setShowAlert(true);
             // សិក្សា condition between dis and retail
-            if (response.data.data.roleId == 1) {
-              navigate("/distributor/home");
+            if (response.data.data.roleId === 1) {
+              router.push("/distributor/home");
             } else {
-              navigate("/retailer/home");
+              router.push("/retailer/home");
             }
           }
         }
@@ -239,11 +224,11 @@ export default function SignInPage() {
     setLoadingOTP(true);
     generateCodeService(email).then((res) => {
       console.log(res);
-      if (res.status == 400) {
+      if (res.status === 400) {
         toast.error("This email does not exist");
         setLoadingOTP(false);
       }
-      if (res.status == 201) {
+      if (res.status === 201) {
         setVerifyCodeOTP(false);
         setLoadingOTP(false);
         // toast.success("The email has been verified successfully")
@@ -328,7 +313,7 @@ export default function SignInPage() {
     setLoadingOTP(true);
     generateCodeService(data)
       .then((res) => {
-        if (res.status == 400) {
+        if (res.status === 400) {
           toast.error("This email does not exist");
           setLoadingOTP(false);
         } else {
@@ -349,7 +334,7 @@ export default function SignInPage() {
   const handleContinueClick = (data) => {
     setLoadingSetPassword(true);
     forget_password(data).then((res) => {
-      if (res.status == 200) {
+      if (res.status === 200) {
         setShowEmail(false);
         setPasswordUpdate(true);
         setLoadingSetPassword(false);
@@ -410,7 +395,7 @@ export default function SignInPage() {
     setLoadingChangePassword(true);
     console.log(loadingChangePassword);
     change_password(data).then((res) => {
-      if (res.status == 200) {
+      if (res.status === 200) {
         setChangePassword(false);
         setLoadingChangePassword(false);
         setPasswordChangeSuccess(true);
@@ -427,17 +412,12 @@ export default function SignInPage() {
   return (
     <section className="bg-backGroundColor h-screen">
       {/* ========================== loading otp ================== */}
-      <Modal
-        show={loadingOTP}
-        size="md"
-        popup
-        onClose={() => setLoadingOTP(!loadingOTP)}
-      >
-        <Modal.Body>
+      <Dialog open={loadingOTP} onOpenChange={setLoadingOTP}>
+        <DialogContent className="max-w-md border-0 p-0 sm:rounded-2xl" showClose={false}>
           <div className="text-center py-10">
             <div className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200">
               {successOTP ? (
-                <img src={require("../../assets/images/success.png")} alt="" />
+                <img src={(require("../../assets/images/success.png")?.default || require("../../assets/images/success.png"))} alt="" />
               ) : (
                 <RingLoader color="#0f766e" />
               )}
@@ -460,19 +440,19 @@ export default function SignInPage() {
                 : "Please wait for few seconds"}
             </h3>
           </div>
-        </Modal.Body>
-      </Modal>
+        </DialogContent>
+      </Dialog>
 
       {showAlert ? (
         <div
           id="dismiss-alert"
-          class="hs-removing:translate-x-5 hs-removing:opacity-0 transition duration-300 bg-teal-50 border border-teal-200 rounded-md p-4"
+          className="hs-removing:translate-x-5 hs-removing:opacity-0 transition duration-300 bg-teal-50 border border-teal-200 rounded-md p-4"
           role="alert"
         >
-          <div class="flex">
-            <div class="flex-shrink-0">
+          <div className="flex">
+            <div className="flex-shrink-0">
               <svg
-                class="h-4 w-4 text-teal-400 mt-0.5"
+                className="h-4 w-4 text-teal-400 mt-0.5"
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
                 height="16"
@@ -482,21 +462,21 @@ export default function SignInPage() {
                 <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
               </svg>
             </div>
-            <div class="ml-3">
-              <div class="text-sm text-teal-800 font-medium">
+            <div className="ml-3">
+              <div className="text-sm text-teal-800 font-medium">
                 File has been successfully uploaded.
               </div>
             </div>
-            <div class="pl-3 ml-auto">
-              <div class="-mx-1.5 -my-1.5">
+            <div className="pl-3 ml-auto">
+              <div className="-mx-1.5 -my-1.5">
                 <button
                   type="button"
-                  class="inline-flex bg-teal-50 rounded-md p-1.5 text-teal-500 hover:bg-teal-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-teal-50 focus:ring-teal-600"
+                  className="inline-flex bg-teal-50 rounded-md p-1.5 text-teal-500 hover:bg-teal-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-teal-50 focus:ring-teal-600"
                   data-hs-remove-element="#dismiss-alert"
                 >
-                  <span class="sr-only">Dismiss</span>
+                  <span className="sr-only">Dismiss</span>
                   <svg
-                    class="h-3 w-3"
+                    className="h-3 w-3"
                     width="16"
                     height="16"
                     viewBox="0 0 16 16"
@@ -526,8 +506,6 @@ export default function SignInPage() {
               </h1>
               <p className="text-logInText text-center relative">
                 Login to get access to your account
-                {/* forget password and verify email */}
-                <div className=""></div>
               </p>
 
               <Formik
@@ -547,7 +525,7 @@ export default function SignInPage() {
                   <Form className="pt-5 space-y-2 md:space-y-3" action="#">
                     <div className="relative">
                       <img
-                        src={require("../../assets/images/emailIcon.png")}
+                        src={(require("../../assets/images/emailIcon.png")?.default || require("../../assets/images/emailIcon.png"))}
                         alt=""
                         className="absolute top-3 right-3 w-5"
                       />
@@ -577,12 +555,12 @@ export default function SignInPage() {
                       >
                         {isPasswordVisible ? (
                           <img
-                            src={require("../../assets/images/show.png")}
+                            src={(require("../../assets/images/show.png")?.default || require("../../assets/images/show.png"))}
                             alt=""
                           />
                         ) : (
                           <img
-                            src={require("../../assets/images/hide (1) 1.png")}
+                            src={(require("../../assets/images/hide (1) 1.png")?.default || require("../../assets/images/hide (1) 1.png"))}
                             alt=""
                           />
                         )}
@@ -612,11 +590,11 @@ export default function SignInPage() {
                           type="submit"
                         >
                           <span
-                            class="animate-spin inline-block w-4 h-4 border-[3px] border-current border-t-transparent text-white rounded-full"
+                            className="animate-spin inline-block w-4 h-4 border-[3px] border-current border-t-transparent text-white rounded-full"
                             role="status"
                             aria-label="loading"
                           >
-                            <span class="sr-only">Loading...</span>
+                            <span className="sr-only">Loading...</span>
                           </span>
                           Sign in...
                         </button>
@@ -654,32 +632,10 @@ export default function SignInPage() {
                         Forgot password?
                       </div>
                     </div>
-                    <a
-                      className="text-logInText flex w-full items-center justify-center rounded-lg border border-primaryColor space-y-4 md:space-y-6 p-1 text-center text-xs md:text-sm font-medium"
-                      href="#!"
-                    >
-                      <img
-                        src={require("../../assets/images/Rectangle 25.png")}
-                        alt=""
-                        className="w-6"
-                      />
-                      Connect with Google
-                    </a>
-                    {/* <a
-                      className="text-logInText flex w-full items-center justify-center rounded-lg border border-primaryColor space-y-4 md:space-y-6 p-1 text-center text-xs md:text-sm font-medium"
-                      href="#!"
-                    >
-                      <img
-                        src={require("../../assets/images/Rectangle 24.png")}
-                        alt=""
-                        className="w-5 mr-1"
-                      />
-                      Connect with Facebook
-                    </a> */}
                     <p className="text-xs md:text-sm text-center font-light text-logInText dark:text-gray-400">
                       Don’t have an account?
                       <Link
-                        to="/sign-up"
+                        href="/sign-up"
                         className="text-sm md:text-base font-medium pl-3 text-primaryColor hover:underline dark:text-primary-500"
                       >
                         Sign up
@@ -693,12 +649,12 @@ export default function SignInPage() {
           {/* form */}
           {/*2.Image */}
           <div className="col-span-1 relative hidden lg:block sign_in_bg">
-            <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden rounded-r-xl bg-fixed bg-primaryColor/80">
-              <div className="w-4/5 flex flex-col h-full justify-center pl-5 rounded-r-xl m-auto ">
-                <h1 className="text-4xl font-bold text-white leading-relaxed">
+            <div className="absolute inset-0 h-full w-full overflow-hidden rounded-r-xl bg-gradient-to-br from-primaryColor/72 via-primaryColor/58 to-slate-900/38">
+              <div className="mx-auto flex h-full w-4/5 max-w-md flex-col justify-center rounded-r-xl px-2">
+                <h1 className="text-4xl font-bold text-white leading-tight drop-shadow-sm xl:text-5xl">
                   Save money, time <br /> and energy with our platform
                 </h1>
-                <p className="text-lg font-bold pt-2 text-white">
+                <p className="pt-4 text-xl font-semibold text-white/95">
                   Find your business partner today!
                 </p>
               </div>
@@ -718,7 +674,7 @@ export default function SignInPage() {
                 <div className="relative p-6 flex-auto -mt-10">
                   <button onClick={() => setShowModalVerify(false)}>
                     <img
-                      src={require("../../assets/images/close.png")}
+                      src={(require("../../assets/images/close.png")?.default || require("../../assets/images/close.png"))}
                       alt=""
                       className="w-10 absolute top-14 right-5"
                     />
@@ -744,9 +700,9 @@ export default function SignInPage() {
                               </p>
                             </div>
                             <div>
-                              <div class="">
-                                <div class="flex flex-col relative space-y-9">
-                                  <div class="mt-10  flex flex-row items-center justify-center mx-auto w-full max-w-xs">
+                              <div className="">
+                                <div className="flex flex-col relative space-y-9">
+                                  <div className="mt-10  flex flex-row items-center justify-center mx-auto w-full max-w-xs">
                                     <OTPInput
                                       value={otp}
                                       onChange={setOtp}
@@ -773,12 +729,12 @@ export default function SignInPage() {
                                       Please input code to verify your email
                                     </div>
                                   ) : null}
-                                  <div class="flex flex-col space-y-5">
-                                    <div class="flex flex-row items-center justify-center text-center text-sm font-medium space-x-1 text-gray-500">
+                                  <div className="flex flex-col space-y-5">
+                                    <div className="flex flex-row items-center justify-center text-center text-sm font-medium space-x-1 text-gray-500">
                                       <p>Don’t received an email?</p>{" "}
                                       <button
                                         onClick={handleResendVerify}
-                                        class="flex flex-row items-center text-primaryColor"
+                                        className="flex flex-row items-center text-primaryColor"
                                       >
                                         Resend email
                                       </button>
@@ -794,7 +750,7 @@ export default function SignInPage() {
                             <button
                               type="button"
                               onClick={handleSubmitVerifyEmail}
-                              class="mt-7 lg:mt-9 mb-5 inline-block rounded-xl bg-primaryColor w-full py-4  text-sm font-medium  leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-cyan-400 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                              className="mt-7 lg:mt-9 mb-5 inline-block rounded-xl bg-primaryColor w-full py-4  text-sm font-medium  leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-cyan-400 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
                               data-te-ripple-init
                               data-te-ripple-color="light"
                             >
@@ -813,7 +769,7 @@ export default function SignInPage() {
         </>
       ) : null}
 
-      {/*==> forgot password and create new password */}
+      {/*===> forgot password and create new password */}
       {/* 1. forgrt password popup*/}
       {showVerifyCodeOTP ? (
         <>
@@ -829,7 +785,7 @@ export default function SignInPage() {
                     onClick={() => setVerifyCodeOTP(false)}
                   >
                     <img
-                      src={require("../../assets/images/Group 119.png")}
+                      src={(require("../../assets/images/Group 119.png")?.default || require("../../assets/images/Group 119.png"))}
                       alt=""
                       className="w-10"
                     />
@@ -865,7 +821,7 @@ export default function SignInPage() {
                                       <Field
                                         name="email"
                                         placeholder="Email"
-                                        class={`border border-primaryColor text-gray-900 text-sm rounded-lg ${
+                                        className={`border border-primaryColor text-gray-900 text-sm rounded-lg ${
                                           errors.email && touched.email
                                             ? "focus:ring-red-500 border-red-500 focus:outline-none"
                                             : null
@@ -882,7 +838,7 @@ export default function SignInPage() {
                                       // type="submit"
                                       type="submit"
                                       // onClick={handleResetClick}
-                                      class="inline-block rounded mb-5 bg-primaryColor px-7 pb-2.5 pt-2.5 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                                      className="inline-block rounded mb-5 bg-primaryColor px-7 pb-2.5 pt-2.5 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
                                     >
                                       verify
                                     </button>
@@ -916,7 +872,7 @@ export default function SignInPage() {
                     onClick={() => setShowForgetPassword(false)}
                   >
                     <img
-                      src={require("../../assets/images/Group 119.png")}
+                      src={(require("../../assets/images/Group 119.png")?.default || require("../../assets/images/Group 119.png"))}
                       alt=""
                       className="w-10"
                     />
@@ -957,7 +913,7 @@ export default function SignInPage() {
                                       <Field
                                         name="email"
                                         placeholder="Email"
-                                        class={`border border-primaryColor text-gray-900 text-sm rounded-lg ${
+                                        className={`border border-primaryColor text-gray-900 text-sm rounded-lg ${
                                           errors.email && touched.email
                                             ? "focus:ring-red-500 border-red-500 focus:outline-none"
                                             : null
@@ -974,7 +930,7 @@ export default function SignInPage() {
                                       // type="submit"
                                       type="submit"
                                       // onClick={handleResetClick}
-                                      class="inline-block rounded mb-5 bg-primaryColor px-7 pb-2.5 pt-2.5 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                                      className="inline-block rounded mb-5 bg-primaryColor px-7 pb-2.5 pt-2.5 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
                                     >
                                       Reset Password
                                     </button>
@@ -1008,7 +964,7 @@ export default function SignInPage() {
                     onClick={handleBackClick}
                   >
                     <img
-                      src={require("../../assets/images/Group 119.png")}
+                      src={(require("../../assets/images/Group 119.png")?.default || require("../../assets/images/Group 119.png"))}
                       alt=""
                       className="w-10"
                     />
@@ -1105,16 +1061,16 @@ export default function SignInPage() {
                                       // type="submit"
                                       type="submit"
                                       // onClick={handleContinueClick}
-                                      class=" flex justify-center items-center gap-2 rounded mb-5 bg-primaryColor px-7 pb-2.5 pt-2.5 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                                      className=" flex justify-center items-center gap-2 rounded mb-5 bg-primaryColor px-7 pb-2.5 pt-2.5 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
                                     >
                                       {loadingSetPassword ? (
                                         <>
                                           <span
-                                            class="animate-spin inline-block w-4 h-4 border-[3px] border-current border-t-transparent text-white rounded-full"
+                                            className="animate-spin inline-block w-4 h-4 border-[3px] border-current border-t-transparent text-white rounded-full"
                                             role="status"
                                             aria-label="loading"
                                           >
-                                            <span class="sr-only">
+                                            <span className="sr-only">
                                               Updating...
                                             </span>
                                           </span>
@@ -1154,7 +1110,7 @@ export default function SignInPage() {
                     onClick={handleCancelClick}
                   >
                     <img
-                      src={require("../../assets/images/Group 119.png")}
+                      src={(require("../../assets/images/Group 119.png")?.default || require("../../assets/images/Group 119.png"))}
                       alt=""
                       className="w-10"
                     />
@@ -1194,12 +1150,12 @@ export default function SignInPage() {
                                       >
                                         {isPasswordVisible ? (
                                           <img
-                                            src={require("../../assets/images/show.png")}
+                                            src={(require("../../assets/images/show.png")?.default || require("../../assets/images/show.png"))}
                                             alt=""
                                           />
                                         ) : (
                                           <img
-                                            src={require("../../assets/images/hide (1) 1.png")}
+                                            src={(require("../../assets/images/hide (1) 1.png")?.default || require("../../assets/images/hide (1) 1.png"))}
                                             alt=""
                                           />
                                         )}
@@ -1229,7 +1185,7 @@ export default function SignInPage() {
                                       // type="submit"
                                       type="button"
                                       onClick={handleSaveClick}
-                                      class="inline-block rounded mb-5 bg-primaryColor px-7 pb-2.5 pt-2.5 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                                      className="inline-block rounded mb-5 bg-primaryColor px-7 pb-2.5 pt-2.5 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
                                     >
                                       Save
                                     </button>
@@ -1263,7 +1219,7 @@ export default function SignInPage() {
                     onClick={handleCancelClick}
                   >
                     <img
-                      src={require("../../assets/images/Group 119.png")}
+                      src={(require("../../assets/images/Group 119.png")?.default || require("../../assets/images/Group 119.png"))}
                       alt=""
                       className="w-10"
                     />
@@ -1278,7 +1234,7 @@ export default function SignInPage() {
                           Password updated
                         </h1>
                         <img
-                          src={require("../../assets/images/success.png")}
+                          src={(require("../../assets/images/success.png")?.default || require("../../assets/images/success.png"))}
                           alt=""
                           className="w-12 mx-auto"
                         />
@@ -1290,7 +1246,7 @@ export default function SignInPage() {
                             // type="submit"
                             type="button"
                             onClick={() => setPasswordUpdate(false)}
-                            class="inline-block rounded mb-5 bg-primaryColor px-7 pb-2.5 pt-2.5 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                            className="inline-block rounded mb-5 bg-primaryColor px-7 pb-2.5 pt-2.5 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
                           >
                             Login
                           </button>
@@ -1320,7 +1276,7 @@ export default function SignInPage() {
                     onClick={() => setShowCreateNewPassword(false)}
                   >
                     <img
-                      src={require("../../assets/images/closeWhite.png")}
+                      src={(require("../../assets/images/closeWhite.png")?.default || require("../../assets/images/closeWhite.png"))}
                       alt=""
                     />
                   </button>
@@ -1358,7 +1314,7 @@ export default function SignInPage() {
                                       <img
                                         onClick={togglePasswordVisiblity}
                                         className="absolute top-2.5 right-2 w-6"
-                                        src={require("../../assets/images/eye_hidden_password.png")}
+                                        src={(require("../../assets/images/eye_hidden_password.png")?.default || require("../../assets/images/eye_hidden_password.png"))}
                                         alt=""
                                       />
                                       <Field
@@ -1367,7 +1323,7 @@ export default function SignInPage() {
                                         }
                                         name="password"
                                         aria-describedby="helper-text-explanation"
-                                        class={`border border-primaryColor text-gray-900 text-sm rounded-lg ${
+                                        className={`border border-primaryColor text-gray-900 text-sm rounded-lg ${
                                           errors.email && touched.email
                                             ? "focus:ring-red-500 border-red-500 focus:outline-none"
                                             : null
@@ -1386,7 +1342,7 @@ export default function SignInPage() {
                                       <img
                                         onClick={togglePasswordVisiblity}
                                         className="absolute top-2.5 right-2 w-6"
-                                        src={require("../../assets/images/eye_hidden_password.png")}
+                                        src={(require("../../assets/images/eye_hidden_password.png")?.default || require("../../assets/images/eye_hidden_password.png"))}
                                         alt=""
                                       />
                                       <Field
@@ -1395,7 +1351,7 @@ export default function SignInPage() {
                                         }
                                         name="confirmPassword"
                                         aria-describedby="helper-text-explanation"
-                                        class={`border border-primaryColor text-gray-900 text-sm rounded-lg ${
+                                        className={`border border-primaryColor text-gray-900 text-sm rounded-lg ${
                                           errors.email && touched.email
                                             ? "focus:ring-red-500 border-red-500 focus:outline-none"
                                             : null
@@ -1411,7 +1367,7 @@ export default function SignInPage() {
                                     </div>
                                     <button
                                       type="button"
-                                      class="inline-block rounded mb-5 bg-primaryColor px-7 pb-2.5 pt-3 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                                      className="inline-block rounded mb-5 bg-primaryColor px-7 pb-2.5 pt-3 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
                                       data-te-ripple-init
                                       data-te-ripple-color="light"
                                     >
@@ -1447,7 +1403,7 @@ export default function SignInPage() {
                     onClick={() => setChangePassword(false)}
                   >
                     <img
-                      src={require("../../assets/images/Group 119.png")}
+                      src={(require("../../assets/images/Group 119.png")?.default || require("../../assets/images/Group 119.png"))}
                       alt=""
                       className="w-10"
                     />
@@ -1486,7 +1442,7 @@ export default function SignInPage() {
                                       <Field
                                         name="email"
                                         placeholder="Your email"
-                                        class={`border border-primaryColor text-gray-900 text-sm rounded-lg ${
+                                        className={`border border-primaryColor text-gray-900 text-sm rounded-lg ${
                                           errors.email && touched.email
                                             ? "focus:ring-red-500 border-red-500 focus:outline-none focus:border-red-500"
                                             : null
@@ -1507,13 +1463,13 @@ export default function SignInPage() {
                                       >
                                         {isPasswordVisible ? (
                                           <img
-                                            src={require("../../assets/images/show.png")}
+                                            src={(require("../../assets/images/show.png")?.default || require("../../assets/images/show.png"))}
                                             className="w-[26px]"
                                             alt=""
                                           />
                                         ) : (
                                           <img
-                                            src={require("../../assets/images/eye_hidden_password.png")}
+                                            src={(require("../../assets/images/eye_hidden_password.png")?.default || require("../../assets/images/eye_hidden_password.png"))}
                                             alt=""
                                             className="w-[26px]"
                                           />
@@ -1527,7 +1483,7 @@ export default function SignInPage() {
                                             : "password"
                                         }
                                         name="oldPassword"
-                                        class={`border border-primaryColor text-gray-900 text-sm rounded-lg ${
+                                        className={`border border-primaryColor text-gray-900 text-sm rounded-lg ${
                                           errors.oldPassword &&
                                           touched.oldPassword
                                             ? "focus:ring-red-500 border-red-500 focus:outline-none focus:border-red-100"
@@ -1550,13 +1506,13 @@ export default function SignInPage() {
                                       >
                                         {isPasswordVisible ? (
                                           <img
-                                            src={require("../../assets/images/show.png")}
+                                            src={(require("../../assets/images/show.png")?.default || require("../../assets/images/show.png"))}
                                             className="w-[26px]"
                                             alt=""
                                           />
                                         ) : (
                                           <img
-                                            src={require("../../assets/images/eye_hidden_password.png")}
+                                            src={(require("../../assets/images/eye_hidden_password.png")?.default || require("../../assets/images/eye_hidden_password.png"))}
                                             alt=""
                                             className="w-[26px]"
                                           />
@@ -1570,7 +1526,7 @@ export default function SignInPage() {
                                             : "password"
                                         }
                                         name="newPassword"
-                                        class={`border border-primaryColor text-gray-900 text-sm rounded-lg ${
+                                        className={`border border-primaryColor text-gray-900 text-sm rounded-lg ${
                                           errors.newPassword &&
                                           touched.newPassword
                                             ? "focus:ring-red-500 border-red-500 focus:outline-none focus:border-red-100"
@@ -1590,16 +1546,16 @@ export default function SignInPage() {
                                       type="submit"
                                       // type="button"
                                       // onClick={handleUpdatePasswordClick}
-                                      class="flex gap-2 justify-center rounded bg-primaryColor px-7 pb-2.5 pt-3 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                                      className="flex gap-2 justify-center rounded bg-primaryColor px-7 pb-2.5 pt-3 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
                                     >
                                       {loadingChangePassword ? (
                                         <>
                                           <span
-                                            class="animate-spin inline-block w-4 h-4 border-[3px] border-current border-t-transparent text-white rounded-full"
+                                            className="animate-spin inline-block w-4 h-4 border-[3px] border-current border-t-transparent text-white rounded-full"
                                             role="status"
                                             aria-label="loading"
                                           >
-                                            <span class="sr-only">
+                                            <span className="sr-only">
                                               Updating...
                                             </span>
                                           </span>
@@ -1639,7 +1595,7 @@ export default function SignInPage() {
                     onClick={handleBackUpdatePasswordClick}
                   >
                     <img
-                      src={require("../../assets/images/Group 119.png")}
+                      src={(require("../../assets/images/Group 119.png")?.default || require("../../assets/images/Group 119.png"))}
                       alt=""
                       className="w-10"
                     />
@@ -1654,7 +1610,7 @@ export default function SignInPage() {
                           Password updated
                         </h1>
                         <img
-                          src={require("../../assets/images/success.png")}
+                          src={(require("../../assets/images/success.png")?.default || require("../../assets/images/success.png"))}
                           alt=""
                           className="w-12 mx-auto"
                         />
@@ -1666,7 +1622,7 @@ export default function SignInPage() {
                             // type="submit"
                             type="button"
                             onClick={() => setPasswordChangeSuccess(false)}
-                            class="inline-block rounded bg-primaryColor px-7 pb-2.5 pt-2.5 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                            className="inline-block rounded bg-primaryColor px-7 pb-2.5 pt-2.5 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
                           >
                             Login
                           </button>
@@ -1685,4 +1641,3 @@ export default function SignInPage() {
     </section>
   );
 }
-

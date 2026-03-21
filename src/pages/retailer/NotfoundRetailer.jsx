@@ -5,7 +5,7 @@ export default function NotFoundRetailer() {
     <div className='bg-white w-[80%] mx-auto h-2/5'>
         <div className=''>
         <img
-              src={require("../../assets/images/retailer/error404.jpg")}
+              src={(require("../../assets/images/retailer/error404.jpg")?.default || require("../../assets/images/retailer/error404.jpg"))}
               alt=""
               className="mx-auto bg-white"
             />

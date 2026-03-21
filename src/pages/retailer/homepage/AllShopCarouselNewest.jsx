@@ -1,61 +1,40 @@
-import Carousel from "react-grid-carousel";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
 import {
-  getAllCategoryByStoreId,
-  getAllProductByStoreId,
   getBookmarkStore,
-  getShopById,
   setStoreId,
-  setUpdateBookmarkStore,
   setUpdateBookmarkStoreNewest,
 } from "../../../redux/slices/retailer/homepageSlice/allShopSlice";
 import noImage from "../../../assets/images/no_image.jpg";
+import { applyImageFallback, getSafeImageSrc } from "@/lib/images";
 import {
   bookmark_store,
   get_all_bookmark_store,
-  get_all_category_by_storeId,
-  get_all_product_by_storeId,
-  get_store_by_id,
   remove_bookmark_store,
 } from "../../../redux/services/retailer/retailerHomepage.service";
-import { Link, useNavigate } from "react-router-dom";
-import DistributorStoreRetailer from "../DistributorStoreRetailer";
+import { useNavigate } from "react-router-dom";
 import ReactPaginate from "react-paginate";
-import { Pagination } from "flowbite-react";
+import { useQuery } from "@tanstack/react-query";
 
 const AllShopCarouselNewest = () => {
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
-  const dataShop = useSelector((state) => state.getDataAllShop.dataShop);
-
   const dataNewShop = useSelector((state) => state.getDataAllShop.dataNewShop);
   const [itemOffset, setItemOffset] = useState(0);
-  const [item, setItem] = useState();
-  const pageCount = Math.ceil(dataNewShop.length / 9);
-  const onPageChange = (event) => {
-    const newOffset = (event.selected * 9) % dataNewShop.length;
+  const pageCount = Math.ceil((dataNewShop?.length || 0) / 9);
+  const onPageChange = useCallback((event) => {
+    const newOffset = (event.selected * 9) % (dataNewShop?.length || 1);
     setItemOffset(newOffset);
-  };
-  const endOffset = itemOffset + 9;
-  const currentDataNewShop = dataNewShop.slice(itemOffset, endOffset);
+  }, [dataNewShop?.length]);
 
-  // useEffect(() => {
-  //   get_all_store().then((e)=> dispatch(getDataAllShopShow(e.data.data))) ;
-  // },[])
-  // const [storeId, setStoreId] = useState(null);
+  const currentDataNewShop = useMemo(() => {
+    const endOffset = itemOffset + 9;
+    return dataNewShop.slice(itemOffset, endOffset);
+  }, [dataNewShop, itemOffset]);
 
-  const onClickGetDataShop = (id,storeName) => {
-    // get_store_by_id(id).then((e) => dispatch(getShopById(e.data.data)));
-
-    // get_all_product_by_storeId(id).then((e) =>
-    //   dispatch(getAllProductByStoreId(e.data.data))
-    // );
-    // get_all_category_by_storeId(id).then((e)=> dispatch(getAllCategoryByStoreId(e.data.data)));
-    // // const storeId= id;
+  const onClickGetDataShop = useCallback((id, storeName) => {
 
     dispatch(setStoreId(id)); // Dispatch the setStoreId action
 
@@ -64,50 +43,48 @@ const AllShopCarouselNewest = () => {
         storeName
       )}`
     );
-    // navigate(`/retailer/distributor-shop/${id}`);
-    // navigate("/retailer/skeleton-store");
     window.scrollTo(0, 0);
-  };
+  }, [dispatch, navigate]);
 
-  const [isBookmarked, setIsBookmarked] = useState(false); // Add a state to track bookmarking
+  const bookmarkStoreQuery = useQuery({
+    queryKey: ["retailer", "bookmark-store"],
+    queryFn: async () => {
+      const res = await get_all_bookmark_store();
+      return res?.data?.data || [];
+    },
+  });
 
   useEffect(() => {
-    get_all_bookmark_store().then((e) => dispatch(getBookmarkStore(e)));
-  }, []);
+    if (bookmarkStoreQuery.data) {
+      dispatch(getBookmarkStore(bookmarkStoreQuery.data));
+    }
+  }, [bookmarkStoreQuery.data, dispatch]);
 
-  const { bookmarkStoreData } = useSelector((state) => state.getDataAllShop);
-  console.log("fafafaf", bookmarkStoreData);
-
-  const handleBookmarkClick = (item) => {
-    if (isBookmarked) {
+  const handleBookmarkClick = useCallback((item) => {
+    if (item.isBookmarked) {
       // If already bookmarked, remove the bookmark
       remove_bookmark_store(item.id)
-        .then(() => {
-          // toast.error("Bookmark removed");
-          setIsBookmarked(false);
-        })
+        .then(() => {})
         .then(() => dispatch(setUpdateBookmarkStoreNewest(item)));
     } else {
       // If not bookmarked, add the bookmark
       bookmark_store(item.id)
-        .then(() => {
-          // toast.success("Bookmarked successfully");
-          setIsBookmarked(true);
-        })
+        .then(() => {})
         .then(() => dispatch(setUpdateBookmarkStoreNewest(item)));
     }
-  };
+  }, [dispatch]);
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
       {/* {storeId && <DistributorStoreRetailer storeId={storeId} />}   */}
 
-      {currentDataNewShop.map((item) => (
+      {currentDataNewShop.map((item, index) => (
         <div
-          class="flex flex-col justify-center h-40 lg:h-60 cursor-pointer"
+          key={item.id ?? `${item.name}-${index}`}
+          className="flex flex-col justify-center h-40 lg:h-60 cursor-pointer"
           onClick={() => onClickGetDataShop(item.id,item.name)}
         >
-          <div class="relative hover:bg-gray-100 sm:flex-wrap lg:grid lg:grid-cols-2 h-40 lg:h-60 md:flex-row md:space-y-0 rounded-xl shadow-lg p-3 max-w-xs md:max-w-3xl mx-auto border border-white bg-white">
+          <div className="retailer-panel relative hover:bg-retailerPrimarySoft/30 sm:flex-wrap lg:grid lg:grid-cols-2 h-40 lg:h-60 md:flex-row md:space-y-0 rounded-xl p-3 max-w-xs md:max-w-3xl mx-auto">
             {/* heart button */}
             {/* heart button */}
             <button
@@ -116,7 +93,7 @@ const AllShopCarouselNewest = () => {
 
                 handleBookmarkClick(item);
               }}
-              className="w-8 h-8 rounded-full sm:ml-1 sm:mt-1 lg:ml-3 lg:mt-4 absolute bg-white hover:opacity-80"
+              className="w-8 h-8 rounded-full sm:ml-1 sm:mt-1 lg:ml-3 lg:mt-4 absolute bg-retailerSurface border border-retailerBorder hover:opacity-80"
             >
               {item.isBookmarked ? (
                 <svg
@@ -141,23 +118,20 @@ const AllShopCarouselNewest = () => {
 
             <div className="grid place-items-center w-full h-40 lg:h-full -ml-1 -mt-1 overflow-hidden rounded-md">
               <img
-                src={
-                  item.bannerImage == null || item.bannerImage == ""
-                    ? noImage
-                    : item.bannerImage
-                }
+                src={getSafeImageSrc(item.bannerImage, noImage)}
+                onError={(e) => applyImageFallback(e, noImage)}
                 className=" h-full w-full "
               />
             </div>
-            <div class="w-full flex flex-col sm:space-y-0 sm:p-1 lg:space-y-2 lg:p-3 relative">
-              <h3 class="font-black text-gray-800 text-lg line-clamp overflow-hidden h-6">
+            <div className="w-full flex flex-col sm:space-y-0 sm:p-1 lg:space-y-2 lg:p-3 relative">
+              <h3 className="font-black text-gray-800 text-lg line-clamp overflow-hidden h-6">
                 {item.name}
               </h3>
               <p className="flex sm:mt-2 lg:mt-0 text-[16px] items-center gap-2">
                 Rating :
                 <span>
                   <img
-                    src={require("../../../assets/images/retailer/star.png")}
+                    src={(require("../../../assets/images/retailer/star.png")?.default || require("../../../assets/images/retailer/star.png"))}
                     alt=""
                   />
                 </span>
@@ -183,15 +157,20 @@ const AllShopCarouselNewest = () => {
               {/* category */}
               <p className="invisible lg:visible flex flex-wrap line-clamp2 overflow-hidden h-12">
                 <span className="font-bold ">Category : &nbsp;</span>
-                {item.categories.map((data) => (
-                  <span className="text-sm ">{data.name}, &nbsp;</span>
+                {item.categories.map((data, categoryIndex) => (
+                  <span
+                    key={data.id ?? `${data.name}-${categoryIndex}`}
+                    className="text-sm "
+                  >
+                    {data.name}, &nbsp;
+                  </span>
                 ))}
                 {/* { item.categories.name} */}
               </p>
 
               <button
                 onClick={() => onClickGetDataShop(item.id, item.name)}
-                className="invisible lg:visible absolute right-0 text-sm bottom-2 py-1 px-2 bg-[#f15b22] rounded-l-full text-white"
+                className="invisible lg:visible absolute right-0 text-sm bottom-2 py-1 px-2 bg-retailerPrimary rounded-l-full text-white"
               >
                 View detail
               </button>
@@ -201,7 +180,7 @@ const AllShopCarouselNewest = () => {
       ))}
       {pageCount < 2 ? null : (
         <div className="h-8 sm:h-10 bg-white  rounded-md  w-[350px] sm:w-[430px] flex flex-row just-start sm:justify-center  top-[830px] sm:top-[1780px] lg:top-[2260px]  absolute left-1/2 translate-x-[-50%]">
-          <div class="flex item-center  sm:ml-0 justify-start sm:justify-center p-1 sm:p-2">
+          <div className="flex item-center  sm:ml-0 justify-start sm:justify-center p-1 sm:p-2">
             <ReactPaginate
               pageCount={pageCount}
               onPageChange={onPageChange}

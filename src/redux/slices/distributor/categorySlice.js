@@ -38,7 +38,7 @@ const categorySlice = createSlice({
       // state.categories.map((category) => {
       //   console.log("category ID : ", category.id);
       //   console.log("action ID :", action.payload);
-      //   if (category.id == action.payload.id) {
+      //   if (category.id === action.payload.id) {
       //     category.name = action.payload.name;
       //   }
       // });

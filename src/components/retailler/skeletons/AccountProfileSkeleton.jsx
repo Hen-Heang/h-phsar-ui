@@ -21,11 +21,11 @@ export default function AccountProfileSkeleton() {
       {/* store skeleton and name */}
       {/* <div
         role="status"
-        class="space-y-8 p-12 animate-pulse flex flex-row md:space-y-0 md:space-x-8 md:flex md:items-center"
+        className="space-y-8 p-12 animate-pulse flex flex-row md:space-y-0 md:space-x-8 md:flex md:items-center"
       >
-        <div class="flex items-center  justify-center sm:w-36 sm:h-36 lg:w-56 lg:h-48 bg-gray-300 rounded  dark:bg-gray-700">
+        <div className="flex items-center  justify-center sm:w-36 sm:h-36 lg:w-56 lg:h-48 bg-gray-300 rounded  dark:bg-gray-700">
           <svg
-            class="w-12 h-12 text-gray-200"
+            className="w-12 h-12 text-gray-200"
             xmlns="http://www.w3.org/2000/svg"
             aria-hidden="true"
             fill="currentColor"
@@ -34,9 +34,9 @@ export default function AccountProfileSkeleton() {
             <path d="M480 80C480 35.82 515.8 0 560 0C604.2 0 640 35.82 640 80C640 124.2 604.2 160 560 160C515.8 160 480 124.2 480 80zM0 456.1C0 445.6 2.964 435.3 8.551 426.4L225.3 81.01C231.9 70.42 243.5 64 256 64C268.5 64 280.1 70.42 286.8 81.01L412.7 281.7L460.9 202.7C464.1 196.1 472.2 192 480 192C487.8 192 495 196.1 499.1 202.7L631.1 419.1C636.9 428.6 640 439.7 640 450.9C640 484.6 612.6 512 578.9 512H55.91C25.03 512 .0006 486.1 .0006 456.1L0 456.1z" />
           </svg>
         </div>
-        <div class="w-full">
-          <div class="h-7 bg-gray-200 rounded-sm dark:bg-gray-700  max-w-[160px] mb-2.5"></div>
-          <div class="h-7 bg-gray-200 rounded-sm dark:bg-gray-700  max-w-[180px] mb-2.5"></div>
+        <div className="w-full">
+          <div className="h-7 bg-gray-200 rounded-sm dark:bg-gray-700  max-w-[160px] mb-2.5"></div>
+          <div className="h-7 bg-gray-200 rounded-sm dark:bg-gray-700  max-w-[180px] mb-2.5"></div>
         </div>
 
       </div> */}
@@ -46,12 +46,12 @@ export default function AccountProfileSkeleton() {
         // flex m-auto flex-row justify-start gap-7
         // p-12 m-auto animate-pulse flex flex-row sm:space-y-4 md:space-x-4 md:flex md:items-center
           role="status"
-          class=" flex  flex-row justify-start animate-pulse  "
+          className=" flex  flex-row justify-start animate-pulse  "
         >
-          <div class=" flex items-center animate-pulse justify-center rounded-sm w-36 h-36 sm:w-48 sm:h-48  bg-gray-300   dark:bg-gray-700">
+          <div className=" flex items-center animate-pulse justify-center rounded-sm w-36 h-36 sm:w-48 sm:h-48  bg-gray-300   dark:bg-gray-700">
             <svg
             // rounded-sm w-36 h-36 sm:w-48 sm:h-48 lg:w-48 lg:h-48 
-              class="w-12 h-12 text-gray-200"
+              className="w-12 h-12 text-gray-200"
               xmlns="http://www.w3.org/2000/svg"
               aria-hidden="true"
               fill="currentColor"
@@ -63,9 +63,9 @@ export default function AccountProfileSkeleton() {
         </div>
       </div>
       <div className="w-1/2 flex items-center sm:px-4">
-        <div class="w-full animate-pulse items-center ">
-          <div class="h-7 bg-gray-200 rounded-sm  dark:bg-gray-700  max-w-[160px] mb-2.5"></div>
-          <div class="h-7 bg-gray-200 rounded-sm  dark:bg-gray-700  max-w-[180px] mb-2.5"></div>
+        <div className="w-full animate-pulse items-center ">
+          <div className="h-7 bg-gray-200 rounded-sm  dark:bg-gray-700  max-w-[160px] mb-2.5"></div>
+          <div className="h-7 bg-gray-200 rounded-sm  dark:bg-gray-700  max-w-[180px] mb-2.5"></div>
         </div>
       </div>
     </div> */}
@@ -74,7 +74,7 @@ export default function AccountProfileSkeleton() {
           <div className=" flex animate-pulse rounded justify-center items-center bg-gray-300 w-36 h-36 lg:w-48 lg:h-48  border border-gray-300">
             {/* replace here */}
             <svg
-              class="w-12 h-12 text-gray-200"
+              className="w-12 h-12 text-gray-200"
               xmlns="http://www.w3.org/2000/svg"
               aria-hidden="true"
               fill="currentColor"
@@ -86,13 +86,13 @@ export default function AccountProfileSkeleton() {
         </div>
         <div className="w-full ">
           <div className="py-12 lg:px-8 animate-pulse">
-            <div class="h-6 bg-gray-200 rounded-sm dark:bg-gray-700  max-w-[180px] mb-2.5"></div>
-            <div class="h-6 bg-gray-200 rounded-sm dark:bg-gray-700  max-w-[280px] mb-2.5"></div>
+            <div className="h-6 bg-gray-200 rounded-sm dark:bg-gray-700  max-w-[180px] mb-2.5"></div>
+            <div className="h-6 bg-gray-200 rounded-sm dark:bg-gray-700  max-w-[280px] mb-2.5"></div>
           </div>
         </div>
 
         {/* <div className="w-full animate-pulse px-12">
-              <div class="h-7 bg-gray-200 rounded-sm dark:bg-gray-700  max-w-[180px] mb-2.5"></div>
+              <div className="h-7 bg-gray-200 rounded-sm dark:bg-gray-700  max-w-[180px] mb-2.5"></div>
 
             </div> */}
       </div>
@@ -103,14 +103,14 @@ export default function AccountProfileSkeleton() {
 
         <div
           role="status"
-          class="space-y-2 animate-pulse md:space-y-0 md:space-x-8 md:flex md:items-center"
+          className="space-y-2 animate-pulse md:space-y-0 md:space-x-8 md:flex md:items-center"
         >
           {/* longline */}
-          <div class="w-full">
-            <div class="h-2 bg-gray-300 rounded-sm dark:bg-gray-700 mb-2.5"></div>
+          <div className="w-full">
+            <div className="h-2 bg-gray-300 rounded-sm dark:bg-gray-700 mb-2.5"></div>
           </div>
 
-          <span class="sr-only">Loading...</span>
+          <span className="sr-only">Loading...</span>
         </div>
       </div>
 
@@ -120,63 +120,63 @@ export default function AccountProfileSkeleton() {
 
         <div
           role="status"
-          class="space-y-2 animate-pulse md:space-y-0 md:space-x-8 md:flex "
+          className="space-y-2 animate-pulse md:space-y-0 md:space-x-8 md:flex "
         >
-          <div class="w-2/4 sm:px-0 sm:w-1/4 lg:w-2/4">
-            <div class="h-6  bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
-            <div class="h-6 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
+          <div className="w-2/4 sm:px-0 sm:w-1/4 lg:w-2/4">
+            <div className="h-6  bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+            <div className="h-6 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
           </div>
 
-          <div class=" lg:w-1/5 ">
-            <div class="h-2 bg-gray-300 rounded-sm  max-w-[80px] mb-2.5"></div>
-            <div class="h-10 w-56 bg-gray-300 rounded-sm  max-w-[480px] mb-2.5"></div>
+          <div className=" lg:w-1/5 ">
+            <div className="h-2 bg-gray-300 rounded-sm  max-w-[80px] mb-2.5"></div>
+            <div className="h-10 w-56 bg-gray-300 rounded-sm  max-w-[480px] mb-2.5"></div>
           </div>
-          <div class=" lg:w-1/5 ">
-            <div class="h-2 bg-gray-300 rounded-sm  max-w-[80px] mb-2.5"></div>
-            <div class="h-10 w-56 bg-gray-300 rounded-sm  max-w-[480px]  mb-2.5"></div>
-          </div>
-        </div>
-        <div className="w-full animate-pulse flex flex-row-reverse sm:mr-10 lg:ml-0">
-          <div class="w-full  py-2 sm:w-3/4 lg:w-1/2 lg:px-8 ">
-            <div class="h-2 bg-gray-300  rounded-sm dark:bg-gray-700 max-w-[80px] mb-2.5"></div>
-            <div class="h-10 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[500px] mb-2.5"></div>
+          <div className=" lg:w-1/5 ">
+            <div className="h-2 bg-gray-300 rounded-sm  max-w-[80px] mb-2.5"></div>
+            <div className="h-10 w-56 bg-gray-300 rounded-sm  max-w-[480px]  mb-2.5"></div>
           </div>
         </div>
         <div className="w-full animate-pulse flex flex-row-reverse sm:mr-10 lg:ml-0">
-          <div class="w-full  py-2 sm:w-3/4 lg:w-1/2 lg:px-8 ">
-            <div class="h-2 bg-gray-300  rounded-sm dark:bg-gray-700 max-w-[80px] mb-2.5"></div>
-            <div class="h-10 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[500px] mb-2.5"></div>
+          <div className="w-full  py-2 sm:w-3/4 lg:w-1/2 lg:px-8 ">
+            <div className="h-2 bg-gray-300  rounded-sm dark:bg-gray-700 max-w-[80px] mb-2.5"></div>
+            <div className="h-10 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[500px] mb-2.5"></div>
+          </div>
+        </div>
+        <div className="w-full animate-pulse flex flex-row-reverse sm:mr-10 lg:ml-0">
+          <div className="w-full  py-2 sm:w-3/4 lg:w-1/2 lg:px-8 ">
+            <div className="h-2 bg-gray-300  rounded-sm dark:bg-gray-700 max-w-[80px] mb-2.5"></div>
+            <div className="h-10 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[500px] mb-2.5"></div>
           </div>
         </div>
 
         {/* section2 */}
         <div
           role="status"
-          class="space-y-2 animate-pulse md:space-y-0 md:space-x-8 md:flex "
+          className="space-y-2 animate-pulse md:space-y-0 md:space-x-8 md:flex "
         >
-          {/* <div class="w-full items-end">
-          <div class="h-2 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[80px] mb-2.5"></div>
-          <div class="h-10 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
+          {/* <div className="w-full items-end">
+          <div className="h-2 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[80px] mb-2.5"></div>
+          <div className="h-10 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
         </div> */}
         </div>
         {/* longline 3*/}
-        <div class="w-full animate-pulse">
-          <div class="h-2 bg-gray-300 rounded-sm dark:bg-gray-700 mb-5"></div>
+        <div className="w-full animate-pulse">
+          <div className="h-2 bg-gray-300 rounded-sm dark:bg-gray-700 mb-5"></div>
         </div>
         {/* section3 */}
         <div
           role="status"
-          class=" space-y-2 animate-pulse md:space-y-0 md:space-x-8 flex  md:flex-none flex-wrap "
+          className=" space-y-2 animate-pulse md:space-y-0 md:space-x-8 flex  md:flex-none flex-wrap "
         >
-          <div class="w-full lg:w-2/4 sm:w-1/4 ">
-            <div class="h-6 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[160px] sm:max-w-[360px] mb-2.5"></div>
-            <div class="h-6 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[180px] sm:max-w-[480px] mb-2.5"></div>
+          <div className="w-full lg:w-2/4 sm:w-1/4 ">
+            <div className="h-6 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[160px] sm:max-w-[360px] mb-2.5"></div>
+            <div className="h-6 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[180px] sm:max-w-[480px] mb-2.5"></div>
           </div>
-          <div class="w-1/6 h-32 ">
-            <div class="h-24 w-24 sm:h-32 sm:w-32  flex justify-center items-center bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[360px] mb-2.5">
+          <div className="w-1/6 h-32 ">
+            <div className="h-24 w-24 sm:h-32 sm:w-32  flex justify-center items-center bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[360px] mb-2.5">
               {" "}
               <svg
-                class="w-12 h-12 text-gray-200"
+                className="w-12 h-12 text-gray-200"
                 xmlns="http://www.w3.org/2000/svg"
                 aria-hidden="true"
                 fill="currentColor"
@@ -186,25 +186,25 @@ export default function AccountProfileSkeleton() {
               </svg>
             </div>
           </div>
-          <div class="w-1/4  px-16 lg:px-0 sm:px-4">
-            <div class="h-36 w-44 sm:h-44 sm:w-64  bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+          <div className="w-1/4  px-16 lg:px-0 sm:px-4">
+            <div className="h-36 w-44 sm:h-44 sm:w-64  bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
           </div>
         </div>
 
         {/* For variant="text", adjust the height via font-size */}
 
         <div className="animate-pulse flex flex-row-reverse">
-          <div class="w-full sm:px-8 py-2 sm:w-1/2 md:1/3 lg:1/4">
-            <div class="h-2 bg-gray-300  rounded-sm dark:bg-gray-700 max-w-[80px] mb-2.5"></div>
-            <div class="h-10 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[500px] mb-0.5">
+          <div className="w-full sm:px-8 py-2 sm:w-1/2 md:1/3 lg:1/4">
+            <div className="h-2 bg-gray-300  rounded-sm dark:bg-gray-700 max-w-[80px] mb-2.5"></div>
+            <div className="h-10 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[500px] mb-0.5">
               {" "}
             </div>
           </div>
         </div>
         <div className="w-full animate-pulse flex flex-row-reverse sm:mr-10 lg:ml-0">
-          <div class="w-full  py-1 sm:w-3/4 lg:w-1/2 lg:px-8 ">
-            <div class="h-2 bg-gray-300  rounded-sm dark:bg-gray-700 max-w-[80px] mb-2.5"></div>
-            <div class="h-10 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[500px] mb-2.5"></div>
+          <div className="w-full  py-1 sm:w-3/4 lg:w-1/2 lg:px-8 ">
+            <div className="h-2 bg-gray-300  rounded-sm dark:bg-gray-700 max-w-[80px] mb-2.5"></div>
+            <div className="h-10 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[500px] mb-2.5"></div>
           </div>
         </div>
       </div>

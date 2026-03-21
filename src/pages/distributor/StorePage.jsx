@@ -1,7 +1,8 @@
+"use client";
+
 import React from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Modal, Button } from "flowbite-react";
 import noImage from "../../assets/images/distributor/store.png";
 import { useEffect } from "react";
 import {
@@ -21,6 +22,13 @@ import { PulseLoader, RingLoader } from "react-spinners";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { StoreSkeleton } from "../../components/Skeletons/StoreSkeleton";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+
+// Static image imports
+import AddressIcon from "../../assets/images/Address.png";
+import InscriptionIcon from "../../assets/images/Inscription.png";
+import addImageIcon from "../../assets/images/add-image 2.png";
+
 export default function StorePage() {
   const [loadingPage, setLoadingPage] = useState(false);
   const noData =
@@ -55,7 +63,7 @@ export default function StorePage() {
 
   //     })
   //     .then(() => setLoadingPage(false));
-  // }, getDataStore());
+  // }, [dispatch]);
 
   const [noDataStore, setNoDataStore] = useState(false);
   useEffect(() => {
@@ -201,7 +209,7 @@ export default function StorePage() {
         console.log("No data shop : ");
         // if shop doesn't have
         console.log("image url : ", targetImage);
-        if (targetImage == null || targetImage == "") {
+        if (targetImage === null || targetImage === "") {
           console.log("No Image url ...");
           // if user did not input image
           add_new_store(newShop)
@@ -252,7 +260,7 @@ export default function StorePage() {
       } else {
         console.log("Already have account...!");
         // if shop already create, so update shop
-        if (targetImage == null || targetImage == "") {
+        if (targetImage === null || targetImage === "") {
           // if user did not input image
           console.log("No target image");
           update_store_distributor(newShop)
@@ -404,11 +412,11 @@ export default function StorePage() {
             <div className="w-full p-6 space-y-1 md:space-y-2 sm:px-12 sm:py-12 ">
               {/* Store image and Name*/}
               <div className="flex flex-row justify-start gap-3 lg:gap-7 w-full">
-                {imageUrl == null || imageUrl == "" ? (
+                {imageUrl === null || imageUrl === "" ? (
                   <img
                     src={
-                      defaultImage == "" ||
-                      defaultImage == null
+                      defaultImage === "" ||
+                      defaultImage === null
                         ? noImage
                         : defaultImage
                     }
@@ -418,13 +426,13 @@ export default function StorePage() {
                 ) : (
                   <img
                     src={
-                      imageUrl == "" || imageUrl == null ? noImage : imageUrl
+                      imageUrl === "" || imageUrl === null ? noImage : imageUrl
                     }
                     alt=""
                     className="rounded w-36 h-36 lg:w-48 lg:h-48 sm:w-48 sm:h-48 "
                   />
                 )}
-                {/* <img src={storeList.bannerImage == '' || storeList.bannerImage==null ? noImage  : storeList.bannerImage} className="rounded w-48 h-48" alt=""/> */}
+                {/* <img src={storeList.bannerImage === '' || storeList.bannerImage===null ? noImage  : storeList.bannerImage} className="rounded w-48 h-48" alt=""/> */}
                 <div className=" flex flex-col lg:gap-2">
                   {/* active */}
                   <label className="relative inline-flex items-center mr-5 cursor-pointer">
@@ -484,7 +492,7 @@ export default function StorePage() {
                   <div className="flex flex-wrap lg:-mx-3 mb-2">
                     <label
                       className="block mb-1 tracking-wide text-primaryColor text-sm font-medium"
-                      for="grid-first-name"
+                      htmlFor="grid-first-name"
                     >
                       Name
                     </label>
@@ -494,7 +502,7 @@ export default function StorePage() {
                       name="name"
                       type="text"
                       placeholder={
-                        storeList.name == "" ? "Store Name" : storeList.name
+                        storeList.name === "" ? "Store Name" : storeList.name
                       }
                       onChange={handleFormChange}
                       disabled={isDisabled}
@@ -508,13 +516,13 @@ export default function StorePage() {
                   {/* Address */}
                   <div className="flex flex-wrap lg:-mx-3 mb-5 relative">
                     <img
-                      src={require("../../assets/images/Address.png")}
+                      src={(require("../../assets/images/Address.png")?.default || require("../../assets/images/Address.png"))}
                       alt=""
                       className="absolute left-16"
                     />
                     <label
                       className="tracking-wide mb-1 text-primaryColor text-sm font-medium"
-                      for="grid-address"
+                      htmlFor="grid-address"
                     >
                       Address
                     </label>
@@ -525,7 +533,7 @@ export default function StorePage() {
                       name="address"
                       // value={storeList.address}
                       placeholder={
-                        storeList.address == ""
+                        storeList.address === ""
                           ? "Store Address"
                           : storeList.address
                       }
@@ -539,12 +547,12 @@ export default function StorePage() {
                   {/* Bio */}
                   <div className="flex flex-wrap lg:-mx-3 relative">
                     <img
-                      src={require("../../assets/images/Inscription.png")}
+                      src={(require("../../assets/images/Inscription.png")?.default || require("../../assets/images/Inscription.png"))}
                       alt=""
                       className="absolute left-6 top-1"
                     />
                     <label
-                      for="grid-bio"
+                      htmlFor="grid-bio"
                       className="tracking-wide mb-1 text-sm font-medium text-primaryColor"
                     >
                       Bio
@@ -591,7 +599,7 @@ export default function StorePage() {
                 <div className="w-full max-w-xl sm:mx-auto ">
                   <div className="flex flex-wrap lg:-mx-3 relative sm:mb-2">
                     <label
-                      for="phone"
+                      htmlFor="phone"
                       className="block mb-1 tracking-wide text-sm font-medium text-primaryColor dark:text-white"
                     >
                       Primary Phone number
@@ -629,7 +637,7 @@ export default function StorePage() {
                     </button>
 
                     <label
-                      for="phone"
+                      htmlFor="phone"
                       className="block mb-1 tracking-wide text-sm font-medium text-primaryColor dark:text-white"
                     >
                       Phone number
@@ -690,11 +698,11 @@ export default function StorePage() {
                   {/* Upload image */}
                   <div className="flex flex-wrap lg:-mx-3 mb-6 lg:mb-10">
                     <div className="w-2/5 mb-6 lg:mb-0 sm:mb-4 flex flex-col justify-between items-center">
-                    {imageUrl == null || imageUrl == "" ? (
+                    {imageUrl === null || imageUrl === "" ? (
                         <img
                           src={
-                            defaultImage == "" ||
-                            defaultImage == null
+                            defaultImage === "" ||
+                            defaultImage === null
                               ? noImage
                               : defaultImage
                           }
@@ -704,7 +712,7 @@ export default function StorePage() {
                       ) : (
                         <img
                           src={
-                            imageUrl == "" || imageUrl == null
+                            imageUrl === "" || imageUrl === null
                               ? noImage
                               : imageUrl
                           }
@@ -712,11 +720,11 @@ export default function StorePage() {
                           className="rounded w-24 h-24 sm:w-32 sm:h-32 border border-gray-300"
                         />
                       )}
-                      {/* {imageUrl == null || imageUrl == "" ? (
+                      {/* {imageUrl === null || imageUrl === "" ? (
                       <img
                         src={
-                          storeList.bannerImage == "" ||
-                          storeList.bannerImage == null
+                          storeList.bannerImage === "" ||
+                          storeList.bannerImage === null
                             ? noImage
                             : storeList.bannerImage
                         }
@@ -729,12 +737,12 @@ export default function StorePage() {
                     </div>
                     <div className="w-3/5">
                       <label
-                        for="dropzone-file"
+                        htmlFor="dropzone-file"
                         className="flex flex-col items-center justify-center w-full h-28 sm:h-40 border border-gray-300 rounded-lg cursor-pointer bg-gray-200 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
                       >
                         <div className="flex flex-col  items-center justify-center pt-5 pb-6">
                           <img
-                            src={require("../../assets/images/add-image 2.png")}
+                            src={(require("../../assets/images/add-image 2.png")?.default || require("../../assets/images/add-image 2.png"))}
                             alt=""
                             className="h-7 w-7 sm:h-10 sm:w-10"
                           />
@@ -780,80 +788,76 @@ export default function StorePage() {
                         </button>
                       ) : null}
                       {/* Popup */}
-                      <React.Fragment>
-                        <Modal show={showSave} size="md" popup={true}>
-                          <Modal.Header className="mt-[50%] sm:m-auto" />
-                          <Modal.Body>
-                            <div className="absolute bg-white top-2 right-0 h-14 w-12"></div>
-                            <div className="w-full mx-auto text-center -mt-6 ">
-                              <div className="mx-auto rounded-full w-16 h-16 sm:w-20 sm:h-20 justify-center">
-                                <svg
-                                  className="text-white fill-primaryColor w-18 h-18"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke-width="1.5"
-                                  stroke="currentColor"
-                                >
-                                  <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"
-                                  />
-                                </svg>
-                              </div>
-                              <div className="w-full mx-auto">
-                                <h3 className="mb-2 sm:text-lg text-base text-black">
-                                  Are you sure you want to update ?
-                                </h3>
-                                <p className="text-gray-500 text-xs sm:text-sm">
-                                  If you choose confirm it would change your{" "}
-                                </p>
-                                <p className="text-xs sm:text-sm text-gray-500">
-                                  information.
-                                </p>
-                                <div className="flex flex-col justify-center gap-3 w-full">
-                                  <Button
-                                    className="relative mt-5 w-3/4 mx-auto hover:bg-primaryColor bg-primaryColor border-gray-300 justify-center"
-                                    type="submit"
-                                    onClick={submit}
-                                  >
-                                    {loadingConfirm ? (
-                                      <>
-                                        <span
-                                          class="animate-spin inline-block w-4 h-4 border-[3px] border-current border-t-transparent text-white rounded-full"
-                                          role="status"
-                                          aria-label="loading"
-                                        >
-                                          <span class="sr-only">
-                                            Confirming...
-                                          </span>
-                                        </span>
-                                        &nbsp; Conforming
-                                        <span className="mt-2 absolute right-[62px]">
-                                          <PulseLoader
-                                            size="3px"
-                                            color="#ffffff"
-                                          />
-                                        </span>
-                                      </>
-                                    ) : (
-                                      "Confirm"
-                                    )}
-                                  </Button>
-                                  <button
-                                    onClick={() => setShowsave(!showSave)}
-                                    type="button"
-                                    className="w-3/4 mx-auto text-semibold text-sm font-medium text-center w-18 h-10 item-center rounded-lg border-2 border-primaryColor text-gray-800"
-                                  >
-                                    Keep Updating
-                                  </button>
-                                </div>
-                              </div>
+                      <Dialog open={showSave} onOpenChange={setShowsave}>
+                        <DialogContent className="max-w-md">
+                          <DialogHeader className="items-center text-center">
+                            <div className="mx-auto rounded-full w-16 h-16 sm:w-20 sm:h-20 justify-center">
+                              <svg
+                                className="text-white fill-primaryColor w-18 h-18"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth="1.5"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"
+                                />
+                              </svg>
                             </div>
-                          </Modal.Body>
-                        </Modal>
-                      </React.Fragment>
+                            <DialogTitle className="text-base sm:text-lg text-black">
+                              Are you sure you want to update?
+                            </DialogTitle>
+                          </DialogHeader>
+                          <div className="w-full mx-auto text-center">
+                            <p className="text-gray-500 text-xs sm:text-sm">
+                              If you choose confirm it would change your
+                            </p>
+                            <p className="text-xs sm:text-sm text-gray-500">
+                              information.
+                            </p>
+                            <div className="flex flex-col justify-center gap-3 w-full mt-5">
+                              <button
+                                className="relative w-3/4 mx-auto h-10 rounded-lg bg-primaryColor text-sm font-medium text-white hover:bg-primaryColor"
+                                type="button"
+                                onClick={submit}
+                              >
+                                {loadingConfirm ? (
+                                  <>
+                                    <span
+                                      className="animate-spin inline-block w-4 h-4 border-[3px] border-current border-t-transparent text-white rounded-full"
+                                      role="status"
+                                      aria-label="loading"
+                                    >
+                                      <span className="sr-only">
+                                        Confirming...
+                                      </span>
+                                    </span>
+                                    &nbsp; Confirming
+                                    <span className="mt-2 absolute right-[62px]">
+                                      <PulseLoader
+                                        size="3px"
+                                        color="#ffffff"
+                                      />
+                                    </span>
+                                  </>
+                                ) : (
+                                  "Confirm"
+                                )}
+                              </button>
+                              <button
+                                onClick={() => setShowsave(false)}
+                                type="button"
+                                className="w-3/4 mx-auto text-sm font-medium text-center h-10 rounded-lg border-2 border-primaryColor text-gray-800"
+                              >
+                                Keep Updating
+                              </button>
+                            </div>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
                   </div>
 
                 </div>

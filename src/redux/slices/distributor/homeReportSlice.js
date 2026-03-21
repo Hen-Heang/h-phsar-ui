@@ -4,7 +4,13 @@ const homeReportSlice = createSlice({
 
   name: "homeReport",
   initialState: {
-    distributorReport: [],
+    distributorReport: {
+      month: [],
+      totalOrderEachMonth: [],
+      totalOrder: 0,
+      totalProductImport: 0,
+      totalProductSold: 0,
+    },
   },
   reducers: {
     getDistributorReport: (state, action) => {

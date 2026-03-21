@@ -1,32 +1,40 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Datepicker from "react-tailwindcss-datepicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Doughnut, Line } from "react-chartjs-2";
+import { Line } from "react-chartjs-2";
 import {
   Chart as chartJS,
   LineElement,
   CategoryScale,
   LinearScale,
   PointElement,
-  layouts,
   ArcElement,
   Tooltip,
   Legend,
 } from "chart.js";
 import { get_all_activity } from "../../redux/services/distributor/homepage.service";
 import { getActivityInfo } from "../../redux/slices/distributor/getActivitySlice";
-import { api } from "../../utils/api";
 import dayjs from "dayjs";
 import { get_dis_home_report } from "../../redux/services/distributor/homeReport.service";
 import { getDistributorReport } from "../../redux/slices/distributor/homeReportSlice";
-import OneSignal from "react-onesignal";
-import axios from "axios";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
+import { Calendar, Filter, Clock, TrendingUp } from "lucide-react";
+
+// Static imports for images
+import add_shopping_cart_home from "../../assets/images/distributor/add_shopping_cart_home.png";
+import packing_home from "../../assets/images/distributor/packing_home.png";
+import delivery_home from "../../assets/images/distributor/delivery_home.png";
+import Hourglass from "../../assets/images/distributor/Hourglass.png";
+import task_completed_home from "../../assets/images/distributor/task_completed_home.png";
+
 chartJS.register(
   LineElement,
   CategoryScale,
@@ -36,612 +44,249 @@ chartJS.register(
   Tooltip,
   Legend
 );
+
 const HomeDistributor = () => {
   useEffect(() => {
-    document.title = "StockFlow Commerce | Home";
+    document.title = "H-Phsar | Home";
   }, []);
 
-  const onSubmit = () => {
-    toast.success("You are login successfully", {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-  };
-
-  // top cards
-  const App = () => {
-    const [activeTab, setActiveTab] = useState("tab1");
-  };
-
   const getActivityList = useSelector((state) => state.getActivityInfo.data);
-  //  console.log("HHHHH",getActivityList)
   const dispatch = useDispatch();
+
   useEffect(() => {
     get_all_activity().then((r) => dispatch(getActivityInfo(r.data.data)));
-  }, getActivityInfo());
-///////////////////////////////////////////////////
-  // const [startDate, setStartDate] = useState();
-  // const [endDate, setEndDate] = useState();
-  // const [formattedStartDate, setFormattedStartDate] = useState("");
-  // const [formattedEndDate, setFormattedEndDate] = useState("");
-  // const [statsTime, setStatsTime] = useState([]);
-  // const [dataSetStats, setDataSetStats] = useState([]);
-  // const [graphLabel, setGraphLabel] = useState([]);
-  // const handleStartDateChange = (newValue) => {
-  //   if (newValue.isAfter(dayjs(), "day")) {
-  //     toast.error("Selected date should not be higher than today!");
-  //     setStartDate(null);
-  //   } else {
-  //     setStartDate(newValue);
-  //   }
-  // };
-  // const handleEndDateChange = (newValue) => {
-  //   if (newValue.isAfter(dayjs(), "day")) {
-  //     toast.error("Selected date should not be higher than today!");
-  //     setEndDate(null);
-  //   } else {
-  //     setEndDate(newValue);
-  //   }
-  // };
-  // // console.log(`stats`, statsTime);
-  // const constructURL = () => {
-  //   const baseURL =
-  //     "http://localhost:8888/api/v1/distributor/order_activities/months";
-  //   // const queryParams = [];
-  //   if (startDate) {
-  //     console.log("startdate", startDate);
-  //     const formattedStartDate = dayjs(startDate).format("YYYY-MM");
-  //     // console.log("aaa", formattedStartDate);
-  //     // queryParams.push(`startDate=${formattedStartDate}`);
-  //     setFormattedStartDate(formattedStartDate);
-  //   }
-  //   if (endDate) {
-  //     const formattedEndDate = dayjs(endDate).format("YYYY-MM");
-  //     // queryParams.push(`endDated=${formattedEndDate}`);
-  //     setFormattedEndDate(formattedEndDate);
-  //   }
-  //   // const queryString = queryParams.join("&");
-  //   const urlWithQuery = `${baseURL}?startDate=${formattedStartDate}&endDated=${formattedEndDate}`;
-  //   console.log(urlWithQuery);
-  //   return urlWithQuery;
-  // };
-  // const handleSubmit = () => {
-  //   if (!startDate || !endDate) {
-  //     toast.error("Please select both start date and end date");
-  //     setStartDate(null);
-  //     setEndDate(null);
-  //     return;
-  //   }
-  //   // Handle the submission of start date and end date
-  //   // For example, you can make an API call or perform any necessary operations
-  //   console.log("Start Date:", startDate);
-  //   console.log("End Date:", endDate);
+  }, [dispatch]);
 
-  //   // Reset the form or perform any other actions
-  //   setStartDate();
-  //   setEndDate();
-
-  //   toast.success("Dates submitted successfully");
-  // };
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const url = constructURL();
-  //     try {
-  //       const response = await api.get(url);
-  //       setStatsTime(response.data.data);
-  //       const timeline = response.data.data.totalOrderEachMonth;
-  //       const graphLabel = response.data.data.month;
-  //       setDataSetStats(timeline);
-  //       setGraphLabel(graphLabel);
-  //     } catch (error) {
-  //       console.log("error", error);
-  //     }
-  //   };
-  //   fetchData();
-  // }, [startDate, endDate]);
-  ///////////////////////////////////////////////////
-
-
-  
-  // For filter the date
-  const [startDate, setStartDate] = useState();
-  const [endDate, setEndDate] = useState();
-  const [formattedStartDate, setFormattedStartDate] = useState();
-  const [formattedEndDate, setFormattedEndDate] = useState();
-  const [report, setStatsTime] = useState([]);
-  const [date, setDate] = useState(true);
+  const [startDate, setStartDate] = useState(dayjs().subtract(6, 'month'));
+  const [endDate, setEndDate] = useState(dayjs());
+  const [formattedStartDate, setFormattedStartDate] = useState(dayjs().subtract(6, 'month').format("YYYY-MM"));
+  const [formattedEndDate, setFormattedEndDate] = useState(dayjs().format("YYYY-MM"));
   const [isClicked, setIsClicked] = useState(false);
-  const currentDate = new Date().toLocaleDateString();
-  const [startDateIsAfterCurrentDate, setStartDateIsAfterCurrentDate] =
-    useState(false);
-  const [endDateIsAfterCurrentDate, setEndDateIsAfterCurrentDate] =
-    useState(false);
-  const [testReport, setTestReport] = useState({});
 
-
+  const handleQuickFilter = (months) => {
+    const start = dayjs().subtract(months, 'month');
+    const end = dayjs();
+    setStartDate(start);
+    setEndDate(end);
+    setFormattedStartDate(start.format("YYYY-MM"));
+    setFormattedEndDate(end.format("YYYY-MM"));
+    setIsClicked(!isClicked);
+  };
 
   const handleStartDateChange = (newValue) => {
-    console.log("value start date ", newValue);
-    if (newValue.isAfter(dayjs(), "day")) {
-      toast.error("Selected date should not be higher than today!");
-      console.log("currentDate", typeof currentDate);
-      console.log("Test ", newValue.isAfter(dayjs(), "day"));
-      setStartDateIsAfterCurrentDate(newValue.isAfter(dayjs(), "day"));
-
-      console.log("startDateIsAfterCurrentDate", startDateIsAfterCurrentDate);
-      setStartDate();
-    } else {
-      // console.log("Else start : ", newValue);
-      // setStartDate(newValue);
-      if (newValue != null) {
-        const formattedStartDate = dayjs(newValue).format("YYYY-MM");
-        setFormattedStartDate(formattedStartDate);
-        setStartDateIsAfterCurrentDate(false);
-        console.log("formattedStartDate type", typeof formattedStartDate);
-
-        console.log("formattedStartDate : ", formattedStartDate);
-      }
+    if (newValue && newValue.isAfter(endDate)) {
+      toast.warn("Start date should be before end date");
     }
+    setStartDate(newValue);
+    if (newValue) setFormattedStartDate(newValue.format("YYYY-MM"));
   };
 
   const handleEndDateChange = (newValue) => {
-    console.log("value end date ", newValue);
-
-    if (newValue.isAfter(dayjs(), "day")) {
-      toast.error("Selected date should not be higher than today!");
-      console.log("Test ", formattedEndDate > currentDate);
-      console.log("End ", newValue.isAfter(dayjs(), "day"));
-      setEndDateIsAfterCurrentDate(newValue.isAfter(dayjs(), "day"));
-      setEndDate();
-    } else {
-      console.log("Hi end date");
-
-      setEndDate(newValue);
-      if (newValue != null) {
-        const formattedEndDate = dayjs(newValue).format("YYYY-MM");
-        setFormattedEndDate(formattedEndDate);
-        setEndDateIsAfterCurrentDate(false);
-        console.log("formattedEndDate : ", formattedEndDate);
-      }
+    if (newValue && newValue.isBefore(startDate)) {
+      toast.warn("End date should be after start date");
     }
-  };
-
-  // For submit date
-  const [open, setOpen] = React.useState(false);
-  const handleClose = () => {
-    setOpen(false);
-  };
-  const handleOpen = () => {
-    setOpen(true);
+    setEndDate(newValue);
+    if (newValue) setFormattedEndDate(newValue.format("YYYY-MM"));
   };
 
   const handleSubmit = () => {
-    console.log("isClicked: ", isClicked);
-    // if (startDate != null && endDate != null) {
-    setIsClicked(!isClicked);
-    // }
-
-    setOpen(true);
-    if (formattedStartDate == null && formattedEndDate == null) {
-      console.log("Hi message");
-      setOpen(false);
-      toast.error("Please select date", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-
-      //  setIsLoading(false);
+    if (!startDate || !endDate) {
+      toast.error("Please select a valid date range");
       return;
     }
-
-    // Reset the form or perform any other actions
-    setStartDate();
-    setEndDate();
+    setIsClicked(!isClicked);
   };
-
-  const reportURL = () => {
-    console.log("Start : ", startDate);
-    console.log("End : ", endDate);
-
-    const baseURL = "http://localhost:8888/api/v1/distributor/order_activities/months";
-    const urlWithQuery = `${baseURL}?startDate=${formattedStartDate}&endDate=${formattedEndDate}`;
-    console.log(urlWithQuery);
-    return urlWithQuery;
-  };
-  // check again
-
-
 
   useEffect(() => {
     const fetchData = async () => {
-      const url = reportURL();
-
       try {
-        console.log(formattedStartDate);
-        console.log(formattedEndDate);
-        const res = await get_dis_home_report(
-          formattedStartDate,
-          formattedEndDate
-        );
-        setOpen(false);
-        console.log("resfff : ", res);
+        const res = await get_dis_home_report(formattedStartDate, formattedEndDate);
         dispatch(getDistributorReport(res.data.data));
-
-      
       } catch (error) {
-        console.log("This is error", error);
+        console.error("Error fetching report:", error);
       }
     };
-    // setIsLoading(true); // Set loading state to true before fetching data
     fetchData();
-  }, [isClicked]);
+  }, [dispatch, formattedEndDate, formattedStartDate, isClicked]);
 
+  const distributorReport = useSelector(
+    (state) =>
+      state.homeReport.distributorReport || {
+        month: [],
+        totalOrderEachMonth: [],
+        totalOrder: 0,
+        totalProductImport: 0,
+        totalProductSold: 0,
+      }
+  );
 
-    const distributorReport =  useSelector((state)=> state.homeReport.distributorReport )
-  console.log("dtr", distributorReport)
-
-  // statistic
   const data = {
-    // labels: graphLabel,
-    labels: distributorReport.month ? distributorReport.month :  [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
+    labels: distributorReport.month?.length ? distributorReport.month : [
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
     ],
     datasets: [
       {
-        label: "Order Each Month",
-        data: distributorReport.totalOrderEachMonth ?
-        distributorReport.totalOrderEachMonth :  [] ,
-        fill: false,
-        borderColor: "rgb(75, 192, 192)",
-        backgroundColor: "#0f766e",
-        tension: 0.1,
+        label: "Orders",
+        data: distributorReport.totalOrderEachMonth || [],
+        fill: true,
+        borderColor: "#0f766e",
+        backgroundColor: "rgba(15, 118, 110, 0.1)",
+        tension: 0.4,
+        pointBackgroundColor: "#0f766e",
+        pointRadius: 4,
+        pointHoverRadius: 6,
       },
     ],
   };
 
   const options = {
     responsive: true,
-    // maintainAspectRatio: false,
+    maintainAspectRatio: false,
     plugins: {
-      legend: {
-        position: "top",
-        align: "",
-        onClick: (e) => e.stopPropagation(), // Prevent legend filtering
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: "#1e293b",
+        padding: 12,
+        titleFont: { size: 14, weight: "bold" },
+        bodyFont: { size: 13 },
+        displayColors: false,
       },
     },
     scales: {
-      x: {
-        title: {
-          display: true,
-          text: 'Month'
-        }
-      },
+      x: { grid: { display: false }, ticks: { color: "#64748b", font: { size: 11 } } },
       y: {
         beginAtZero: true,
-        title: {
-          display: true,
-          text: 'Number'
-        },
-        ticks: {
-          // forces step size to be 50 units
-          stepSize: 1
-        }
-
-
+        ticks: { stepSize: 1, color: "#64748b", font: { size: 11 } },
+        grid: { color: "rgba(0,0,0,0.05)", drawBorder: false },
       },
     },
   };
 
-  const [isOpen, setIsOpen] = useState(false);
-  useEffect(() => {
-    setIsOpen(true);
-  }, []);
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsOpen(true);
-    }, 5000); // Delay of 500 milliseconds
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  // ===================== push notifications =================
-  // const externalUserId = "65"; // Replace with the actual external user ID
-  // const message = "Hello, Tell me pg when you get this notification...!(~_~)"; // Replace with your notification message
-
-  // const sendPushNotification = async () => {
-  //   const apiKey = "MTc0Nzk5MWEtNjI0Ni00NGFjLWJiZmItYzVjNmY0MzY3NzQ0";
-  //   const appId = "aaa38faa-9476-4e23-9c0c-037a9fac31ce";
-  //   const notification = {
-  //     app_id: appId,
-  //     contents: { en: message },
-  //     include_external_user_ids: [externalUserId],
-  //   };
-
-  //   try {
-  //     const response = await axios.post(
-  //       "https://onesignal.com/api/v1/notifications",
-  //       notification,
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: `Basic ${apiKey}`,
-  //         },
-  //       }
-  //     );
-
-  //     console.log("Push notification sent successfully:", response.data);
-  //   } catch (error) {
-  //     console.error("Error sending push notification:", error.response.data);
-  //   }
-  // };
-  // const allNotifications = useSelector((state)=>state.allDataNotification.dataNotification)
   return (
-    <div
-    className={`dark:text-white transition ${
-      isOpen
-        ? " transition-all ease-in-out delay-300 duration-1000 "
-        : "opacity-0 scale-95 translate-y-1/2 "
-    }`}
-  >
-       {/* {allNotifications.map((item)=>{
-        <span>{console.log(item.notificationType)}</span>
-      })} */}
-      <div></div>
-      <div className="bg-white py-8 w-[95%] mx-auto lg:w-full rounded-lg shadow-md">
-        {/* <button onClick={sendPushNotification}>Send Push Notification</button> */}
-        {/* text */}
-        <div className="w-[95%] flex flex-wrap flex-col gap-3 justify-center m-auto">
-          <h1 className="lg:text-3xl text-primaryColor font-bold">
-            Order activity
-          </h1>
-          <ToastContainer />
-          <p className="text-[#777777]  text-xs lg:text-base text-start">
-            Activity that you need to monitor your to maintain your order
-          </p>
-          {/* Item Activity */}
-          <div className="flex flex-wrap justify-evenly sm:justify-between lg:gap-0 gap-5">
-            {/* item 1 */}
-            <div className="col-span-1 flex justify-center flex-col  lg:flex-row gap-5  ">
-              <div className="px-4 lg:px-0 lg:w-full">
-                <img
-                  src={require("../../assets/images/distributor/add_shopping_cart_home.png")}
-                  className="p-2 bg-[#F2F2F2] rounded-full shadow-md outline-gray-600"
-                />
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="space-y-6 p-4 md:p-6 dark:bg-slate-950 min-h-screen"
+    >
+      <ToastContainer />
+      
+      {/* Activity Section */}
+      <Card className="border-none shadow-sm bg-white dark:bg-slate-900">
+        <CardHeader className="pb-4">
+          <div className="flex items-center gap-2">
+            <Clock className="w-5 h-5 text-teal-600" />
+            <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">Order Activity</CardTitle>
+          </div>
+          <p className="text-slate-500 text-sm">Real-time status of your current orders.</p>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            {[
+              { label: "New Order", value: getActivityList.newOrder, img: add_shopping_cart_home, color: "bg-orange-50 text-orange-600" },
+              { label: "Preparing", value: getActivityList.preparing, img: packing_home, color: "bg-blue-50 text-blue-600" },
+              { label: "Dispatch", value: getActivityList.dispatch, img: delivery_home, color: "bg-purple-50 text-purple-600" },
+              { label: "Confirming", value: getActivityList.confirming, img: Hourglass, color: "bg-amber-50 text-amber-600" },
+              { label: "Completed", value: getActivityList.completed, img: task_completed_home, color: "bg-emerald-50 text-emerald-600" },
+            ].map((item, idx) => (
+              <div key={idx} className="flex flex-col items-center p-5 rounded-2xl bg-slate-50/50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 transition-all hover:scale-[1.02]">
+                <div className="p-3 bg-white dark:bg-slate-800 rounded-2xl shadow-sm mb-3">
+                  <img src={item.img.src || item.img} alt={item.label} className="w-8 h-8 object-contain" />
+                </div>
+                <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-1">{item.label}</p>
+                <span className="text-3xl font-black text-slate-900 dark:text-white">{item.value || 0}</span>
               </div>
-              <div className="flex flex-col justify-center">
-                <p className="text-[#777777] whitespace-nowrap">New order</p>
-                <span className="text-black lg:text-2xl text-xl font-medium">
-                  {getActivityList.newOrder}
-                </span>
-              </div>
-            </div>
-            {/* <div className="col-span-1 flex justify-center gap-5 cursor-pointer hover:rounded-full hover:shadow-lg">
-              <div className="hidden lg:block">
-                <img
-                  src={require("../../assets/images/distributor/add_shopping_cart_home.png")}
-                  className="p-2 bg-[#F2F2F2] rounded-full shadow-md outline-gray-600"
-                />
-              </div>
-              <div className="flex flex-col justify-center">
-                <p className="text-[#777777]">New order</p>
-                <span className="text-black lg:text-2xl text-xl font-medium">
-                  {getActivityList.newOrder}
-                </span>
-              </div>
-            </div> */}
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
-            {/* item 2 */}
-            <div className="col-span-1 flex flex-col  lg:flex-row  gap-5">
-              <div className="px-4 lg:px-0 lg:w-full">
-                <img
-                  src={require("../../assets/images/distributor/packing_home.png")}
-                  className="p-2 bg-[#F2F2F2] rounded-full shadow-md outline-gray-600"
-                />
-              </div>
-              <div className="flex flex-col justify-center">
-                <p className="text-[#777777]">Preparing</p>
-                <span className="text-black lg:text-2xl text-xl font-medium">
-                  {getActivityList.preparing}
-                </span>
-              </div>
+      {/* Statistics Section */}
+      <Card className="border-none shadow-sm bg-white dark:bg-slate-900">
+        <CardHeader className="space-y-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-teal-600" />
+              <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">Performance Insights</CardTitle>
             </div>
-            {/* item 3 */}
-            <div className="col-span-1 flex flex-col  lg:flex-row gap-5">
-              <div className="px-4 lg:px-0 lg:w-full">
-                <img
-                  src={require("../../assets/images/distributor/delivery_home.png")}
-                  className="p-2 bg-[#F2F2F2] rounded-full shadow-md outline-gray-600"
-                />
+            
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-lg mr-2">
+                {[
+                  { label: "3M", val: 3 },
+                  { label: "6M", val: 6 },
+                  { label: "1Y", val: 12 }
+                ].map(q => (
+                  <button
+                    key={q.label}
+                    type="button"
+                    onClick={() => handleQuickFilter(q.val)}
+                    className="px-3 py-1 text-xs font-bold rounded-md hover:bg-white dark:hover:bg-slate-700 transition-all text-slate-600 dark:text-slate-400"
+                  >
+                    {q.label}
+                  </button>
+                ))}
               </div>
-              <div className="flex flex-col justify-center">
-                <p className="text-[#777777]">Dispatch</p>
-                <span className="text-black lg:text-2xl text-xl font-medium">
-                  {getActivityList.dispatch}
-                </span>
-              </div>
-            </div>
-            {/* <div className="col-span-1 flex gap-5">
-              <div className="hidden lg:block">
-                <img
-                  src={require("../../assets/images/distributor/delivery_home.png")}
-                  className="p-2 bg-[#F2F2F2] rounded-full shadow-md outline-gray-600"
-                />
-              </div>
-              <div className="flex flex-col justify-center">
-                <p className="text-[#777777]">Dispatch</p>
-                <span className="text-black lg:text-2xl text-xl font-medium">
-                  {getActivityList.dispatch}
-                </span>
-              </div>
-            </div> */}
-            {/* item 4 */}
-            <div className="col-span-1 flex flex-col  lg:flex-row gap-5">
-              <div className="px-4 lg:px-0 lg:w-full">
-                <img
-                  src={require("../../assets/images/distributor/Hourglass.png")}
-                  className="p-2 bg-[#F2F2F2] rounded-full shadow-md outline-gray-600"
-                />
-              </div>
-              <div className="flex flex-col justify-center">
-                <p className="text-[#777777]">Confirming</p>
-                <span className="text-black lg:text-2xl text-xl font-medium">
-                  {getActivityList.confirming}
-                </span>
-              </div>
-            </div>
-            {/* item 5 */}
-            <div className="col-span-1 flex flex-col  lg:flex-row  gap-5">
-              <div className=" px-4 lg:px-0 lg:w-full">
-                <img
-                  src={require("../../assets/images/distributor//task_completed_home.png")}
-                  className="p-2  bg-[#F2F2F2] rounded-full shadow-md outline-gray-600"
-                />
-              </div>
-              <div className="flex flex-col justify-center">
-                <p className="text-[#777777]">Completed</p>
-                <span className="text-black lg:text-2xl text-xl font-medium">
-                  {getActivityList.completed}
-                </span>
-              </div>
+              
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <div className="flex items-center gap-2 scale-90 origin-right">
+                  <DatePicker
+                    views={["year", "month"]}
+                    format="MMM YYYY"
+                    value={startDate}
+                    onChange={handleStartDateChange}
+                    slotProps={{ textField: { size: "small", sx: { width: 140 } } }}
+                  />
+                  <span className="text-slate-400 text-xs font-bold">TO</span>
+                  <DatePicker
+                    views={["year", "month"]}
+                    format="MMM YYYY"
+                    value={endDate}
+                    onChange={handleEndDateChange}
+                    slotProps={{ textField: { size: "small", sx: { width: 140 } } }}
+                  />
+                </div>
+              </LocalizationProvider>
+              
+              <Button 
+                onClick={handleSubmit}
+                className="gap-2 px-5 py-2 h-9 rounded-lg"
+              >
+                <Filter className="w-4 h-4" />
+                Apply
+              </Button>
             </div>
           </div>
-        </div>
-      </div>
-      <br />
-      <div className="bg-white h-min-screen  w-full lg:rounded-lg lg:shadow-md">
-        <div className="w-[95%] m-auto flex flex-col gap-10">
-          <div className="mt-10">
-            <h1 className="text-xl lg:text-2xl text-black font-medium">
-              Store Statistic
-            </h1>
+        </CardHeader>
+        
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            {[
+              { label: "Total Orders", value: distributorReport.totalOrder, trend: "+12%" },
+              { label: "Inventory Import", value: distributorReport.totalProductImport, trend: "-2%" },
+              { label: "Sold Products", value: distributorReport.totalProductSold, trend: "+5%" },
+            ].map((stat, idx) => (
+              <div key={idx} className="p-6 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-800/30 relative overflow-hidden group">
+                <p className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-2">{stat.label}</p>
+                <div className="flex items-baseline gap-2">
+                  <h3 className="text-3xl font-black text-slate-900 dark:text-white leading-none">{stat.value || 0}</h3>
+                  <span className={`text-[10px] font-bold ${stat.trend.startsWith('+') ? 'text-emerald-500' : 'text-rose-500'}`}>
+                    {stat.trend}
+                  </span>
+                </div>
+                <div className="absolute -right-2 -bottom-2 opacity-5 group-hover:opacity-10 transition-opacity">
+                  <TrendingUp className="w-20 h-20" />
+                </div>
+              </div>
+            ))}
           </div>
 
-          {/* <Datepicker
-                format="yyyy-MM"
-                value={value}
-                onChange={handleValueChange}
-              /> */}
-
-          <div className=" flex sm:gap-5 sm:items-center flex-col sm:flex-row">
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                      label={'"Start Date"'}
-                      views={["year", "month"]}
-                      format="YYYY-MM"
-                      value={startDate}
-                      onChange={handleStartDateChange}
-                     
-                    />
-                  </LocalizationProvider>
-            <p className="flex py-2 justify-center sm:justify-normal">To</p>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                      label={'"End Date"'}
-                      views={["year", "month"]}
-                      value={endDate}
-                      format="YYYY-MM"
-                      onChange={handleEndDateChange}
-                    />
-                  </LocalizationProvider>
-
-                  {startDateIsAfterCurrentDate === true ||
-                  endDateIsAfterCurrentDate === true ? (
-                    <button className="px-4 py-2 bg-gray-500 text-white font-semibold rounded-md ">
-                      Check
-                    </button>
-                  ) : (
-                    <button
-                      className="px-4 py-2 bg-primary text-white font-semibold rounded-md hover:bg-sky-400 hover:text-white"
-                      onClick={handleSubmit}
-                    >
-                      Check
-                    </button>
-                  )}
+          <div className="h-[400px] w-full mt-4 p-4 rounded-2xl bg-slate-50/50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+            <Line data={data} options={options} />
           </div>
-
-
-          {/* card */}
-
-          {/* 
-            { statsTime.map((item)=>
-console.log("item",item)
-            )}; */}
-
-          <div className="flex flex-row justify-evenly sm:justify-between   space-x-3">
-            {/* Total Order */}
-            {/* <div className="pt-8  px-2 w-28 sm:w-1/4 mb-2  lg:pb-7 sm:pl-8  shadow-md flex flex-col sm:gap-3 rounded-lg border border-gray-200">
-              <p className="text-xs sm:text-base">Total Order</p>
-              <div className="p-2">
-              <h2 className=" text-xl mt-10 lg:mt-4 mb-2 lg:text-2xl text-black font-medium">
-                {statsTime.totalOrder}
-              </h2>
-              </div>
-            </div> */}
-            <div className="pt-7  px-2 w-28 mb-2 sm:w-1/4  lg:pb-7 sm:pl-8  shadow-md flex flex-col gap-3 rounded-lg border border-gray-200">
-              <p className="text-xs sm:text-base py-2">Total Order</p>
-
-              <div className="p-2">
-                <h2 className="text-xl pt-4 w-28 mb-2 lg:text-2xl text-black font-medium">
-                  {distributorReport.totalOrder}
-                </h2>
-              </div>
-            </div>
-            {/* totalProductImport*/}
-            <div className="pt-7  px-2 w-28 mb-2 sm:w-1/4  lg:pb-7 sm:pl-8  shadow-md flex flex-col gap-3 rounded-lg border border-gray-200">
-              <p className="text-xs sm:text-base py-2">
-                Total Product Imported
-              </p>
-
-              <div className="p-2">
-                <h2 className="text-xl w-28 mb-2 lg:text-2xl text-black font-medium">
-                  {/* {statsTime.totalProductImport} */}
-                  {distributorReport.totalProductImport}
-                </h2>
-              </div>
-            </div>
-            {/*totalProductSold*/}
-            <div className="pt-8  px-2 w-28 mb-2 sm:w-1/4   sm:pl-8 shadow-md flex flex-col gap-3 rounded-lg border border-gray-200">
-              <p className="text-xs sm:text-base">Total Products Sold</p>
-              <div className="p-2">
-                <h2 className="text-xl pt-4 mb-4 lg:text-2xl text-black font-medium">             
-                  {distributorReport.totalProductSold}
-                </h2>
-              </div>
-            </div>
-          </div>
-          {/* Statistic chart */}
-          <div className="mb-36 p-6 sm:px-14 lg:px-0">
-            <Line data={data} options={options} className="" />
-          </div>
-        </div>
-      </div>
-    </div>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 };
 
 export default HomeDistributor;
-

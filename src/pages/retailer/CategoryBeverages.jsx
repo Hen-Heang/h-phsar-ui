@@ -44,14 +44,14 @@ export default function CategoryBeverages() {
           loop
           arrowLeft={
             <img
-              src={require("../../assets/images/retailer/back.png")}
+              src={(require("../../assets/images/retailer/back.png")?.default || require("../../assets/images/retailer/back.png"))}
               alt=""
               className="absolute z-50  top-80 -left-9 cursor-pointer"
             />
           }
           arrowRight={
             <img
-              src={require("../../assets/images/retailer/next.png")}
+              src={(require("../../assets/images/retailer/next.png")?.default || require("../../assets/images/retailer/next.png"))}
               alt=""
               className="absolute z-50 top-80 right-2 cursor-pointer"
             />
@@ -66,7 +66,7 @@ export default function CategoryBeverages() {
                 <div className="w-full flex ">
                   <div className="w-1/2  flex justify-center items-center">
                     <img
-                      src={require("../../assets/images/retailer/Carlsberg.jpeg")}
+                      src={(require("../../assets/images/retailer/Carlsberg.jpeg")?.default || require("../../assets/images/retailer/Carlsberg.jpeg"))}
                       className="h-5/6"
                     />
                   </div>

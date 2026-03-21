@@ -2,6 +2,8 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { PropagateLoader } from "react-spinners";
+import noImage from "../../assets/images/no_image.jpg";
+import { applyImageFallback, getSafeImageSrc } from "@/lib/images";
 export default function SearchingRetailer() {
   const SearchList = useSelector((state) => state.search.item);
   const loadingSearch = useSelector((state) => state.search.loading);
@@ -43,25 +45,26 @@ export default function SearchingRetailer() {
             </div>
           ) : (
             SearchList.map((item) => (
-              //   <div class="flex flex-col justify-center h-60 cursor-pointer">
+              //   <div className="flex flex-col justify-center h-60 cursor-pointer">
               <div  className="flex flex-col justify-center mt-3 lg:mb-0 -mb-2 lg:w-1/3 md:w-2/4 sm:w-2/6 p-4 cursor-pointer">
                 <div className="relative grid grid-cols-2 lg:h-64 h-52 md:flex-row md:space-y-0 w-full rounded-xl shadow-lg p-3 max-w-xs md:max-w-3xl mx-auto border border-white bg-white" onClick={()=>onClickGetDataShop(item.id,item.name)}>
                   <div className="grid place-items-center  w-full h-full">
                     <img
-                      src={item.bannerImage}
+                      src={getSafeImageSrc(item.bannerImage, noImage)}
+                      onError={(e) => applyImageFallback(e, noImage)}
                       alt="tailwind logo"
                       className=" rounded-md lg:h-[227px] h-[183px] w-full"
                     />
                   </div>
-                  <div class="w-full flex flex-col space-y-2 p-3 relative">
-                    <h3 class="font-black capitalize text-gray-800 lg:text-lg text-base line-clamp overflow-hidden h-6">
+                  <div className="w-full flex flex-col space-y-2 p-3 relative">
+                    <h3 className="font-black capitalize text-gray-800 lg:text-lg text-base line-clamp overflow-hidden h-6">
                       {item.name}
                     </h3>
                     <p className="flex lg:text-[16px] text-[14px] items-center font-bold gap-2">
                       Rating:
                       <span>
                         <img
-                          // src={require("../../../assets/images/retailer/star.png")}
+                          // src={(require("../../../assets/images/retailer/star.png")?.default || require("../../../assets/images/retailer/star.png"))}
                           alt=""
                         />
                       </span>{" "}
@@ -89,24 +92,24 @@ export default function SearchingRetailer() {
                 </div>
               </div>
               // </div>
-              //     <div class="flex flex-cols-4 w-[550px] h-[310px] cursor-pointer p-4 m-auto">
-              //     <div class="flex flex-row  rounded-xl shadow-lg p-3 max-w-xs md:max-w-3xl mx-auto border border-white bg-white">
-              //       <div class="w-full">
+              //     <div className="flex flex-cols-4 w-[550px] h-[310px] cursor-pointer p-4 m-auto">
+              //     <div className="flex flex-row  rounded-xl shadow-lg p-3 max-w-xs md:max-w-3xl mx-auto border border-white bg-white">
+              //       <div className="w-full">
               //         <img
               //           src={item.bannerImage}
               //           alt="tailwind logo"
               //           className="h-[00px] w-full"
               //         />
               //       </div>
-              //       <div class="w-full bg-gray-100">
-              //         <h3 class="font-black text-gray-800 text-lg line-clamp overflow-hidden h-6">
+              //       <div className="w-full bg-gray-100">
+              //         <h3 className="font-black text-gray-800 text-lg line-clamp overflow-hidden h-6">
               //           {item.name}
               //         </h3>
               //         <p className="flex text-[16px] items-center gap-2">
               //           Rating :{" "}
               //           <span>
               //             <img
-              //               // src={require("../../../assets/images/retailer/star.png")}
+              //               // src={(require("../../../assets/images/retailer/star.png")?.default || require("../../../assets/images/retailer/star.png"))}
               //               alt=""
               //             />
               //           </span>{" "}
@@ -133,4 +136,3 @@ export default function SearchingRetailer() {
     </div>
   );
 }
-

@@ -19,7 +19,7 @@ export function ThemeToggle() {
       type="button"
       onClick={cycleTheme}
       whileTap={{ scale: 0.95 }}
-      className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-300 bg-white text-slate-700 shadow-sm transition hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+      className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-slate-300 bg-white text-slate-700 shadow-sm transition hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
       aria-label={`Toggle theme, current mode is ${theme}`}
       title={`Theme: ${theme}`}
     >

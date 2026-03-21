@@ -16,15 +16,19 @@ import axios from "axios";
 //   return s;
 // });
 
-export const api = axios.create();
+export const api = axios.create({
+  baseURL: "http://localhost:8888/api/v1",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
-  config.baseURL = "http://localhost:8888/api/v1";
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   } else {
     delete config.headers.Authorization;
   }
-  config.headers["Content-Type"] = "application/json";
   return config;
 });

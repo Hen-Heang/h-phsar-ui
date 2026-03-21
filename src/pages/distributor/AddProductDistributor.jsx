@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { Field, Form, Formik } from "formik";
-import * as yup from "yup";
-import { Link, Navigate, useNavigate } from "react-router-dom";
-import Switch from "react-switch";
+"use client";
+
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storageFirebase } from "../../firebaseUploadImage";
 import { v4 } from "uuid";
@@ -10,525 +10,339 @@ import { add_new_product_distributor } from "../../redux/services/distributor/pr
 import { useDispatch, useSelector } from "react-redux";
 import { addNewProduct } from "../../redux/slices/distributor/productSlice";
 import { CategoryComponent } from "../../components/Distributor/CategoryComponent";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { motion, AnimatePresence } from "framer-motion";
+import { Plus, Trash2, Image as ImageIcon, Check, X, DollarSign, Package, Layout } from "lucide-react";
+import { toast, ToastContainer } from "react-toastify";
 
+// Static image imports
+import dollarIcon from "../../assets/images/distributor/dollar.png";
+import downArrowIcon from "../../assets/images/distributor/down_arrow.png";
 
 const AddProductDistributor = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const [inputFields, setInputFields] = useState([
     {
+      id: v4(),
       name: "",
       qty: "",
       price: "",
       categoryId: "",
-      image: "",
+      image: null,
+      previewUrl: "",
       description: "",
       isPublish: true,
     },
   ]);
-  const handleFormChange = (index, event) => {
-    let data = [...inputFields];
-    data[index][event.target.name] = event.target.value;
-    setInputFields(data);
-  };
-  // console.log(inputFields);
 
-  // validation using react hook form
-  const schemaAddProduct = yup.object().shape({
-    name: yup.string().required("Category cannot be blank"),
-    qty: yup
-      .number()
-      .typeError("Quantity must be a number")
-      .required("Quantity cannot be blank")
-      .positive("Quantity must be greater than 0"),
-    price: yup
-      .number()
-      .typeError("Price must be a number")
-      .required("Price cannot be blank")
-      .positive("Price must be greater than 0"),
-      
-  });
-  const {
-    register: registerAddProduct,
-    handleSubmit: handleSubmitAddProduct,
-    formState: { errors: errorsAddProduct },
-    reset: resetAddProduct,
-  } = useForm({
-    resolver: yupResolver(schemaAddProduct),
-  });
-
-  const [selectedOption, setSelectedOption] = useState('');
-  const [validationError, setValidationError] = useState({});
-
-const handleChange = (event, index) => {
-  const { value } = event.target;
-  setSelectedOption((prevOptions) => {
-    const updatedOptions = [...prevOptions];
-    updatedOptions[index] = value;
-    return updatedOptions;
-  });
-  setValidationError((prevErrors) => {
-    const updatedErrors = { ...prevErrors };
-    updatedErrors[index] = '';
-    return updatedErrors;
-  });
-};
-const validateOption = (index) => {
-  if (selectedOption[index] === '') {
-    setValidationError((prevErrors) => ({
-      ...prevErrors,
-      [index]: 'Please select an option',
-    }));
-    return false;
-  }
-  // Additional validation logic here if needed
-  return true;
-};
-
-  //   add more form fields
-  const addFields = (nextChecked) => {
-    let newField = {
-      name: "",
-      qty: "",
-      price: "",
-      categoryId: "",
-      image: "",
-      description: "",
-      isPublish: true,
-    };
-    setInputFields([...inputFields, newField]);
-  };
-
-  // visibility
-  const [visible, setVisible] = useState(true);
-  const handleToggle = (index) => {
-    const data = [...inputFields];
-    data[index].isPublish = !data[index].isPublish;
-    setInputFields(data);
-    console.log(visible);
-    setVisible((current) => !current);
-  };
-  
-  // submit form
+  const categoryData = useSelector((state) => state.categoryDistributor.categories);
   const [loading, setLoading] = useState(false);
-  const [errorAdd, setErrorAdd] = useState("");
+  const [isOpenCategory, setIsOpenCategory] = useState(false);
+
+  const handleFormChange = (id, event) => {
+    const { name, value } = event.target;
+    setInputFields(prev => prev.map(field => 
+      field.id === id ? { ...field, [name]: value } : field
+    ));
+  };
+
+  const handleImageChange = (id, event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const previewUrl = URL.createObjectURL(file);
+      setInputFields(prev => prev.map(field => 
+        field.id === id ? { ...field, image: file, previewUrl } : field
+      ));
+    }
+  };
+
+  const handleToggle = (id) => {
+    setInputFields(prev => prev.map(field => 
+      field.id === id ? { ...field, isPublish: !field.isPublish } : field
+    ));
+  };
+
+  const addFields = () => {
+    setInputFields([
+      ...inputFields,
+      {
+        id: v4(),
+        name: "",
+        qty: "",
+        price: "",
+        categoryId: "",
+        image: null,
+        previewUrl: "",
+        description: "",
+        isPublish: true,
+      },
+    ]);
+  };
+
+  const removeFields = (id) => {
+    if (inputFields.length > 1) {
+      setInputFields(prev => prev.filter(field => field.id !== id));
+    } else {
+      toast.warn("You must have at least one product.");
+    }
+  };
+
   const submit = async (e) => {
     e.preventDefault();
-    // Validate options for each form
-    const isFormValid = Object.keys(selectedOption).every((index) =>
-      validateOption(index)
-    );
-  
-    if (isFormValid) {
-      // Desired action when validation passes
-      console.log('Validation passed! Submitting the form...');
-    } else {
-      // Desired action when validation fails
-      console.log('Validation failed! Please correct the form errors.');
+    
+    // Simple validation
+    const isValid = inputFields.every(f => f.name && f.qty && f.price && f.categoryId);
+    if (!isValid) {
+      toast.error("Please fill in all required fields for each product.");
+      return;
     }
-    e.preventDefault();
+
     setLoading(true);
-    // console.log("target : ",targetImage);
-    if (targetImage == null) {
-      console.log("data no image: ",inputFields);
-      add_new_product_distributor(inputFields)
-          .then((res) => dispatch(addNewProduct(res.data.data)))
-          .then(() => navigate("/distributor/product"))
-          .catch((error) => {
-            console.log(error);
-            setLoading(false);
-          });
-    }
-    // Set the loading state to true
-    const imageRef = ref(storageFirebase, `image/${targetImage.name + v4()}`);
-    await uploadBytes(imageRef, targetImage)
-      .then(() => getDownloadURL(imageRef))
-      .then((downloadURL) => {
-        console.log("downloadURL : ", downloadURL);
-        const updatedFields = inputFields.map((field) => ({
-          ...field,
-          image: downloadURL,
-        }));
-        console.log(updatedFields);
-        // Submit the form data after the image upload is complete
-        add_new_product_distributor(updatedFields)
-          .then((res) => dispatch(addNewProduct(res.data.data)))
-          .then(() => navigate("/distributor/product"))
-          .catch((error) => {
-            console.log(error);
-            setLoading(false);
-          });
-      })
-      .catch((error) => {
-        console.log(error);
-        setLoading(false);
-      });
-  };
-
-  // image
-  const [imageUrl, setImageUrl] = useState("");
-  const [targetImage, setTargetImage] = useState(null);
-  const handleChangeImage = (e, index) => {
-    const uploadImage = e.target.files[0];
-    setTargetImage(uploadImage);
-    console.log(URL.createObjectURL(e.target.files[0]));
-    setImageUrl(URL.createObjectURL(e.target.files[0]));
-    const formData = new FormData();
-    formData.append("image", e.target.files[0]);
-  };
-  // get category
-  const categoryData = useSelector(
-    (state) => state.categoryDistributor.categories
-  );
-
-  // console.log(inputFields);
-
-  //  Remove the fields
-  const removeFields = (index) => {
-    let data = [...inputFields];
-    data.splice(index, 1);
-    setInputFields(data);
-  };
-
-  // open category
-  const [isOpenCategory, setIsOpenCategory] = useState(false);
-  const handleShowCategory = () => {
-    setIsOpenCategory(!isOpenCategory);
-  };
-
-  const [isOpen, setIsOpen] = useState(false);
-  useEffect(() => {
-    setIsOpen(true);
-  }, []);
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsOpen(true);
-    }, 5000); // Delay of 500 milliseconds
-
-    return () => clearTimeout(timer);
-  }, []);
-  return (
-    <div
-      className={`dark:text-white transition ${
-        isOpen
-          ? " transition-all ease-in-out delay-300 duration-1000 "
-          : "opacity-0 scale-95 translate-y-1/2 "
-      }`}
-    >
-      
-      <div className="bg-white h-min-screen rounded-lg w-full shadow-md">
+    try {
+      const productsToSubmit = await Promise.all(inputFields.map(async (field) => {
+        let imageUrl = "";
+        if (field.image) {
+          const imageRef = ref(storageFirebase, `image/${field.image.name + v4()}`);
+          const snapshot = await uploadBytes(imageRef, field.image);
+          imageUrl = await getDownloadURL(snapshot.ref);
+        }
         
-        <div className="w-[90%] h-min-screen m-auto relative pb-10">
-          {/* Header */}
-          <div className="">
-            <h1 className="text-primaryColor text-4xl text-center font-medium py-8">
-              Add New Product
-            </h1>
-          </div>
-          <hr className="border border-gray-200" />
-          {/* form */}
-          <div className="">
-            <form class="m-auto mt-10 " onSubmit={submit}>
-              {inputFields.map((input, index) => {
-                return (
-                  <div
-                    key={index}
-                    class="grid grid-cols-6 gap-5 border border-1 rounded-lg  p-10 mb-5"
-                  >
-                    {/* Field input */}
-                    <div class="col-span-4">
-                      {/* Product */}
-                      <div>
-                        <label
-                          class="block relative uppercase tracking-wide text-gray-700 font-bold mb-2"
-                          for="grid-password"
-                        >
-                          Product Name
-                          {/* {errorAdd == '' ? null : <span className="text-sm lowercase font-medium text-red-600 absolute right-1 top-10">{errorAdd}</span>} */}
-                        </label>
-                        <input
-                          value={input.productName}
-                          onChange={(event) => handleFormChange(index, event)}
-                          className="appearance-none block w-full text-gray-700 border border-gray-400 rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:ring-primary focus:bg-white focus:border-primary"
-                          // class={`${errorAdd == '' ? " appearance-none block w-full text-gray-700 border border-gray-400 rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:ring-primary focus:bg-white focus:border-gray-500" :"appearance-none block w-full text-gray-700 border border-red-600 rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:ring-red-600 focus:bg-white focus:border-gray-500"}`}
-                          name="name"
-                          type="text"
-                          placeholder="Product Name"
-                        />
-                      </div>
-                      {/* qty & price */}
-                      <div class="flex flex-wrap -mx-3 ">
-                        {/* qty */}
-                        <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                          <label
-                            class="relative block uppercase tracking-wide text-gray-700  font-bold mb-2"
-                            for="grid-first-name"
-                          >
-                            Quantity
-                          </label>
-                          <input
-                            class="appearance-none block w-full text-gray-700 border border-gray-400 rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:ring-primary focus:bg-white focus:border-primary"
-                            onChange={(event) => handleFormChange(index, event)}
-                            value={input.qty}
-                            type="number"
-                            name="qty"
-                            placeholder="Quantity"
-                          />
-                        </div>
-                        {/* Price */}
-                        <div class="w-full md:w-1/2 px-3 relative">
-                          <img
-                            src={require("../../assets/images/distributor/dollar.png")}
-                            className="absolute top-11 left-6 "
-                            alt=""
-                          />
-                          <label
-                            class="block uppercase tracking-wide text-gray-700  font-bold mb-2"
-                            for="grid-last-name"
-                          >
-                            Price
-                          </label>
-                          <input
-                            class="appearance-none block w-full text-gray-700 border border-gray-400 rounded py-2 px-4 pl-10 mb-3 leading-tight focus:outline-none focus:ring-primary focus:bg-white focus:border-primary"
-                            onChange={(event) => handleFormChange(index, event)}
-                            value={input.price}
-                            type="number"
-                            name="price"
-                            placeholder="00.00"
-                          />
-                        </div>
-                      </div>
-                      {/* category */}
-                      <div class="flex flex-wrap -mx-3">
-                        <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                          <label
-                            class="block uppercase tracking-wide text-gray-700  font-bold mb-2"
-                            for="grid-state"
-                          >
-                            Category
-                          </label>
-                          <div class="relative">
-                            <select
-                              class="appearance-none capitalize block w-full text-gray-700 border border-gray-400 rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:ring-primary focus:bg-white focus:border-primary"
-                              id="grid-state"
-                              name="categoryId"
-                              // onChange={(event) =>
-                              //   handleFormChange(index, event)
-                              // }
-                              // value={selectedOption} 
-                              onChange={(event) =>
-                                handleChange(event,index)}
-                              // value={input.categoryId}
-                        
-                            >
-                              <option selected disabled value="">
-                                -- please select --
-                              </option>
-                              {categoryData.map((item, index) => (
-                                <option value={item.id}>{item.name}</option>
-                              ))}
-                            </select>
-                            {validationError && <div className="error-message">{validationError}</div>}
-                            <div class="pointer-events-none absolute inset-y-0 right-1 flex items-center px-2 text-gray-700">
-                              <img
-                                src={require("../../assets/images/distributor/down_arrow.png")}
-                                alt=""
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        <div class="w-full md:w-1/2 px-3 mt-2 md:mb-0">
-                          <button
-                            type="button"
-                            onClick={handleShowCategory}
-                            class="inline-block rounded bg-primary mt-6 px-9 py-[8px]  font-medium  leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
-                          >
-                            Add new{" "}
-                           
-                          </button>
-                          <CategoryComponent
-                              isOpenCategory={isOpenCategory}
-                              handleShowCategory={handleShowCategory}
-                            />
-                        </div>
-                      </div>
-                      {/* description */}
-                      <div className="relative mb-6">
-                        <label
-                          class="block uppercase tracking-wide text-gray-700  font-bold mb-2"
-                          for="grid-password"
-                        >
-                          description
-                        </label>
-                        <textarea
-                          class="appearance-none block w-full text-gray-700 border border-gray-400 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:ring-primary focus:bg-white focus:border-primary"
-                          name="description"
-                          rows="10"
-                          placeholder="Description..."
-                          onChange={(event) => handleFormChange(index, event)}
-                          value={input.description}
-                        />
-                      </div>
-                    </div>
-                    {/* image */}
-                    <div class=" col-span-2">
-                      <div class="flex items-center justify-center w-full">
-                        <label
-                          for="dropzone-file"
-                          class="flex flex-col items-center justify-center  bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
-                        >
-                          {imageUrl == "" || imageUrl == null ? (
-                            <>
-                              <div class="flex flex-col items-center justify-center w-full px-14 h-64 border-2 border-primaryColor border-dashed rounded-lg cursor-pointer">
-                                <img
-                                  src={require("../../assets/images/distributor/image.png")}
-                                  alt=""
-                                />
-                                <p class="mb-2  text-center text-gray-500 dark:text-gray-400">
-                                  <span class="font-semibold text-primaryColor">
-                                    Click to upload
-                                  </span>
-                                  or <br />
-                                  drag and drop
-                                </p>
-                              </div>
-                            </>
-                          ) : (
-                            <img
-                              src={imageUrl}
-                              className="h-[260px] w-auto rounded-lg "
-                            />
-                          )}
-                          {/* <p class=" text-gray-500 dark:text-gray-400">
-                          SVG, PNG, JPG or GIF (MAX. 800x400px)
-                        </p> */}
+        return {
+          name: field.name,
+          qty: parseInt(field.qty),
+          price: parseFloat(field.price),
+          categoryId: field.categoryId,
+          image: imageUrl,
+          description: field.description,
+          isPublish: field.isPublish
+        };
+      }));
 
-                          <input
-                            id="dropzone-file"
-                            name="image"
-                            multiple
-                            // onChange={(event) => handleFormChange(index, event)}
-                            onChange={(e) => handleChangeImage(e, index)}
-                            type="file"
-                            class="hidden"
-                          />
-                        </label>
-                      </div>
+      const res = await add_new_product_distributor(productsToSubmit);
+      dispatch(addNewProduct(res.data.data));
+      toast.success("Products added successfully!");
+      router.push("/distributor/product");
+    } catch (error) {
+      console.error("Error adding products:", error);
+      toast.error("Failed to add products. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-                      {/* visibility */}
-                      <div className="mt-44 relative">
-                        <label
-                          class="block text-3xl  tracking-wide text-primaryColor font-bold mb-2"
-                          for="grid-password"
-                        >
-                          Visibility
-                        </label>
-                        <div class="hs-tooltip flex items-center">
-                          {/* visible */}
-                          <label
-                            key={index}
-                            className="relative inline-flex items-center mr-5 cursor-pointer"
-                          >
-                            <input
-                              type="checkbox"
-                              onChange={handleFormChange}
-                              className="sr-only peer border border-primary"
-                              checked={input.isPublish}
-                              name="isPublish"
-                              onClick={() => handleToggle(index)}
-                            />
-                            <div className="w-11 h-6 rounded-full peer bg-gray-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primaryColor"></div>
-                            {visible ? (
-                              <span className="ml-3 text-sm font-medium text-gray-900">
-                                Visibility
-                              </span>
-                            ) : (
-                              <span className="ml-3 text-sm font-medium text-gray-900">
-                                Invisibility
-                              </span>
-                            )}
-                          </label>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => removeFields(index)}
-                        type="button"
-                        class="float-right -mb-10 flex text-lg items-center rounded-lg bg-[#FF7272] px-2 py-2 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
-                      >
-                        <img
-                          src={require("../../assets/images/distributor/delete_white.png")}
-                          alt=""
-                        />
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-              {/* add more button */}
-              <div
-                className="border border-1 rounded-lg py-3 px-5 cursor-pointer w-52"
-                onClick={addFields}
-              >
-                <div className="flex items-center justify-center gap-3">
-                  <img
-                    className=""
-                    src={require("../../assets/images/distributor/add_more.png")}
-                    alt=""
-                  />
-                  <p className="text-[#777777] font-medium">Add more</p>
-                </div>
-              </div>
-              {/* button save and cancel */}
-              <div className="w-full flex justify-end gap-3 mb-5">
-                {loading ? (
-                  <button
-                    type="button"
-                    class="col-span-2 flex text-lg justify-center  items-center gap-3 rounded-lg bg-primary w-32  px-2 py-2 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
-                    href="#"
-                  >
-                    <span
-                      class="animate-spin inline-block w-4 h-4 border-[3px] border-current border-t-transparent text-white rounded-full"
-                      role="status"
-                      aria-label="loading"
-                    >
-                      <span class="sr-only">Loading...</span>
-                    </span>
-                    Saving...
-                  </button>
-                ) : (
-                  <button
-                    type="submit"
-                    class="col-span-2 flex justify-center text-lg items-center gap-3 rounded-lg bg-primary w-32 px-2 py-2 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
-                  >
-                    <img
-                      src={require("../../assets/images/distributor/save.png")}
-                      alt=""
-                    />{" "}
-                    Save
-                  </button>
-                )}
-
-                <Link
-                  to="/distributor/product"
-                  type="button"
-                  class="col-span-2 flex text-lg justify-center items-center gap-3 rounded-lg bg-[#FF7272] w-32 px-2 py-2 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
-                >
-                  <img
-                    src={require("../../assets/images/distributor/close_white.png")}
-                    alt=""
-                  />{" "}
-                  Cancel
-                </Link>
-              </div>
-            </form>
-          </div>
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="p-4 md:p-6 space-y-6 dark:bg-slate-950 min-h-screen"
+    >
+      <ToastContainer />
+      
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-black text-slate-900 dark:text-white">Add New Products</h1>
+          <p className="text-slate-500">List your items to start selling to retailers.</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <Link href="/distributor/product">
+            <Button variant="outline" className="gap-2">
+              <X className="w-4 h-4" /> Cancel
+            </Button>
+          </Link>
+          <Button onClick={submit} disabled={loading} className="gap-2 px-8 bg-teal-600 hover:bg-teal-700">
+            {loading ? (
+              <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+            ) : (
+              <Check className="w-4 h-4" />
+            )}
+            {loading ? "Saving..." : "Save Products"}
+          </Button>
         </div>
       </div>
-    </div>
+
+      <form onSubmit={submit} className="space-y-6">
+        <AnimatePresence>
+          {inputFields.map((field, index) => (
+            <motion.div
+              key={field.id}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ delay: index * 0.1 }}
+            >
+              <Card className="border-none shadow-sm overflow-hidden bg-white dark:bg-slate-900">
+                <CardHeader className="flex flex-row items-center justify-between border-b border-slate-50 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 py-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-teal-600 text-white flex items-center justify-center font-bold text-sm">
+                      {index + 1}
+                    </div>
+                    <CardTitle className="text-lg font-bold">Product Information</CardTitle>
+                  </div>
+                  {inputFields.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeFields(field.id)}
+                      className="text-rose-500 hover:text-rose-700 p-2 transition-colors"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
+                  )}
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                    {/* Left Column: Image Upload */}
+                    <div className="lg:col-span-1 space-y-4">
+                      <div className="relative group aspect-square rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex items-center justify-center overflow-hidden">
+                        {field.previewUrl ? (
+                          <img src={field.previewUrl} alt="Preview" className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="text-center p-4">
+                            <ImageIcon className="w-10 h-10 text-slate-300 mx-auto mb-2" />
+                            <p className="text-xs text-slate-400 font-medium">Click to upload product image</p>
+                          </div>
+                        )}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleImageChange(field.id, e)}
+                          className="absolute inset-0 opacity-0 cursor-pointer"
+                        />
+                      </div>
+                      
+                      <div className="pt-4 space-y-3">
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-widest block">Visibility</label>
+                        <div className="flex items-center gap-3">
+                          <button
+                            type="button"
+                            onClick={() => handleToggle(field.id)}
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${field.isPublish ? 'bg-teal-600' : 'bg-slate-200'}`}
+                          >
+                            <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${field.isPublish ? 'translate-x-6' : 'translate-x-1'}`} />
+                          </button>
+                          <span className="text-sm font-medium text-slate-600">{field.isPublish ? "Public" : "Hidden"}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Middle Columns: Fields */}
+                    <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="md:col-span-2">
+                        <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Product Name *</label>
+                        <div className="relative">
+                          <Package className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
+                          <input
+                            type="text"
+                            name="name"
+                            value={field.name}
+                            onChange={(e) => handleFormChange(field.id, e)}
+                            placeholder="e.g. Organic Jasmine Rice 5kg"
+                            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 focus:ring-2 focus:ring-teal-500 outline-none transition-all"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Unit Price ($) *</label>
+                        <div className="relative">
+                          <DollarSign className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
+                          <input
+                            type="number"
+                            name="price"
+                            step="0.01"
+                            value={field.price}
+                            onChange={(e) => handleFormChange(field.id, e)}
+                            placeholder="0.00"
+                            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 focus:ring-2 focus:ring-teal-500 outline-none transition-all"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Initial Quantity *</label>
+                        <input
+                          type="number"
+                          name="qty"
+                          value={field.qty}
+                          onChange={(e) => handleFormChange(field.id, e)}
+                          placeholder="0"
+                          className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 focus:ring-2 focus:ring-teal-500 outline-none transition-all"
+                          required
+                        />
+                      </div>
+
+                      <div className="md:col-span-2">
+                        <div className="flex items-center justify-between mb-2">
+                          <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest">Category *</label>
+                          <button
+                            type="button"
+                            onClick={() => setIsOpenCategory(true)}
+                            className="text-[10px] font-bold text-teal-600 uppercase hover:underline"
+                          >
+                            + Add New Category
+                          </button>
+                        </div>
+                        <div className="relative">
+                          <Layout className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
+                          <select
+                            name="categoryId"
+                            value={field.categoryId}
+                            onChange={(e) => handleFormChange(field.id, e)}
+                            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 focus:ring-2 focus:ring-teal-500 outline-none appearance-none transition-all"
+                            required
+                          >
+                            <option value="">Select a category</option>
+                            {categoryData.map((cat) => (
+                              <option key={cat.id} value={cat.id}>{cat.name}</option>
+                            ))}
+                          </select>
+                          <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                            <img src={downArrowIcon.src || downArrowIcon} alt="" className="w-3" />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="md:col-span-2">
+                        <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Description</label>
+                        <textarea
+                          name="description"
+                          rows="4"
+                          value={field.description}
+                          onChange={(e) => handleFormChange(field.id, e)}
+                          placeholder="Describe your product features, dimensions, etc."
+                          className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 focus:ring-2 focus:ring-teal-500 outline-none transition-all resize-none"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+
+        <div className="flex justify-center py-4">
+          <button
+            type="button"
+            onClick={addFields}
+            className="flex items-center gap-2 px-6 py-3 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all group"
+          >
+            <Plus className="w-5 h-5 group-hover:scale-110 transition-transform" />
+            <span className="font-bold">Add Another Product</span>
+          </button>
+        </div>
+      </form>
+
+      <CategoryComponent
+        isOpenCategory={isOpenCategory}
+        handleShowCategory={() => setIsOpenCategory(false)}
+      />
+    </motion.div>
   );
 };
+
 export default AddProductDistributor;

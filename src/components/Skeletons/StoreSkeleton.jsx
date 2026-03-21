@@ -22,7 +22,7 @@ export const StoreSkeleton = () => {
 <div className=" flex animate-pulse rounded justify-center items-center bg-gray-300 w-36 h-36 lg:w-48 lg:h-48  border border-gray-300">
 {/* replace here */}
 <svg
-            class="w-12 h-12 text-gray-200"
+            className="w-12 h-12 text-gray-200"
             xmlns="http://www.w3.org/2000/svg"
             aria-hidden="true"
             fill="currentColor"
@@ -35,14 +35,14 @@ export const StoreSkeleton = () => {
 </div>
         <div className="w-full ">
          <div className="py-12 lg:px-8 animate-pulse">
-          <div class="h-6 bg-gray-200 rounded-sm dark:bg-gray-700  max-w-[180px] mb-2.5"></div>
-          <div class="h-6 bg-gray-200 rounded-sm dark:bg-gray-700  max-w-[280px] mb-2.5"></div>
+          <div className="h-6 bg-gray-200 rounded-sm dark:bg-gray-700  max-w-[180px] mb-2.5"></div>
+          <div className="h-6 bg-gray-200 rounded-sm dark:bg-gray-700  max-w-[280px] mb-2.5"></div>
 
           </div>
          </div>
           
           {/* <div className="w-full animate-pulse px-12">
-              <div class="h-7 bg-gray-200 rounded-sm dark:bg-gray-700  max-w-[180px] mb-2.5"></div>
+              <div className="h-7 bg-gray-200 rounded-sm dark:bg-gray-700  max-w-[180px] mb-2.5"></div>
 
             </div> */}
          
@@ -55,14 +55,14 @@ export const StoreSkeleton = () => {
 
       <div
         role="status"
-        class="space-y-2 animate-pulse md:space-y-0 md:space-x-8 md:flex md:items-center"
+        className="space-y-2 animate-pulse md:space-y-0 md:space-x-8 md:flex md:items-center"
       >
         {/* longline */}
-        <div class="w-full">
-          <div class="h-2 bg-gray-200 rounded-sm dark:bg-gray-700 mb-2.5"></div>
+        <div className="w-full">
+          <div className="h-2 bg-gray-200 rounded-sm dark:bg-gray-700 mb-2.5"></div>
         </div>
 
-        <span class="sr-only">Loading...</span>
+        <span className="sr-only">Loading...</span>
       </div>
     </div>
 
@@ -72,102 +72,102 @@ export const StoreSkeleton = () => {
 
       <div
         role="status"
-        class="space-y-2 animate-pulse md:space-y-0 md:space-x-8 md:flex "
+        className="space-y-2 animate-pulse md:space-y-0 md:space-x-8 md:flex "
       >
-        {/* <div class="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96 dark:bg-gray-700">
-        <div class="w-full">
-          <div class="h-7 bg-gray-200 rounded-md dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
-          <div class="h-7 bg-gray-200 rounded-md dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
+        {/* <div className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96 dark:bg-gray-700">
+        <div className="w-full">
+          <div className="h-7 bg-gray-200 rounded-md dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+          <div className="h-7 bg-gray-200 rounded-md dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
 
         </div>
         </div> */}
-       {/* <div class="w-full ">
-          <div class="h-7 bg-gray-300 rounded-sm dark:bg-gray-700 sm:max-w-[160px] lg:max-w-[360px] mb-2.5"></div>
-          <div class="h-7 bg-gray-300 rounded-sm dark:bg-gray-700 sm:max-w-[280px] lg:max-w-[480px] mb-2.5"></div>
+       {/* <div className="w-full ">
+          <div className="h-7 bg-gray-300 rounded-sm dark:bg-gray-700 sm:max-w-[160px] lg:max-w-[360px] mb-2.5"></div>
+          <div className="h-7 bg-gray-300 rounded-sm dark:bg-gray-700 sm:max-w-[280px] lg:max-w-[480px] mb-2.5"></div>
         </div>
 
-        <div class="w-full">
-          <div class="h-2 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[80px] mb-2.5"></div>
-          <div class="h-10 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
-          <div class="h-2 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[80px] mb-3.5"></div>
-          <div class="h-10 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
-          <div class="h-2 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[80px] mb-3.5"></div>
-          <div class="h-20 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
+        <div className="w-full">
+          <div className="h-2 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[80px] mb-2.5"></div>
+          <div className="h-10 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
+          <div className="h-2 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[80px] mb-3.5"></div>
+          <div className="h-10 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
+          <div className="h-2 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[80px] mb-3.5"></div>
+          <div className="h-20 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
         </div> */}
-        <div class="w-full sm:w-2/4 lg:w-full ">
-          <div class="h-7 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[60px] sm:max-w-[160px] lg:max-w-[360px] mb-2.5"></div>
-          <div class="h-7 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[180px] sm:max-w-[280px] lg:max-w-[480px] mb-2.5"></div>
+        <div className="w-full sm:w-2/4 lg:w-full ">
+          <div className="h-7 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[60px] sm:max-w-[160px] lg:max-w-[360px] mb-2.5"></div>
+          <div className="h-7 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[180px] sm:max-w-[280px] lg:max-w-[480px] mb-2.5"></div>
         </div>
 
-        <div class="w-full sm:w-full  sm:px-16 lg:px-0 lg:w-full ">
-          <div class="h-2 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[80px] mb-2.5"></div>
-          <div class="h-10 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
-          <div class="h-2 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[80px] mb-3.5"></div>
-          <div class="h-10 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
-          <div class="h-2 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[80px] mb-3.5"></div>
-          <div class="h-20 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
+        <div className="w-full sm:w-full  sm:px-16 lg:px-0 lg:w-full ">
+          <div className="h-2 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[80px] mb-2.5"></div>
+          <div className="h-10 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
+          <div className="h-2 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[80px] mb-3.5"></div>
+          <div className="h-10 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
+          <div className="h-2 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[80px] mb-3.5"></div>
+          <div className="h-20 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
         </div>
 
-        <span class="sr-only">Loading...</span>
+        <span className="sr-only">Loading...</span>
       </div>
       {/* longline 2*/}
-      <div class="w-full ">
-        <div class="h-2 bg-gray-200 rounded-sm dark:bg-gray-700 mb-5"></div>
+      <div className="w-full ">
+        <div className="h-2 bg-gray-200 rounded-sm dark:bg-gray-700 mb-5"></div>
       </div>
       {/* section2 */}
       <div
         role="status"
-        class="space-y-2 flex lg:w-full animate-pulse md:space-y-0 md:space-x-8 flex-col sm:flex-row "
+        className="space-y-2 flex lg:w-full animate-pulse md:space-y-0 md:space-x-8 flex-col sm:flex-row "
       >
-        {/* <div class="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96 dark:bg-gray-700">
-        <div class="w-full">
-          <div class="h-7 bg-gray-200 rounded-md dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
-          <div class="h-7 bg-gray-200 rounded-md dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
+        {/* <div className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96 dark:bg-gray-700">
+        <div className="w-full">
+          <div className="h-7 bg-gray-200 rounded-md dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+          <div className="h-7 bg-gray-200 rounded-md dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
 
         </div>
         </div> */}
         
-        <div class="w-full sm:w-2/4 lg:w-full ">
-          <div class="h-7 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[60px] sm:max-w-[160px] lg:max-w-[360px] mb-2.5"></div>
-          <div class="h-7 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[180px] sm:max-w-[280px] lg:max-w-[480px] mb-2.5"></div>
+        <div className="w-full sm:w-2/4 lg:w-full ">
+          <div className="h-7 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[60px] sm:max-w-[160px] lg:max-w-[360px] mb-2.5"></div>
+          <div className="h-7 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[180px] sm:max-w-[280px] lg:max-w-[480px] mb-2.5"></div>
         </div>
 
-        <div class="w-full sm:w-full  sm:px-16 lg:px-0 lg:w-full ">
-          <div class="h-2 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[80px] mb-2.5"></div>
-          <div class="h-10 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
-          <div class="h-2 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[80px] mb-3.5"></div>
-          <div class="h-10 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
+        <div className="w-full sm:w-full  sm:px-16 lg:px-0 lg:w-full ">
+          <div className="h-2 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[80px] mb-2.5"></div>
+          <div className="h-10 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
+          <div className="h-2 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[80px] mb-3.5"></div>
+          <div className="h-10 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
         </div>
 
       </div>
       {/* longline 3*/}
-      <div class="w-full ">
-        <div class="h-2 bg-gray-200 rounded-sm dark:bg-gray-700 mb-5"></div>
+      <div className="w-full ">
+        <div className="h-2 bg-gray-200 rounded-sm dark:bg-gray-700 mb-5"></div>
       </div>
       {/* section3 */}
       <div
         role="status"
-        class="space-y-2 animate-pulse md:space-y-0 md:space-x-8 md:flex "
+        className="space-y-2 animate-pulse md:space-y-0 md:space-x-8 md:flex "
       >
-        {/* <div class="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96 dark:bg-gray-700">
-        <div class="w-full">
-          <div class="h-7 bg-gray-200 rounded-md dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
-          <div class="h-7 bg-gray-200 rounded-md dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
+        {/* <div className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96 dark:bg-gray-700">
+        <div className="w-full">
+          <div className="h-7 bg-gray-200 rounded-md dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+          <div className="h-7 bg-gray-200 rounded-md dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
 
         </div>
         </div> */}
-        <div class="w-2/4 ">
-          <div class="h-7 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
-          <div class="h-7 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
+        <div className="w-2/4 ">
+          <div className="h-7 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+          <div className="h-7 bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[480px] mb-2.5"></div>
         </div>
         
         
         <div className="flex sm:flex-row ">
-        <div class="w-1/3">
-          <div class="h-28 w-28 sm:h-32 sm:w-32 flex justify-center items-center bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[360px] mb-2.5">
+        <div className="w-1/3">
+          <div className="h-28 w-28 sm:h-32 sm:w-32 flex justify-center items-center bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[360px] mb-2.5">
             {" "}
             <svg
-              class="w-12 h-12 text-gray-200"
+              className="w-12 h-12 text-gray-200"
               xmlns="http://www.w3.org/2000/svg"
               aria-hidden="true"
               fill="currentColor"
@@ -179,7 +179,7 @@ export const StoreSkeleton = () => {
         </div>
        <div className="lg:2/3 px-6">
             {/*  sm:w-2/3 */}
-          <div class="h-32 w-48 sm:h-32 sm:w-72 animate-pulse bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+          <div className="h-32 w-48 sm:h-32 sm:w-72 animate-pulse bg-gray-300 rounded-sm dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
        </div>
         </div>
       </div>

@@ -24,7 +24,7 @@ const draftHistorySlice = createSlice({
                     item.status = "Pending"
                 }
             })
-            .filter((item) => item.order.id != action.payload)    
+            .filter((item) => item.order.id !== action.payload)    
         },
         draftToRequest: (state, action) => {
             const itemId = action.payload;

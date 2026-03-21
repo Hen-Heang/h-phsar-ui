@@ -1,0 +1,12 @@
+"use client";
+
+import dynamic from "next/dynamic";
+
+const DistributorShell = dynamic(
+  () => import("@/components/Distributor/DistributorShell"),
+  { ssr: false }
+);
+
+export default function DistributorLayout({ children }) {
+  return <DistributorShell>{children}</DistributorShell>;
+}

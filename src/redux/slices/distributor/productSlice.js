@@ -35,7 +35,7 @@ const productSlice = createSlice({
       state.product.map((item) => {
         // console.log("category ID : ", category.id);
         // console.log("action ID :", action.payload);
-        if (item.id == action.payload.id) {
+        if (item.id === action.payload.id) {
           item.name = action.payload.name;
           item.description = action.payload.description;
           item.price = action.payload.price;
@@ -52,7 +52,7 @@ const productSlice = createSlice({
       state.product.map((item) => {
         // console.log("product ID : ", item.id);
         // console.log("action payload :", action.payload);
-        if (item.id == action.payload.id) {
+        if (item.id === action.payload.id) {
           item.isPublish = !action.payload.isPublish;
         }
       });
@@ -61,7 +61,7 @@ const productSlice = createSlice({
       state.product.map((item) => {
         // console.log("product ID : ", item.id);
         // console.log("action payload :", action.payload);
-        if (item.id == action.payload.id) {
+        if (item.id === action.payload.id) {
           // console.log("qty state : ", typeof item.qty);
           // console.log("qty payload : ", typeof parseInt(action.payload.qty));
           item.qty = item.qty + parseInt(action.payload.qty);

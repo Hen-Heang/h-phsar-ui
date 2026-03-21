@@ -1,26 +1,21 @@
-import { Field, Form, Formik } from "formik";
+"use client";
 
-import eye from "../../assets/images/eye_hidden_password.png";
+import { Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
-import { useEffect } from "react";
 import OtpInput from "react-otp-input";
-import { object, string, ref } from "yup";
+import { string, ref } from "yup";
 import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
 import {
   generateCodeService,
   registerService,
   verifyEmailService,
 } from "../../redux/services/auth/auth.server";
-import { Link, useNavigate } from "react-router-dom";
-import { data } from "autoprefixer";
-import { signInWithPopup } from "firebase/auth";
-import { auth, googleProvide } from "../../components/Distributor/GoogleCofig";
-import { Button, Modal } from "flowbite-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { PulseLoader, RingLoader } from "react-spinners";
-const MySwal = withReactContent(Swal);
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 const SignupSchema = Yup.object().shape({
   email: Yup.string()
@@ -29,7 +24,7 @@ const SignupSchema = Yup.object().shape({
   password: Yup.string()
     .required("Password cannot be blank")
     .matches(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/,
       "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character"
     ),
   confirmPassword: string()
@@ -61,7 +56,7 @@ const SignUpPage = () => {
     password: "",
   });
 
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const handleSubmit = (data) => {
     setDataOnchange(data);
@@ -180,7 +175,7 @@ const SignUpPage = () => {
     verifyEmailService(dataOnchange, otp).then((res) => {
       setLoadingVerifyEmail(false);
       console.log("res " + res);
-      if (res.data.status == 200) {
+      if (res.data.status === 200) {
         setShowModalVerify(false);
         setShowLine(false);
         Swal.fire({
@@ -192,7 +187,7 @@ const SignUpPage = () => {
           showConfirmButton: false,
           timer: 2500,
         }).then(() => {
-          navigate("/sign-in");
+          router.push("/sign-in");
         });
       }
       // navigate("/login");
@@ -214,24 +209,6 @@ const SignUpPage = () => {
   function togglePasswordVisibility() {
     setIsPasswordVisible((prevState) => !prevState);
   }
-  // handle login with Google
-  const handleSignUpWithGoogle = () => {
-    signInWithPopup(auth, googleProvide).then((data) => {
-      const google = {
-        email: data.user.email,
-        password: data.user.password,
-      };
-      setDataOnchange(google);
-      setShowModal(true);
-
-      console.log("email: " + data.user.email);
-
-      // console.log("password: " + data.password);
-      // localStorage.setItem("email", data.user.email);
-      // localStorage.setItem("password", data.user.password);
-    });
-  };
-
   // const testButton = () => {
   //   let timerInterval;
   //   setLoadingOTP(true);
@@ -241,17 +218,12 @@ const SignUpPage = () => {
     <div className="bg-backGroundColor h-screen ">
       {/* <button onClick={testButton}>test</button> */}
       {/* <RingLoader color="#36d7b7" /> */}
-      <Modal
-        show={loadingOTP}
-        size="md"
-        popup
-        onClose={() => setLoadingOTP(!loadingOTP)}
-      >
-        <Modal.Body>
+      <Dialog open={loadingOTP} onOpenChange={setLoadingOTP}>
+        <DialogContent className="max-w-md border-0 p-0 sm:rounded-2xl" showClose={false}>
           <div className="text-center py-10">
             <div className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200">
               {successOTP ? (
-                <img src={require("../../assets/images/success.png")} alt="" />
+                <img src={(require("../../assets/images/success.png")?.default || require("../../assets/images/success.png"))} alt="" />
               ) : (
                 <RingLoader color="#0f766e" />
               )}
@@ -274,11 +246,11 @@ const SignUpPage = () => {
                 : "Please wait for few seconds"}
             </h3>
           </div>
-        </Modal.Body>
-      </Modal>
+        </DialogContent>
+      </Dialog>
       <ToastContainer />
       <div className="w-4/5 lg:w-3/6 h-screen flex m-auto flex-col justify-evenly ">
-        {/* <section class="h-5/6 bg-white flex flex-wrap items-center justify-center">
+        {/* <section className="h-5/6 bg-white flex flex-wrap items-center justify-center">
           
         </section> */}
         <div className="md:h-4/6 lg:h-5/6 grid grid-cols-2 shadow-md ">
@@ -303,6 +275,7 @@ const SignUpPage = () => {
                 initialValues={{
                   email: "",
                   password: "",
+                  confirmPassword: "",
                 }}
                 validationSchema={SignupSchema}
                 onSubmit={(values) => {
@@ -314,11 +287,11 @@ const SignUpPage = () => {
                 {({ errors, touched }) => (
                   <Form>
                     {/* <!--Logo--> */}
-                    <div class="text-center mb-10">
-                      <h4 class="pb-1 text-4xl font-semibold text-gray-500">
+                    <div className="text-center mb-10">
+                      <h4 className="pb-1 text-4xl font-semibold text-gray-500">
                         Welcome to <br />
                         <span className="text-primaryColor">
-                          StockFlow Commerce
+                          H-Phsar
                         </span>
                       </h4>
                       <p className="text-gray-500">
@@ -332,13 +305,13 @@ const SignUpPage = () => {
                         <div className="relative">
                           <img
                             className="absolute top-2.5 right-2 w-6"
-                            src={require("../../assets/images/emailIcon.png")}
+                            src={(require("../../assets/images/emailIcon.png")?.default || require("../../assets/images/emailIcon.png"))}
                             alt=""
                           />
                           <Field
                             name="email"
                             placeholder="Email"
-                            class={`border border-primaryColor text-gray-900 text-sm rounded-lg ${
+                            className={`border border-primaryColor text-gray-900 text-sm rounded-lg ${
                               errors.email && touched.email
                                 ? "focus:ring-red-500 border-red-500 focus:outline-none focus:border-red-500"
                                 : null
@@ -359,13 +332,13 @@ const SignUpPage = () => {
                           >
                             {isPasswordVisible ? (
                               <img
-                                src={require("../../assets/images/show.png")}
+                                src={(require("../../assets/images/show.png")?.default || require("../../assets/images/show.png"))}
                                 className="w-[26px]"
                                 alt=""
                               />
                             ) : (
                               <img
-                                src={require("../../assets/images/eye_hidden_password.png")}
+                                src={(require("../../assets/images/eye_hidden_password.png")?.default || require("../../assets/images/eye_hidden_password.png"))}
                                 alt=""
                                 className="w-[26px]"
                               />
@@ -399,13 +372,13 @@ const SignUpPage = () => {
                           >
                             {isPasswordVisible ? (
                               <img
-                                src={require("../../assets/images/show.png")}
+                                src={(require("../../assets/images/show.png")?.default || require("../../assets/images/show.png"))}
                                 className="w-[26px]"
                                 alt=""
                               />
                             ) : (
                               <img
-                                src={require("../../assets/images/eye_hidden_password.png")}
+                                src={(require("../../assets/images/eye_hidden_password.png")?.default || require("../../assets/images/eye_hidden_password.png"))}
                                 alt=""
                                 className="w-[26px]"
                               />
@@ -415,7 +388,7 @@ const SignUpPage = () => {
                             type={isPasswordVisible ? "text" : "password"}
                             name="confirmPassword"
                             aria-describedby="helper-text-explanation"
-                            class={`border border-primaryColor text-gray-900 text-sm rounded-lg ${
+                            className={`border border-primaryColor text-gray-900 text-sm rounded-lg ${
                               !!errors.confirmPassword &&
                                ( "focus:ring-red-500 border-red-500 focus:outline-none focus:border-red-100")
                                
@@ -435,7 +408,7 @@ const SignUpPage = () => {
                         </div>
                         <button
                           type="submit"
-                          class="inline-block rounded bg-primaryColor px-7 pb-2.5 pt-3 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                          className="inline-block rounded bg-primaryColor px-7 pb-2.5 pt-3 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
                         >
                           Sign up
                         </button>
@@ -444,45 +417,10 @@ const SignUpPage = () => {
                   </Form>
                 )}
               </Formik>
-              {/* <!-- Separator between social media sign in and email/password sign in --> */}
-              <div class="my-4 flex items-center before:mt-0.5 before:flex-1 before:border-t before:border-neutral-300 after:mt-0.5 after:flex-1 after:border-t after:border-neutral-300">
-                <p class="mx-4 mb-0 text-center text-gray-500 dark:text-white">
-                  Or connect with
-                </p>
-              </div>
-              {/* <!--Sign in section--> */}
-              <div class="flex items-center gap-5 justify-center m-auto">
-                <div className="-mt-2">
-                  {/* <!-- Facebook --> */}
-                  {/* <button
-                    type="button"
-                    class="inline-block mx-1 h-9 w-9 rounded-full bg-white uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primaryColor hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primaryColor focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
-                  >
-                 
-                    <img
-                      src={require("../../assets/images/Facebook.png")}
-                      alt=""
-                    />
-                  </button> */}
-
-                  {/* <!-- Google --> */}
-                  <button
-                    type="button"
-                    onClick={handleSignUpWithGoogle}
-                    class="inline-block mx-1 h-9 w-9 rounded-full bg-white uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primaryColor hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primaryColor focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
-                  >
-                    {/* <!-- Twitter --> */}
-                    <img
-                      src={require("../../assets/images/Google.png")}
-                      alt=""
-                    />
-                  </button>
-                </div>
-              </div>
               <div className="flex justify-evenly ">
                 <p>
                   Already have an account?{" "}
-                  <Link to="/sign-in">
+                  <Link href="/sign-in">
                     <span className="text-primaryColor">Sign in</span>
                   </Link>
                 </p>
@@ -503,7 +441,7 @@ const SignUpPage = () => {
                 <div className="relative p-6 flex items-center h-full">
                   <button onClick={() => setShowModal(false)}>
                     <img
-                      src={require("../../assets/images/close.png")}
+                      src={(require("../../assets/images/close.png")?.default || require("../../assets/images/close.png"))}
                       alt=""
                       className="w-10 absolute top-5 right-5"
                     />
@@ -516,7 +454,7 @@ const SignUpPage = () => {
                           <div>
                             <img
                               className="lg:h-full mt-12"
-                              src={require("../../assets/images/Line_chooseRole.png")}
+                              src={(require("../../assets/images/Line_chooseRole.png")?.default || require("../../assets/images/Line_chooseRole.png"))}
                               alt=""
                             />
                           </div>
@@ -536,18 +474,18 @@ const SignUpPage = () => {
                                 </p>
                               </div>
                               <div>
-                                <div class="">
+                                <div className="">
                                   {/* Distributor */}
                                   <label
-                                    for="distributor"
-                                    class="relative flex p-8 mt-10 w-full hover:shadow-primaryColor shadow-sm bg-white border border-gray-200 active:border-primaryColor focus:border-primaryColor rounded-md text-sm  dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
+                                    htmlFor="distributor"
+                                    className="relative flex p-8 mt-10 w-full hover:shadow-primaryColor shadow-sm bg-white border border-gray-200 active:border-primaryColor focus:border-primaryColor rounded-md text-sm  dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
                                   >
                                     <img
-                                      src={require("../../assets/images/victory_choose_role.png")}
+                                      src={(require("../../assets/images/victory_choose_role.png")?.default || require("../../assets/images/victory_choose_role.png"))}
                                       className="absolute top-4 lg:left-10"
                                       alt=""
                                     />
-                                    <span class=" text-gray-500 dark:text-gray-400 absolute md:top-5 left-24 lg:left-32">
+                                    <span className=" text-gray-500 dark:text-gray-400 absolute md:top-5 left-24 lg:left-32">
                                       <h1 className="font-bold text-xl">
                                         Distributor
                                       </h1>
@@ -562,21 +500,21 @@ const SignUpPage = () => {
                                       value="1"
                                       onChange={(e) => setRole(e.target.value)}
                                       id="distributor"
-                                      class="shrink-0 ml-auto mt-0.5 border-gray-200 rounded-full text-primaryColor pointer-events-none focus:ring-primaryColor dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
+                                      className="shrink-0 ml-auto mt-0.5 border-gray-200 rounded-full text-primaryColor pointer-events-none focus:ring-primaryColor dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
                                     />
                                   </label>
                                   {/* Retailer */}
                                   <label
-                                    for="retailer"
-                                    class="relative flex p-8 mt-7 w-full hover:shadow-primaryColor visited:shadow-primaryColor shadow-sm bg-white border border-gray-200 rounded-md text-sm focus:ring-primaryColor focus:border-primaryColor focus:outline-primaryColor dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
+                                    htmlFor="retailer"
+                                    className="relative flex p-8 mt-7 w-full hover:shadow-primaryColor visited:shadow-primaryColor shadow-sm bg-white border border-gray-200 rounded-md text-sm focus:ring-primaryColor focus:border-primaryColor focus:outline-primaryColor dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
                                   >
-                                    <span class="text-sm text-gray-500 dark:text-gray-400">
+                                    <span className="text-sm text-gray-500 dark:text-gray-400">
                                       <img
-                                        src={require("../../assets/images/trolley_choose_role.png")}
+                                        src={(require("../../assets/images/trolley_choose_role.png")?.default || require("../../assets/images/trolley_choose_role.png"))}
                                         className="absolute top-4 lg:left-10"
                                         alt=""
                                       />
-                                      <span class=" text-gray-500 dark:text-gray-400 absolute md:top-5 left-24 lg:left-32">
+                                      <span className=" text-gray-500 dark:text-gray-400 absolute md:top-5 left-24 lg:left-32">
                                         <h1 className="font-bold text-xl">
                                           Retailer
                                         </h1>
@@ -593,7 +531,7 @@ const SignUpPage = () => {
                                       name="roleId"
                                       value="2"
                                       id="retailer"
-                                      class="shrink-0 ml-auto mt-0.5 border-gray-200 rounded-full text-primaryColor pointer-events-none focus:ring-primaryColor dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
+                                      className="shrink-0 ml-auto mt-0.5 border-gray-200 rounded-full text-primaryColor pointer-events-none focus:ring-primaryColor dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
                                     />
                                   </label>
                                 </div>
@@ -603,7 +541,7 @@ const SignUpPage = () => {
                                   Please choose the role you want to
                                 </div>
                               ) : null}
-                              {/* {values.role != ""
+                              {/* {values.role !== ""
                                     ? () => onSubmitChooseRole()
                                     : setShowModal(true)} */}
                             </div>
@@ -612,18 +550,18 @@ const SignUpPage = () => {
                               <button
                                 type="button"
                                 onClick={onSubmitChooseRole}
-                                class="mt-7 lg:mt-12 flex items-center justify-center gap-3 rounded-xl bg-primaryColor text-xl w-full py-4 font-medium  leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-cyan-400 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                                className="mt-7 lg:mt-12 flex items-center justify-center gap-3 rounded-xl bg-primaryColor text-xl w-full py-4 font-medium  leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-cyan-400 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
                                 data-te-ripple-init
                                 data-te-ripple-color="light"
                               >
                                 {loadingChooseRole ? (
                                   <>
                                     <span
-                                      class="animate-spin inline-block w-6 h-6 border-[3px] border-current border-t-transparent text-white rounded-full"
+                                      className="animate-spin inline-block w-6 h-6 border-[3px] border-current border-t-transparent text-white rounded-full"
                                       role="status"
                                       aria-label="loading"
                                     >
-                                      <span class="sr-only">Continuing...</span>
+                                      <span className="sr-only">Continuing...</span>
                                     </span>
                                     Continuing...
                                   </>
@@ -673,7 +611,7 @@ const SignUpPage = () => {
                 <div className="relative p-6 flex-auto -mt-10">
                   {/* <button onClick={() => setShowModalVerify(false)}>
                     <img
-                      src={require("../../assets/images/close.png")}
+                      src={(require("../../assets/images/close.png")?.default || require("../../assets/images/close.png"))}
                       alt=""
                       className="w-10 absolute top-14 right-5"
                     />
@@ -699,9 +637,9 @@ const SignUpPage = () => {
                               </p>
                             </div>
                             <div>
-                              <div class="">
-                                <div class="flex flex-col relative space-y-9">
-                                  <div class="mt-10  flex flex-row items-center justify-center mx-auto w-full max-w-xs">
+                              <div className="">
+                                <div className="flex flex-col relative space-y-9">
+                                  <div className="mt-10  flex flex-row items-center justify-center mx-auto w-full max-w-xs">
                                     <OtpInput
                                       value={otp}
                                       onChange={setOtp}
@@ -728,12 +666,12 @@ const SignUpPage = () => {
                                       Please input code to verify your email
                                     </div>
                                   ) : null}
-                                  <div class="flex flex-col space-y-5">
-                                    <div class="flex flex-row items-center justify-center text-center text-sm font-medium space-x-1 text-gray-500">
+                                  <div className="flex flex-col space-y-5">
+                                    <div className="flex flex-row items-center justify-center text-center text-sm font-medium space-x-1 text-gray-500">
                                       <p>Don’t received an email?</p>{" "}
                                       <button
                                         onClick={handleResendVerify}
-                                        class="flex flex-row items-center text-primaryColor"
+                                        className="flex flex-row items-center text-primaryColor"
                                       >
                                         Resend email
                                       </button>
@@ -749,18 +687,18 @@ const SignUpPage = () => {
                             <button
                               type="button"
                               onClick={onSubmitVerifyEmail}
-                              class="mt-7 flex  lg:mt-9 mb-5 items-center justify-center gap-2 rounded-xl bg-primaryColor w-full py-4  text-md font-medium  leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-cyan-400 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                              className="mt-7 flex  lg:mt-9 mb-5 items-center justify-center gap-2 rounded-xl bg-primaryColor w-full py-4  text-md font-medium  leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-cyan-400 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
                               data-te-ripple-init
                               data-te-ripple-color="light"
                             >
                               {loadingVerifyEmail ? (
                                 <>
                                   <span
-                                    class="animate-spin inline-block w-4 h-4 border-[3px] border-current border-t-transparent text-white rounded-full"
+                                    className="animate-spin inline-block w-4 h-4 border-[3px] border-current border-t-transparent text-white rounded-full"
                                     role="status"
                                     aria-label="loading"
                                   >
-                                    <span class="sr-only">Verifying...</span>
+                                    <span className="sr-only">Verifying...</span>
                                   </span>
                                   Verifying...
                                 </>
@@ -785,5 +723,3 @@ const SignUpPage = () => {
 };
 
 export default SignUpPage;
-
-

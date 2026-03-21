@@ -1,6 +1,7 @@
 import React from 'react'
 import { useState } from 'react';
-import { Modal, Button } from 'flowbite-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { get_detail_product } from '../../../redux/services/distributor/product.service';
@@ -8,6 +9,10 @@ import { getProductDetail } from '../../../redux/slices/distributor/productSlice
 import { Backdrop,CircularProgress } from '@mui/material';
 import { PropagateLoader } from "react-spinners"
 export default function Product(props) {
+    const formatMoney = (value) => {
+        const number = Number(value);
+        return Number.isFinite(number) ? number.toFixed(2) : "0.00";
+    };
     const [isOpen, setOpen] = useState(false);
     const [decline, setDecline] = useState(false);
     const productList = useSelector((state) => state.product.product);
@@ -21,59 +26,37 @@ export default function Product(props) {
     return (
         <div>
             <React.Fragment>
-                <Modal
-                    show={props.isOpen}
-                    size="2xl"
-                    popup={true}
-                    onClose={props.handlePro}
-                    // onClose={props.handlePro}
+                <Dialog
+                    open={props.isOpen}
+                    onOpenChange={(open) => { if(!open) props.handlePro() }}
                 >
-                    <Modal />
-                    <Modal.Header className="text-center bg-primary w-full">
-                        <h1 className="text-center text-white font-semiblod absolute w-full text-xl">
-                            Products
-                        </h1>
-                        <p
-                            className="text-white float-right absolute right-2 top-2 bg-primary w-8 h-8"
-                            onClick={props.handlePro}
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke-width="1.5"
-                                stroke="currentColor"
-                                class="w-6 h-6 font-bold text-white"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M6 18L18 6M6 6l12 12"
-                                />
-                            </svg>
-                        </p>
-                    </Modal.Header>
-                    <Modal.Body className="">
-                        <div class="shadow-md sm:rounded-lg mt-4 relative overflow-y-auto h-[400px]">
-                            <table class="w-full text-sm text-left text-newGray">
-                                <thead class="text-xs text-black bg-newWhite shadow-md border-spacint">
+                    <DialogContent className="max-w-2xl">
+                        <DialogHeader className="text-center bg-primary w-full p-4">
+                            <DialogTitle className="text-center text-white font-semibold w-full text-xl">
+                                Products
+                            </DialogTitle>
+                        </DialogHeader>
+                        <div className="">
+                            <div className="shadow-md sm:rounded-lg mt-4 relative overflow-y-auto h-[400px]">
+                            <table className="w-full text-sm text-left text-newGray">
+                                <thead className="text-xs text-black bg-newWhite shadow-md border-spacint">
                                     <tr>
-                                        <th scope="col" class="px-6 py-3">
+                                        <th scope="col" className="px-6 py-3">
                                             No
                                         </th>
-                                        <th scope="col" class="px-6 py-3">
+                                        <th scope="col" className="px-6 py-3">
                                             Products
                                         </th>
-                                        <th scope="col" class="px-6 py-3">
+                                        <th scope="col" className="px-6 py-3">
                                             Qty
                                         </th>
-                                        <th scope="col" class="px-6 py-3">
+                                        <th scope="col" className="px-6 py-3">
                                             Stock
                                         </th>
-                                        <th scope="col" class="px-6 py-3">
+                                        <th scope="col" className="px-6 py-3">
                                             Unitprice
                                         </th>
-                                        <th scope="col" class="px-6 py-3">
+                                        <th scope="col" className="px-6 py-3">
                                             Total
                                         </th>
                                     </tr>
@@ -81,57 +64,51 @@ export default function Product(props) {
                                 <tbody className="text-black w-full bg-slate-50">
                                     {! props.loadingPro ?
                                     productList.map((item,index) => (
-                                        <tr key={index} class="bg-white border-b text-black dark:bg-gray-800 text-sm">
+                                        <tr key={index} className="bg-white border-b text-black dark:bg-gray-800 text-sm">
                                             <td
                                                 scope="row"
-                                                class="px-6 py-2 0 whitespace-nowrap dark:text-white"
+                                                className="px-6 py-2 0 whitespace-nowrap dark:text-white"
                                             >
                                                 {index+1}
                                             </td>
                                             <td
                                                 scope="row"
-                                                class="flex items-center px-6 py-2 whitespace-nowrap"
+                                                className="flex items-center px-6 py-2 whitespace-nowrap"
                                             >
                                                 {/* <img
-                                                class="w-10 h-10 rounded-full border-primary border p-1"
-                                                // src={require("../../../assets/images/Landing/logo.png")}
+                                                className="w-10 h-10 rounded-full border-primary border p-1"
+                                                // src={(require("../../../assets/images/Landing/logo.png")?.default || require("../../../assets/images/Landing/logo.png"))}
                                                 src={item.image}
                                                 alt="images"
                                             /> */}
                                                 {item.image && item.image!=="String" ? (
-                                                    <img src={item.image} alt="upload image" class="w-10 h-10 rounded-full  p-1" />
+                                                    <img src={item.image} alt="upload image" className="w-10 h-10 rounded-full  p-1" />
                                                 ) : (
                                                     // <div className='flex flex-col'>
-                                                    <img src={require("../../../assets/images/image 7.png")} class="w-10 h-10 rounded-full border-primary border p-1" alt="upload" />
+                                                    <img src={(require("../../../assets/images/image 7.png")?.default || require("../../../assets/images/image 7.png"))} className="w-10 h-10 rounded-full border-primary border p-1" alt="upload" />
                                                     // <p className='text-primary ml-12'>Click to upload <span className='text-newGray font-semibold text-center '><br />or drag to drop</span></p>
                                                     // </div>
                                                 )}
-                                                <div class="pl-3">
-                                                    <div class="text-sm">
+                                                <div className="pl-3">
+                                                    <div className="text-sm">
                                                         {item.productName}
                                                     </div>
-                                                    <div class="font-normal text-xs text-newGray">
+                                                    <div className="font-normal text-xs text-newGray">
                                                         {/* {item.category.name} */}
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td class="px-6 py-2">
+                                            <td className="px-6 py-2">
                                                 {item.qty}
                                             </td>
-                                            <td class="px-6 py-2">
+                                            <td className="px-6 py-2">
                                                 {item.inStock}
                                             </td>
-                                            <td class="px-6 py-2">
-                                            ${item.unitPrice == null 
-                            ? <span>0.00</span>
-                            : (item.unitPrice).toFixed(2)
-                            }
+                                            <td className="px-6 py-2">
+                                            ${formatMoney(item.unitPrice)}
                                             </td>
-                                            <td class="px-6 py-4">
-                                            ${item.subTotal == null 
-                            ? <span>0.00</span>
-                            : (item.subTotal).toFixed(2)
-                            }
+                                            <td className="px-6 py-4">
+                                            ${formatMoney(item.subTotal)}
                                             </td>
                                         </tr>
                                     ))
@@ -142,11 +119,11 @@ export default function Product(props) {
                                 </tbody>
                             </table>
                         </div>
-                    </Modal.Body>
-                </Modal>
+                    </div>
+                </DialogContent>
+                </Dialog>
             </React.Fragment>
         </div>
         
     )
 }
-

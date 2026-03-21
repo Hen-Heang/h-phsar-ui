@@ -1,485 +1,306 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+"use client";
 
-import { BsArrowLeftCircle } from "react-icons/bs";
-import { BsFillBagPlusFill } from "react-icons/bs";
-import { AiFillHome } from "react-icons/ai";
-import { FaBox } from "react-icons/fa";
-import { RiUserSettingsFill } from "react-icons/ri";
-import { AiFillAppstore } from "react-icons/ai";
-import { AiFillSetting } from "react-icons/ai";
+import React, { useState } from "react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  Home, 
+  Package, 
+  Layers, 
+  ShoppingCart, 
+  BarChart3, 
+  CheckSquare, 
+  Download, 
+  History, 
+  User, 
+  Store, 
+  LogOut, 
+  ChevronDown, 
+  X,
+  AlertTriangle
+} from "lucide-react";
 
-import { HiDocumentReport, HiOutlineExclamationCircle } from "react-icons/hi";
-import { MdWorkHistory } from "react-icons/md";
-import { GoSignOut } from "react-icons/go";
-import { GoChecklist } from "react-icons/go";
-
-import Logo from "../../assets/images/logo.svg";
 import HamburgerButton from "../HamburgerMenuButton/HamburgerButton";
-import Navbar from "./Navbar";
-import { Button, Modal, Pagination, TextInput } from "flowbite-react";
-import { Field, Form, Formik } from "formik";
-import * as Yup from "yup";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  add_new_category,
-  delete_category,
-  get_all_category,
-  update_category,
-} from "../../redux/services/distributor/category.service";
-import {
-  addNewCategoryDistributor,
-  deleteCategoryDistributor,
-  getAllCategoryDistributor,
-  updateCategoryDistributor,
-} from "../../redux/slices/distributor/categorySlice";
-import { toast, ToastContainer } from "react-toastify";
-import ReactPaginate from "react-paginate";
-import { api } from "../../utils/api";
-import { addNewImportProduct } from "../../redux/slices/distributor/importedPrice";
-import { addNewProduct } from "../../redux/slices/distributor/addProductSlice";
-import { current } from "@reduxjs/toolkit";
+import { useDispatch } from "react-redux";
+import { getAllCategoryDistributor } from "../../redux/slices/distributor/categorySlice";
 import NewImport from "./NewImport";
 import { CategoryComponent } from "./CategoryComponent";
 import { getAllProduct } from "../../redux/slices/distributor/productSlice";
 import { getDataStore } from "../../redux/slices/distributor/storeSlice";
 import { getAccountDistributer } from "../../redux/slices/distributor/AccountSlice";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
-const LoginSchema = Yup.object().shape({
-  name: Yup.string().required("Please enter a category"),
-});
+// Static image imports
+import LOGO_final from "../../assets/images/distributor/LOGO_final.png";
 
-// main class
 const Sidebar = () => {
-  const navigate = useNavigate();
-  const [open, setOpen] = useState(true);
+  const router = useRouter();
   const [mobileMenu, setMobileMenu] = useState(false);
-  const location = useLocation();
-  const [cat, setCat] = useState("");
-
-  const Menus = [
-    { title: "Home", path: "/distributor/home" },
-    { title: "Product", path: "/distributor/product" },
-    { title: "Category"},
-    { title: "Order", path: "/distributor/order" },
-    { title: "Report", path: "/distributor/report" },
-    { title: "Order history", path: "/distributor/order-history" },
-    { title: "Account", path: "/distributor/account" },
-    { title: "Sign out" },
-  ];
-
-  const [navHome, setNavHome] = useState(false);
+  const pathname = usePathname();
   const dispatch = useDispatch();
 
-  // ===================== sign out =================
   const [showSignOut, setShowSignOut] = useState(false);
+  const [isOpenNewImport, setIsOpenNewImport] = useState(false);
+  const [isImportSectionOpen, setIsImportSectionOpen] = useState(pathname.includes('import') || pathname.includes('history'));
+  const [isProfileSectionOpen, setIsProfileSectionOpen] = useState(pathname.includes('account') || pathname.includes('store'));
+  const [isOpenCategory, setIsOpenCategory] = useState(false);
+
   const handleSignOut = () => {
     localStorage.clear();
-    // localStorage.removeItem("token");
     dispatch(getAllProduct([]));
     dispatch(getAllCategoryDistributor([]));
     dispatch(getDataStore([]));
     dispatch(getAccountDistributer([]));
-    navigate("/");
+    router.push("/");
   };
 
-  const [isOpenNewImport, setIsOpenNewImport] = useState(false);
-  const handleShowImport = () => {
-    setIsOpenNewImport(!isOpenNewImport);
-  };
-  const [isOpenCategory, setIsOpenCategory] = useState(false);
-  const handleShowCategory = () => {
-    setIsOpenCategory(!isOpenCategory);
+  const menuItems = [
+    { title: "Home", path: "/distributor/home", icon: Home },
+    { title: "Product", path: "/distributor/product", icon: Package },
+    { 
+      title: "Category", 
+      type: "button", 
+      onClick: () => setIsOpenCategory(true),
+      icon: Layers
+    },
+    { title: "Order", path: "/distributor/order", icon: ShoppingCart },
+    { title: "Report", path: "/distributor/report", icon: BarChart3 },
+    { title: "Order history", path: "/distributor/order-history", icon: CheckSquare },
+  ];
+
+  const getNavLinkClass = (path) => {
+    const isActive = pathname === path;
+    return `group relative flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 ${
+      isActive 
+        ? "bg-teal-500 text-white shadow-lg shadow-teal-500/20 font-bold" 
+        : "text-slate-500 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-900"
+    }`;
   };
 
   return (
     <>
-      <div className="sticky top-0 lg:h-screen">
-        <ToastContainer />
-        <div
-          className={`
-            w-full
-            hidden lg:block relative h-screen duration-300 bg-white border-r border-gray-200 dark:border-gray-600 p-5 dark:bg-slate-800`}
-        >
-          <div className="flex flex-col items-center justify-center w-full">
-            <div class="w-[70%] flex justify-center m-auto">
-              <img
-                src={require("../../assets/images/distributor/LOGO_final.png")}
-                alt=""
-                className=""
-              />
+      {/* Desktop Sidebar */}
+      <aside className="hidden lg:flex flex-col sticky top-0 h-screen w-72 bg-white border-r border-slate-100 dark:bg-slate-950 dark:border-slate-900 transition-colors">
+        <div className="p-8">
+          <Link href="/distributor/home" className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-teal-500 p-2 flex items-center justify-center">
+              <img src={LOGO_final.src || LOGO_final} alt="H-Phsar" className="h-full w-full object-contain brightness-0 invert" />
             </div>
-          </div>
-          <hr className="p-[1px] bg-gray-2  00 my-5" />
-          <div id="docs-sidebar">
-            <nav class="hs-accordion-group" data-hs-accordion-always-open>
-              <ul class="w-full">
-                <li></li>
-                {/* Home */}
-                <li className="">
-                  <NavLink
-                    to="/distributor/home"
-                    // onClick={OnNavHome}
-                    className={({ isActive }) =>
-                      isActive
-                        ? "bg-primaryColor shadow-md flex  items-center gap-x-3 p-3 text-base xl:font-medium rounded-lg cursor-pointer dark:text-white  text-white dark:bg-gray-700  dark:hover:bg-gray-700"
-                        : "text-black flex shadow-sm items-center gap-x-3 p-3 text-base font-medium rounded-lg cursor-pointer dark:text-white hover:bg-gray-200   dark:bg-gray-700  dark:hover:bg-gray-700 "
-                    }
-                  >
-                    <AiFillHome size={22} />
-                    Home
-                  </NavLink>
-                </li>
-                {/* Product */}
-                <li>
-                  <NavLink
-                    to="/distributor/product"
-                    className={({ isActive }) =>
-                      isActive
-                        ? "bg-primaryColor shadow-md flex  items-center gap-x-3 p-3 text-base xl:font-medium rounded-lg cursor-pointer dark:text-white  text-white dark:bg-gray-700  dark:hover:bg-gray-700"
-                        : "text-black flex shadow-sm items-center gap-x-3 p-3 text-base font-medium rounded-lg cursor-pointer dark:text-white hover:bg-gray-200   dark:bg-gray-700  dark:hover:bg-gray-700 "
-                    }
-                  >
-                    <FaBox size={20} />
-                    Product
-                  </NavLink>
-                </li>
-                {/* Category */}
-                <li>
-                  <div
-                    // to="/distributor/category"
-                    onClick={() => setIsOpenCategory(!isOpenCategory)}
-                    className={`flex items-center gap-x-3 p-3 shadow-sm text-base font-medium rounded-lg cursor-pointer dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700
-                    text-gray-900 dark:bg-gray-700
-                 `}
-                  >
-                    <img
-                      src={require("../../assets/images/distributor/category.png")}
-                      className={`w-[20px]`}
-                    />
-                    Category{" "}
-                    {/* <CategoryComponent
-                      isOpenCategory={isOpenCategory}
-                      // handleShowCategory={handleShowCategory}
-                    /> */}
-                  </div>
-
-                  {isOpenCategory ? (
-                    <CategoryComponent
-                      isOpenCategory={isOpenCategory}
-                      handleShowCategory={handleShowCategory}
-                    />
-                  ) : (
-                    <></>
-                  )}
-                </li>
-                {/* Order */}
-                <li>
-                  <NavLink
-                    to="/distributor/order"
-                    className={({ isActive }) =>
-                      isActive
-                        ? "bg-primaryColor shadow-md flex  items-center gap-x-3 p-3 text-base xl:font-medium rounded-lg cursor-pointer dark:text-white  text-white dark:bg-gray-700  dark:hover:bg-gray-700"
-                        : "text-black flex shadow-sm items-center gap-x-3 p-3 text-base font-medium rounded-lg cursor-pointer dark:text-white hover:bg-gray-200   dark:bg-gray-700  dark:hover:bg-gray-700 "
-                    }
-                  >
-                    {/* <img
-                      src={require("../../assets/images/distributor/order.png")}
-                    /> */}
-                    <BsFillBagPlusFill size={20} />
-                    Order
-                  </NavLink>
-                </li>
-                {/* Report */}
-                <li>
-                  <NavLink
-                    to="/distributor/report"
-                    className={({ isActive }) =>
-                      isActive
-                        ? "bg-primaryColor shadow-md flex  items-center gap-x-3 p-3 text-base xl:font-medium rounded-lg cursor-pointer dark:text-white  text-white dark:bg-gray-700  dark:hover:bg-gray-700"
-                        : "text-black flex shadow-sm items-center gap-x-3 p-3 text-base font-medium rounded-lg cursor-pointer dark:text-white hover:bg-gray-200   dark:bg-gray-700  dark:hover:bg-gray-700 "
-                    }
-                  >
-                    {/* <img
-                      src={require("../../assets/images/distributor/report.png")}
-                    />
-                     */}
-                    <span className="-ml-1">
-                      {" "}
-                      <HiDocumentReport size={26} />
-                    </span>
-                    Report
-                  </NavLink>
-                </li>
-                {/* Order history */}
-                <li>
-                  <NavLink
-                    to="/distributor/order-history"
-                    className={({ isActive }) =>
-                      isActive
-                        ? "bg-primaryColor shadow-md flex  items-center gap-x-3 p-3 text-base xl:font-medium rounded-lg cursor-pointer dark:text-white  text-white dark:bg-gray-700  dark:hover:bg-gray-700"
-                        : "text-black flex shadow-sm items-center gap-x-3 p-3 text-base font-medium rounded-lg cursor-pointer dark:text-white hover:bg-gray-200   dark:bg-gray-700  dark:hover:bg-gray-700 "
-                    }
-                  >
-                    <GoChecklist size={26} />
-                    Order history
-                  </NavLink>
-                </li>
-                {/* Import */}
-                <li class="hs-accordion" id="account-accordion">
-                  <div
-                    class="hs-accordion-toggle shadow-sm  flex gap-x-3 p-3   hs-accordion-active:hover:bg-transparent  text-slate-700  dark:bg-gray-800  dark:hover:text-slate-300 dark:hs-accordion-active:text-white `flex items-center text-base font-medium rounded-lg cursor-pointer dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700
-                     "
-                  >
-                    <img
-                      src={require("../../assets/images/distributor/import.png")}
-                    />
-                    Import
-                    <svg
-                      class="hs-accordion-active:block ml-auto hidden w-3 h-3 text-gray-600 group-hover:text-gray-500 dark:text-gray-400"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 16 16"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M2 11L8.16086 5.31305C8.35239 5.13625 8.64761 5.13625 8.83914 5.31305L15 11"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                      ></path>
-                    </svg>
-                    <svg
-                      class="hs-accordion-active:hidden ml-auto block w-3 h-3 text-gray-600 group-hover:text-gray-500 dark:text-gray-400"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 16 16"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M2 5L8.16086 10.6869C8.35239 10.8637 8.64761 10.8637 8.83914 10.6869L15 5"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                      ></path>
-                    </svg>
-                  </div>
-
-                  <div
-                    id="account-accordion"
-                    class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
-                  >
-                    <ul class="pt-2 pl-2">
-                      <li>
-                        <div
-                          onClick={handleShowImport}
-                          className="text-black flex text-sm items-center gap-x-1 p-3 rounded-lg cursor-pointer dark:text-white hover:bg-gray-200   dark:bg-gray-700  dark:hover:bg-gray-700 "
-                        >
-                          <span className="ml-7">New import </span>
-                        </div>
-                      </li>
-                      <NewImport
-                        isOpenNewImport={isOpenNewImport}
-                        handleShowImport={handleShowImport}
-                        // data={123}
-                      />
-                      <li>
-                        <NavLink
-                          to="/distributor/history"
-                          className={({ isActive }) =>
-                            isActive
-                              ? "bg-primaryColor text-white  flex text-sm items-center gap-x-1 p-3 rounded-lg cursor-pointer dark:text-white hover:bg-gray-200   dark:bg-gray-700  dark:hover:bg-gray-700 "
-                              : "text-black flex text-sm items-center gap-x-1 p-3 rounded-lg cursor-pointer dark:text-white hover:bg-gray-200   dark:bg-gray-700  dark:hover:bg-gray-700 "
-                          }
-                        >
-                          <span className="ml-7">History</span>
-                        </NavLink>
-                      </li>
-                    </ul>
-                  </div>
-                </li>
-                {/* Profile */}
-                <li class="hs-accordion" id="account-accordion">
-                  <a
-                    class="hs-accordion-toggle shadow-sm  flex gap-x-3 p-3  hs-accordion-active:hover:bg-transparent  text-slate-700  dark:bg-gray-800  dark:hover:text-slate-300 dark:hs-accordion-active:text-white `flex items-center text-base font-medium rounded-lg cursor-pointer dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700
-                     "
-                    href="javascript:;"
-                  >
-                    <img
-                      src={require("../../assets/images/distributor/user.png")}
-                    />
-                    Profile
-                    <svg
-                      class="hs-accordion-active:block ml-auto hidden w-3 h-3 text-gray-600 group-hover:text-gray-500 dark:text-gray-400"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 16 16"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M2 11L8.16086 5.31305C8.35239 5.13625 8.64761 5.13625 8.83914 5.31305L15 11"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                      ></path>
-                    </svg>
-                    <svg
-                      class="hs-accordion-active:hidden ml-auto block w-3 h-3 text-gray-600 group-hover:text-gray-500 dark:text-gray-400"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 16 16"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M2 5L8.16086 10.6869C8.35239 10.8637 8.64761 10.8637 8.83914 10.6869L15 5"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                      ></path>
-                    </svg>
-                  </a>
-
-                  <div
-                    id="account-accordion"
-                    class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
-                  >
-                    <ul class="pt-2 pl-2">
-                      <li>
-                        <NavLink
-                          to="/distributor/account"
-                          className={({ isActive }) =>
-                            isActive
-                              ? "bg-primaryColor text-white  flex text-sm items-center gap-x-1 p-3 rounded-lg cursor-pointer dark:text-white hover:bg-gray-200   dark:bg-gray-700  dark:hover:bg-gray-700 "
-                              : "text-black flex text-sm items-center gap-x-1 p-3 rounded-lg cursor-pointer dark:text-white hover:bg-gray-200   dark:bg-gray-700  dark:hover:bg-gray-700 "
-                          }
-                        >
-                          <span className="ml-7">Account</span>
-                        </NavLink>
-                      </li>
-                      <li>
-                        <NavLink
-                          to="/distributor/store"
-                          className={({ isActive }) =>
-                            isActive
-                              ? "bg-primaryColor text-white  flex text-sm items-center gap-x-1 p-3 rounded-lg cursor-pointer dark:text-white hover:bg-gray-200   dark:bg-gray-700  dark:hover:bg-gray-700 "
-                              : "text-black flex text-sm items-center gap-x-1 p-3 rounded-lg cursor-pointer dark:text-white hover:bg-gray-200   dark:bg-gray-700  dark:hover:bg-gray-700 "
-                          }
-                        >
-                          <span className="ml-7">Store</span>
-                        </NavLink>
-                      </li>
-                    </ul>
-                  </div>
-                </li>
-                {/* Sign out */}
-                <li>
-                  <div
-                    onClick={() => setShowSignOut(true)}
-                    className={`flex items-center shadow-sm gap-x-3 p-3 text-base font-medium rounded-lg cursor-pointer dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700
-                      text-gray-900 dark:bg-gray-700
-                   `}
-                  >
-                    <img
-                      src={require("../../assets/images/distributor/logout.png")}
-                    />
-                    Sign out
-                  </div>
-                </li>
-              </ul>
-            </nav>
-          </div>
+            <span className="text-xl font-black tracking-tight text-slate-900 dark:text-white">StockFlow</span>
+          </Link>
         </div>
-        {/* Mobile Menu */}
-        <div className="pt-3">
-          <HamburgerButton
-            setMobileMenu={setMobileMenu}
-            mobileMenu={mobileMenu}
-          />
-        </div>
-        <div className="lg:hidden ">
-          <div
-            className={`${
-              mobileMenu ? "flex " : "hidden"
-            } bg-white absolute z-50 flex-col items-center self-end py-8 mt-16 space-y-6 font-bold w-44 left-2 dark:text-white   dark:bg-slate-800 drop-shadow md rounded-xl`}
+
+        <nav className="flex-1 px-4 space-y-1.5 overflow-y-auto custom-scrollbar">
+          {menuItems.map((item) => (
+            <div key={item.title}>
+              {item.path ? (
+                <Link href={item.path} className={getNavLinkClass(item.path)}>
+                  <item.icon className={`w-5 h-5 ${pathname === item.path ? "text-white" : "text-slate-400 group-hover:text-teal-500"}`} />
+                  {item.title}
+                </Link>
+              ) : (
+                <button onClick={item.onClick} className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-500 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-900 transition-all group">
+                  <item.icon className="w-5 h-5 text-slate-400 group-hover:text-teal-500" />
+                  {item.title}
+                </button>
+              )}
+            </div>
+          ))}
+
+          {/* Submenu: Import */}
+          <div className="pt-2">
+            <button 
+              onClick={() => setIsImportSectionOpen(!isImportSectionOpen)}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all group ${
+                isImportSectionOpen ? "text-teal-600 dark:text-teal-400 font-bold" : "text-slate-500"
+              } hover:bg-slate-50 dark:hover:bg-slate-900`}
+            >
+              <Download className={`w-5 h-5 ${isImportSectionOpen ? "text-teal-500" : "text-slate-400 group-hover:text-teal-500"}`} />
+              <span>Import</span>
+              <ChevronDown className={`ml-auto w-4 h-4 transition-transform ${isImportSectionOpen ? "rotate-180" : ""}`} />
+            </button>
+            <AnimatePresence>
+              {isImportSectionOpen && (
+                <motion.div 
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="overflow-hidden pl-12 space-y-1"
+                >
+                  <button onClick={() => setIsOpenNewImport(true)} className="w-full text-left py-2 text-sm text-slate-500 hover:text-teal-600 transition-colors">
+                    New Import
+                  </button>
+                  <Link href="/distributor/history" className={`block py-2 text-sm transition-colors ${pathname === '/distributor/history' ? 'text-teal-600 font-bold' : 'text-slate-500 hover:text-teal-600'}`}>
+                    History
+                  </Link>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Submenu: Profile */}
+          <div>
+            <button 
+              onClick={() => setIsProfileSectionOpen(!isProfileSectionOpen)}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all group ${
+                isProfileSectionOpen ? "text-teal-600 dark:text-teal-400 font-bold" : "text-slate-500"
+              } hover:bg-slate-50 dark:hover:bg-slate-900`}
+            >
+              <User className={`w-5 h-5 ${isProfileSectionOpen ? "text-teal-500" : "text-slate-400 group-hover:text-teal-500"}`} />
+              <span>Settings</span>
+              <ChevronDown className={`ml-auto w-4 h-4 transition-transform ${isProfileSectionOpen ? "rotate-180" : ""}`} />
+            </button>
+            <AnimatePresence>
+              {isProfileSectionOpen && (
+                <motion.div 
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="overflow-hidden pl-12 space-y-1"
+                >
+                  <Link href="/distributor/account" className={`block py-2 text-sm transition-colors ${pathname === '/distributor/account' ? 'text-teal-600 font-bold' : 'text-slate-500 hover:text-teal-600'}`}>
+                    Account
+                  </Link>
+                  <Link href="/distributor/store" className={`block py-2 text-sm transition-colors ${pathname === '/distributor/store' ? 'text-teal-600 font-bold' : 'text-slate-500 hover:text-teal-600'}`}>
+                    Store Profile
+                  </Link>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </nav>
+
+        <div className="p-4 border-t border-slate-50 dark:border-slate-900">
+          <button 
+            onClick={() => setShowSignOut(true)}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-all font-bold"
           >
-            {Menus.map((menu, index) => (
-              <Link
-              to={menu.path}
-                key={index}
-                onClick={() => {
-                  
-                  if ( index === 2){
-                    setIsOpenCategory(!isOpenCategory)
-                    console.log("first item selected")
-                    return;
-                  }
-                  if (index === 7) {
-                    handleSignOut(); // Call the handleSignOut function
-                  }
-                  setMobileMenu(false);
-                }}
-              >
-                <span
-                  className={` ${
-                    location.pathname === menu.path &&
-                    "bg-primaryColor dark:bg-gray-700 text-white"
-                  } py-2 px-5 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700`}
-                >
-                  {menu.title}
-                  {/* {isOpenCategory ? (
-                    <CategoryComponent
-                      isOpenCategory={isOpenCategory}
-                      handleShowCategory={handleShowCategory}
-                    />
-                  ) : (
-                    <></>
-                  )} */}
-                </span>
-              </Link>
-            ))}
-          </div>
+            <LogOut className="w-5 h-5" />
+            <span>Sign Out</span>
+          </button>
         </div>
-        {/* Sign out */}
-        <React.Fragment>
-          <Modal show={showSignOut} size="md" popup={true}>
-            <Modal.Body>
-              <div className="relative flex -mx-6 -mt-6 items-center justify-center py-2 border-b border-solid bg-primaryColor border-slate-200 rounded-t">
-                <h1 className="text-white font-bold text-2xl text-center">
-                  Sign Out
-                </h1>
-                <button
-                  className="absolute right-2 top-2 p-1 ml-auto bg-transparent border-0 text-black float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                  onClick={() => setShowSignOut(false)}
-                >
-                  <img
-                    src={require("../../assets/images/closeWhite.png")}
-                    className="w-[20px]"
-                    alt=""
-                  />
+      </aside>
+
+      {/* Mobile Top Bar */}
+      <div className="lg:hidden sticky top-0 z-40 flex items-center justify-between px-6 h-16 bg-white dark:bg-slate-950 border-b border-slate-100 dark:border-slate-900">
+        <div className="flex items-center gap-2">
+          <div className="h-8 w-8 rounded-lg bg-teal-500 p-1.5">
+            <img src={LOGO_final.src || LOGO_final} alt="Logo" className="h-full w-full object-contain brightness-0 invert" />
+          </div>
+          <span className="text-lg font-black tracking-tight text-slate-900 dark:text-white">StockFlow</span>
+        </div>
+        <HamburgerButton setMobileMenu={setMobileMenu} mobileMenu={mobileMenu} />
+      </div>
+
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {mobileMenu && (
+          <div className="lg:hidden fixed inset-0 z-50">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileMenu(false)}
+              className="absolute inset-0 bg-slate-950/20 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="relative w-4/5 max-w-sm h-full bg-white dark:bg-slate-950 shadow-2xl flex flex-col"
+            >
+              <div className="p-6 border-b border-slate-50 dark:border-slate-900 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="h-8 w-8 rounded-lg bg-teal-500 p-1.5">
+                    <img src={LOGO_final.src || LOGO_final} alt="Logo" className="h-full w-full object-contain brightness-0 invert" />
+                  </div>
+                  <span className="text-lg font-black text-slate-900 dark:text-white">StockFlow</span>
+                </div>
+                <button onClick={() => setMobileMenu(false)} className="p-2 text-slate-400">
+                  <X className="w-6 h-6" />
                 </button>
               </div>
-              <div className="text-center">
-                <HiOutlineExclamationCircle className="mx-auto my-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
-                <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-                  Do you want to sign out ?
-                </h3>
-                <div className="flex justify-center gap-4">
-                  <Button color="failure" onClick={handleSignOut}>
-                    Yes, I'm sure
-                  </Button>
-                  <Button color="gray" onClick={() => setShowSignOut(false)}>
-                    No, cancel
-                  </Button>
-                </div>
-              </div>
-            </Modal.Body>
-          </Modal>
-        </React.Fragment>
-      </div>
+              <nav className="flex-1 overflow-y-auto p-4 space-y-1">
+                {menuItems.map((item) => (
+                  <div key={item.title}>
+                    {item.path ? (
+                      <Link 
+                        href={item.path} 
+                        onClick={() => setMobileMenu(false)}
+                        className={`flex items-center gap-4 px-4 py-4 rounded-2xl text-base font-bold ${
+                          pathname === item.path 
+                            ? 'bg-teal-500 text-white shadow-lg shadow-teal-500/20' 
+                            : 'text-slate-600 dark:text-slate-400'
+                        }`}
+                      >
+                        <item.icon className={`w-5 h-5 ${pathname === item.path ? 'text-white' : 'text-slate-400'}`} /> 
+                        {item.title}
+                      </Link>
+                    ) : (
+                      <button 
+                        onClick={() => { item.onClick(); setMobileMenu(false); }}
+                        className="w-full flex items-center gap-4 px-4 py-4 rounded-2xl text-base font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all"
+                      >
+                        <item.icon className="w-5 h-5 text-slate-400" />
+                        {item.title}
+                      </button>
+                    )}
+                  </div>
+                ))}
+                
+                <div className="my-4 h-px bg-slate-50 dark:bg-slate-900" />
+                
+                <Link href="/distributor/account" onClick={() => setMobileMenu(false)} className="flex items-center gap-4 px-4 py-4 rounded-2xl text-base font-bold text-slate-600 dark:text-slate-400">
+                  <User className="w-5 h-5 text-slate-400" /> Account Settings
+                </Link>
+                <Link href="/distributor/store" onClick={() => setMobileMenu(false)} className="flex items-center gap-4 px-4 py-4 rounded-2xl text-base font-bold text-slate-600 dark:text-slate-400">
+                  <Store className="w-5 h-5 text-slate-400" /> Store Profile
+                </Link>
+                <button 
+                  onClick={() => { setMobileMenu(false); setShowSignOut(true); }}
+                  className="w-full flex items-center gap-4 px-4 py-4 rounded-2xl text-base font-bold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-all"
+                >
+                  <LogOut className="w-5 h-5" /> Sign Out
+                </button>
+              </nav>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Components & Dialogs */}
+      <NewImport isOpenNewImport={isOpenNewImport} handleShowImport={() => setIsOpenNewImport(false)} />
+      {isOpenCategory && <CategoryComponent isOpenCategory={isOpenCategory} handleShowCategory={() => setIsOpenCategory(false)} />}
+
+      <Dialog open={showSignOut} onOpenChange={setShowSignOut}>
+        <DialogContent className="max-w-md rounded-[2.5rem] p-8 text-center border-none shadow-2xl">
+          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-rose-50 text-rose-500 dark:bg-rose-950/30">
+            <AlertTriangle className="h-10 w-10" />
+          </div>
+          <h3 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">Sign Out?</h3>
+          <p className="mt-4 text-slate-500 leading-relaxed">
+            Are you sure you want to end your distributor session? You'll need to sign back in to manage your inventory.
+          </p>
+          <div className="mt-10 flex gap-3">
+            <Button 
+              className="h-14 flex-1 rounded-2xl bg-rose-500 font-bold text-white shadow-lg shadow-rose-500/20 hover:bg-rose-600 transition-all active:scale-[0.98]"
+              onClick={handleSignOut}
+            >
+              Yes, Sign Out
+            </Button>
+            <Button 
+              variant="outline" 
+              className="h-14 flex-1 rounded-2xl border-slate-200 dark:border-slate-800 font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all active:scale-[0.98]"
+              onClick={() => setShowSignOut(false)}
+            >
+              Stay Logged In
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

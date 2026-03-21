@@ -1,9 +1,7 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import { Bar } from "react-chartjs-2";
-import Datepicker from "react-tailwindcss-datepicker";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import {
   Chart as chartJS,
   BarElement,
@@ -12,282 +10,180 @@ import {
   Legend,
   CategoryScale,
 } from "chart.js";
-import { useState } from "react";
-import { useEffect } from "react";
 import dayjs from "dayjs";
 import { api } from "../../utils/api";
 import { ToastContainer, toast } from "react-toastify";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
+import { FileText, Filter, TrendingUp, DollarSign, ShoppingBag } from "lucide-react";
 
 chartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+
 function ReportDistributor() {
   useEffect(() => {
-    document.title = "StockFlow Commerce | Report";
+    document.title = "H-Phsar | Reports";
   }, []);
 
-  const [startDate, setStartDate] = useState();
-  const [endDate, setEndDate] = useState();
-
-  const [formattedStartDate, setFormattedStartDate] = useState();
-  const [formattedEndDate, setFormattedEndDate] = useState();
-
-  const [statsTime, setStatsTime] = useState([]);
-
+  const [startDate, setStartDate] = useState(dayjs().subtract(6, 'month').format("YYYY-MM"));
+  const [endDate, setEndDate] = useState(dayjs().format("YYYY-MM"));
+  const [statsTime, setStatsTime] = useState({});
   const [dataSetStats, setDataSetStats] = useState([]);
   const [graphLabel, setGraphLabel] = useState([]);
+  const [isClicked, setIsClicked] = useState(false);
 
-  const handleStartDateChange = (newValue) => {
-    if (newValue.isAfter(dayjs(), "day")) {
-      toast.error("Selected date should not be higher than today!");
-      setStartDate(null);
-    } else {
-      setStartDate(newValue);
-    }
-  };
-
-  const handleEndDateChange = (newValue) => {
-    if (newValue.isAfter(dayjs(), "day")) {
-      toast.error("Selected date should not be higher than today!");
-      setEndDate(null);
-    } else {
-      setEndDate(newValue);
-    }
+  const handleQuickFilter = (months) => {
+    setStartDate(dayjs().subtract(months, 'month').format("YYYY-MM"));
+    setEndDate(dayjs().format("YYYY-MM"));
+    setIsClicked(!isClicked);
   };
 
   const handleSubmit = () => {
     if (!startDate || !endDate) {
-      toast.error("Please select both start date and end date");
-      setStartDate(null);
-      setEndDate(null);
+      toast.error("Please select a valid date range");
       return;
     }
-    // Handle the submission of start date and end date
-    // For example, you can make an API call or perform any necessary operations
-    console.log("Start Date:", startDate);
-    console.log("End Date:", endDate);
-
-    // Reset the form or perform any other actions
-    setStartDate();
-    setEndDate();
-
-    toast.success("Dates submitted successfully");
-  };
-
-  const reportURL = () => {
-    const baseURL = "http://localhost:8888/api/v1/distributor/reports";
-
-    if (startDate) {
-      console.log(startDate);
-      const formattedStartDate = dayjs(startDate).format("YYYY-MM");
-      console.log(formattedStartDate);
-      setFormattedStartDate(formattedStartDate);
-    }
-
-    if (endDate) {
-      console.log(endDate);
-      const formattedEndDate = dayjs(endDate).format("YYYY-MM");
-      console.log(formattedEndDate);
-      setFormattedEndDate(formattedEndDate);
-    }
-    const urlWithQuery = `${baseURL}?startDate=${formattedStartDate}&endDate=${formattedEndDate}`;
-    console.log(urlWithQuery);
-    return urlWithQuery;
+    setIsClicked(!isClicked);
   };
 
   useEffect(() => {
     const fetchData = async () => {
-      const url = reportURL();
+      const formattedStartDate = dayjs(startDate).startOf('month').format("YYYY-MM-DD");
+      const formattedEndDate = dayjs(endDate).endOf('month').format("YYYY-MM-DD");
+      const url = `http://localhost:8888/api/v1/distributor/reports?startDate=${formattedStartDate}&endDate=${formattedEndDate}`;
       try {
         const response = await api.get(url);
-        setStatsTime(response.data.data);
-        console.log(response )
-        console.log(response.data.data);
-        const timeline = response.data.data.orderPerMonth
-        ;
-        console.log("pr",timeline)
-        const graphLabel = response.data.data.periodName;
-        setDataSetStats(timeline);
-        console.log("aa",graphLabel)
-        setGraphLabel(graphLabel);
+        if (response.data?.data) {
+          setStatsTime(response.data.data);
+          setDataSetStats(response.data.data.orderPerMonth || []);
+          setGraphLabel(response.data.data.periodName || []);
+        }
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching report data:", error);
       }
     };
     fetchData();
-  }, [startDate && endDate]);
- 
+  }, [startDate, endDate, isClicked]);
 
   const data = {
-    labels: 
-    graphLabel,
-    // [
-    // "January" ,
-    // "February" ,
-    // "March",
-    // "April",
-    // "May",
-    // "June",
-    // "July",
-    // "August",
-
-    // ],
+    labels: graphLabel.length ? graphLabel : ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
     datasets: [
       {
-        label: "a month",
-        data: dataSetStats, // order per month
-        fill: false,
-        borderColor: "rgb(75, 192, 192)",
-        backgroundColor: "#0f766e",
-        tension: 0.1,
+        label: "Monthly Orders",
+        data: dataSetStats,
+        backgroundColor: "rgba(15, 118, 110, 0.8)",
+        borderRadius: 8,
+        hoverBackgroundColor: "#0f766e",
       },
     ],
   };
 
-  //   data picker with
-
-  // set when opening
-  const [isOpen, setIsOpen] = useState(false);
-  useEffect(() => {
-    setIsOpen(true);
-  }, []);
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsOpen(true);
-    }, 5000); // Delay of 500 milliseconds
-
-
-    const options = {
-      responsive: true,
-      // maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: "top",
-          align: "",
-          onClick: (e) => e.stopPropagation(), // Prevent legend filtering
-        },
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: "#1e293b",
+        padding: 12,
+        titleFont: { size: 14, weight: "bold" },
+        bodyFont: { size: 13 },
       },
-      scales: {
-        y: {
-            beginAtZero: true,        
-        }
-    }
-    };
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { color: "#64748b" } },
+      y: { beginAtZero: true, ticks: { stepSize: 1, color: "#64748b" }, grid: { color: "rgba(0,0,0,0.05)" } },
+    },
+  };
 
-    return () => clearTimeout(timer);
-  }, []);
   return (
-    <div
-      className={`dark:text-white transition ${
-        isOpen
-          ? " transition-all ease-in-out delay-300 duration-1000 "
-          : "opacity-0 scale-95 translate-y-1/2 "
-      }`}
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="space-y-6 p-4 md:p-6 dark:bg-slate-950 min-h-screen"
     >
-      <div className="bg-white min-h-screen rounded-lg w-full shadow-md">
-        <div className="w-[95%] min-h-screen px-4 sm:px-10 lg:px-0 lg:m-auto flex-col">
-          <div className="flex flex-col gap-3 justify-between m-auto">
-            <div className="mt-10 mb-10 flex flex-wrap flex-col gap-5 justify-center">
-              <h1 className="text-3xl text-primaryColor font-bold">
-                Order history
-              </h1>
-              <p className="text-[#777777]">
-                Manage your recent order and invoices.
-              </p>
-              <p className="text-[#777777]">
-                Click on a download button to get the invoice!
-              </p>
-              <div className=" flex flex-col lg:flex-row sm:gap-5  sm:justify-start">
-                {/* <Datepicker
-                format="yyyy-MM"
-                value={value}
-                onChange={handleValueChange}
-              /> */}
-             <div className="flex flex-col sm:flex-row gap-5 lg:w-3/5">
-         <div className="flex flex-col w-[100%] sm:flex-row sm:justify-start sm:space-x-1 lg:p-2  justify-evenly">
-         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    label={"Start Date"}
-                    views={["year", "month"]}
-                    format="YYYY-MM"
-                    value={startDate}
-                    onChange={handleStartDateChange}
-                    slotProps={{
-                      textField: {
-                          readOnly: true,
-                      },
-                  }}
-                    
-                  />
-                </LocalizationProvider>
-                <p className="mx-auto sm:mx-0 sm:p-4">To</p>
-
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    label={"End Date"}
-                    views={["year", "month"]}
-                    value={endDate}
-                    format="YYYY-MM"
-                    onChange={handleEndDateChange}
-                    slotProps={{
-                      textField: {
-                          readOnly: true,
-                      },
-                  }}
-                  />
-                </LocalizationProvider>
-
-                <button
-                  className="px-4 mb-2 mt-2 sm:mt-0 sm:mb-0 space-x-1 h-10 sm:h-14 bg-primary text-white font-semibold rounded-md hover:bg-primary"
-                  onClick={handleSubmit}
-                >
-                  Check
-                </button>
-         </div>
-             </div>
-                <div className="  flex flex-col sm:flex-row sm:justify-between  lg:justify-between w-full sm:w-4/5 lg:m-auto sm:gap-2 lg:gap-0 lg:ml-40 ">
-                  {/* Expense */}
-                  <div className="py-2 mb-2 sm:mb-0 pl-8 pr-24  shadow-md flex flex-col gap-1 rounded-lg border border-gray-200">
-                    <p className="text-[#0F766E]">Expense</p>
-                    <h2 className="text-xl text-black font-medium">
-                      $ <span>{statsTime.totalExpense}</span>
-                    </h2>
-                    <p>
-                      {/* <span className="text-[#08C91B]">+34.42%</span> */}
-                    </p>
-                  </div>
-                  {/* Expense */}
-                  <div className="py-2 mb-2 sm:mb-0 pl-8 pr-24  shadow-md flex flex-col gap-1 rounded-lg border border-gray-200">
-                    <p className="text-[#0F766E]">Profit</p>
-                    <h2 className="text-xl text-black font-medium">
-                      $ <span>{statsTime.totalProfit}</span>
-                    </h2>
-                    <p>
-                      {/* <span className="text-[#08C91B]">+34.42%</span> */}
-                    </p>
-                  </div>
-                  {/* Expense */}
-                  <div className="py-2 mb-2 sm:mb-0 pl-8 pr-24  shadow-md flex flex-col gap-1 rounded-lg border border-gray-200">
-                    <p className="text-[#0F766E]">Total Orders</p>
-                    <h2 className="text-xl text-black font-medium">
-                      <span>{statsTime.totalOrder}</span>
-                    </h2>
-                    <p>
-                      {/* <span className="text-[#08C91B]">+34.42%</span> */}
-                    </p>
-                  </div>
-                </div>
-                <ToastContainer />
-              </div>
-             <Bar data={data} options={Option}  />
-
-              {/* cart */}
-              {/* {reportList.map((item=>( */}
-
-              {/* )))}   */}
+      <ToastContainer />
+      
+      <Card className="border-none shadow-sm bg-white dark:bg-slate-900">
+        <CardHeader className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-teal-100 dark:bg-teal-900/30 rounded-lg">
+              <FileText className="w-6 h-6 text-teal-600" />
+            </div>
+            <div>
+              <CardTitle className="text-2xl font-bold text-slate-900 dark:text-white">Business Reports</CardTitle>
+              <p className="text-slate-500 text-sm">Detailed overview of your sales and performance.</p>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-lg">
+              {[
+                { label: "3M", val: 3 },
+                { label: "6M", val: 6 },
+                { label: "1Y", val: 12 }
+              ].map(q => (
+                <button
+                  key={q.label}
+                  type="button"
+                  onClick={() => handleQuickFilter(q.val)}
+                  className="px-3 py-1.5 text-xs font-bold rounded-md hover:bg-white dark:hover:bg-slate-700 transition-all text-slate-600 dark:text-slate-400 shadow-sm"
+                >
+                  {q.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-2">
+              <input
+                type="month"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500"
+              />
+              <span className="text-slate-400 text-xs font-bold">TO</span>
+              <input
+                type="month"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500"
+              />
+            </div>
+
+            <Button onClick={handleSubmit} className="gap-2 rounded-lg h-10 px-6">
+              <Filter className="w-4 h-4" />
+              Apply
+            </Button>
+          </div>
+        </CardHeader>
+
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            {[
+              { label: "Total Expense", value: statsTime.totalExpense, icon: <DollarSign className="w-5 h-5" />, color: "text-rose-600", bg: "bg-rose-50" },
+              { label: "Total Profit", value: statsTime.totalProfit, icon: <TrendingUp className="w-5 h-5" />, color: "text-emerald-600", bg: "bg-emerald-50" },
+              { label: "Total Orders", value: statsTime.totalOrder, icon: <ShoppingBag className="w-5 h-5" />, color: "text-teal-600", bg: "bg-teal-50" },
+            ].map((stat, idx) => (
+              <div key={idx} className="p-6 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex items-center gap-4">
+                <div className={`p-4 ${stat.bg} dark:bg-slate-800 rounded-2xl ${stat.color}`}>
+                  {stat.icon}
+                </div>
+                <div>
+                  <p className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">{stat.label}</p>
+                  <h3 className="text-2xl font-black text-slate-900 dark:text-white">
+                    {typeof stat.value === 'number' ? (stat.label.includes('Order') ? stat.value : `$${stat.value.toFixed(2)}`) : (stat.value || 0)}
+                  </h3>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="h-[450px] w-full mt-10 p-6 rounded-2xl bg-slate-50/50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+            <Bar data={data} options={options} />
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 }
 

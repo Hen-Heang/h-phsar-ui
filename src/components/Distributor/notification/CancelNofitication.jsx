@@ -13,6 +13,9 @@ import {
   getAllNotificationsDistributor,
   setUpdateDateNotification,
 } from "../../../redux/slices/distributor/notification/notificationSlice";
+import closeWhite from "../../../assets/images/distributor/close_white.png";
+import noNotification from "../../../assets/images/distributor/no_notification.png";
+import fallbackAvatar from "../../../assets/images/profile_acc.png";
 export const CancelNotification = () => {
   const dispatch = useDispatch();
 
@@ -58,7 +61,7 @@ export const CancelNotification = () => {
       setLoadingPro(false);
     } else {
       read_notification_distributor(data.id).then((res) => {
-        if (res.status == 200) {
+        if (res.status === 200) {
           dispatch(setUpdateDateNotification(data));
           setShowModal(true);
           setDataNotification(data);
@@ -70,9 +73,6 @@ export const CancelNotification = () => {
       });
     }
   };
-  const imageTest =
-    "https://firebasestorage.googleapis.com/v0/b/wm-file-upload.appspot.com/o/download.png?alt=media&token=f3aa8608-77b4-4437-af13-993de6ac2e84";
-
   const StyledLoader = styled(LoadingOverlay)`
     position: fixed;
     top: 0;
@@ -100,11 +100,11 @@ export const CancelNotification = () => {
                     {/*header*/}
                     <div className="flex items-start justify-between p-3 border-b border-solid bg-primaryColor border-slate-200 rounded-t">
                       <h3 className="text-xl text-white font-semibold">
-                        {dataNotification.notificationType == "ORDER_CANCELLED"
+                        {dataNotification.notificationType === "ORDER_CANCELLED"
                           ? "Order Has Cancelled"
-                          : dataNotification.notificationType == "NEW_ORDER"
+                          : dataNotification.notificationType === "NEW_ORDER"
                           ? "New Order"
-                          : dataNotification.notificationType ==
+                          : dataNotification.notificationType ===
                             "ORDER_COMPLETE"
                           ? "Order Complete"
                           : "Out of stock"}
@@ -112,7 +112,7 @@ export const CancelNotification = () => {
                       <button onClick={() => setShowModal(false)}>
                         <span className="h-6 w-6 z-20">
                           <img
-                            src={require("../../../assets/images/distributor/close_white.png")}
+                            src={closeWhite}
                             alt=""
                           />
                         </span>
@@ -129,12 +129,16 @@ export const CancelNotification = () => {
                                   <img
                                     alt="..."
                                     src={
-                                      dataNotification.image == null ||
-                                      dataNotification.image == ""
-                                        ? imageTest
+                                      dataNotification.image === null ||
+                                      dataNotification.image === ""
+                                        ? fallbackAvatar
                                         : dataNotification.image
                                     }
                                     className="shadow-xl rounded-full align-middle border-none w-[100px] h-[100px]"
+                                    onError={(e) => {
+                                      e.currentTarget.onerror = null;
+                                      e.currentTarget.src = fallbackAvatar;
+                                    }}
                                   />
                                 </div>
                                 <div className="text-center mt-6">
@@ -148,7 +152,7 @@ export const CancelNotification = () => {
                                   <div className="mb-2 text-gray-700 w-full">
                                     <span
                                       className={`w-[80%] mx-auto ${
-                                        dataNotification.notificationType ==
+                                        dataNotification.notificationType ===
                                         "OUT_OF_STOCK_NOTIFICATION"
                                           ? "text-red-500"
                                           : null
@@ -178,7 +182,7 @@ export const CancelNotification = () => {
           <div className="w-full h-full">
             <div className="flex mx-auto justify-center items-center flex-col h-full gap-2">
               <img
-                src={require("../../../assets/images/distributor/no_notification.png")}
+                src={noNotification}
                 className=""
                 alt="loading.."
               />
@@ -187,24 +191,28 @@ export const CancelNotification = () => {
           </div>
         ) : (
         allNotifications.map((item) =>
-          item.notificationType == "ORDER_CANCELLED" ? (
+          item.notificationType === "ORDER_CANCELLED" ? (
             <div
               key={item.id}
               className={`${
-                item.seen == false ? "bg-blue-100" : null
+                item.seen === false ? "bg-blue-100" : null
               } w-full rounded-xl cursor-pointer`}
               onClick={() => handleGetDataNotification(item)}
             >
               <div className="flex mx-auto justify-evenly items-center w-[95%] py-2">
                 <img
-                  src={item.image}
+                  src={item.image || fallbackAvatar}
                   alt=""
                   className=" w-12 h-12 rounded-full"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = fallbackAvatar;
+                  }}
                 />
                 <div className="w-72 ml-5">
                   <h2
                     className={`text-lg font-medium ${
-                      item.name == "Notice product unavailable"
+                      item.name === "Notice product unavailable"
                         ? "text-red-600"
                         : null
                     }`}
@@ -213,7 +221,7 @@ export const CancelNotification = () => {
                   </h2>
                   <p
                     className={`text-xs ${
-                      item.title == "Out of stock." ? "text-red-600" : null
+                      item.title === "Out of stock." ? "text-red-600" : null
                     }`}
                   >
                     {item.title}
@@ -243,13 +251,13 @@ export const CancelNotification = () => {
       >
         {allNotifications.map((item) => (
           <ListItem  className={`${
-            item.seen == false ? "bg-blue-100" : null
+            item.seen === false ? "bg-blue-100" : null
           } w-full rounded-xl cursor-pointer`}>
             <ListItemAvatar>
             <img src={item.image} alt="" className=" w-10 h-10 rounded-full" />
             </ListItemAvatar>
             <ListItemText primary={item.store} secondary={item.title}  className={`text-xs ${
-                  item.title == "Out of stock."
+                  item.title === "Out of stock."
                     ? "text-red-600"
                     : null
                 }`}/>

@@ -1,357 +1,137 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Modal } from "flowbite-react";
-import Product from "./Product";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  Package, 
+  Truck, 
+  Plus
+} from "lucide-react";
+import { toast } from "react-toastify";
+import ReactPaginate from "react-paginate";
+import { PropagateLoader } from "react-spinners";
+
 import {
   get_all_preparing,
   get_finish,
 } from "../../../redux/services/distributor/Preparing.service";
 import { getProductDetail } from "../../../redux/slices/distributor/productSlice";
 import { get_detail_product } from "../../../redux/services/distributor/product.service";
-import ReactPaginate from "react-paginate";
-import { setLoadingOrder } from "../../../redux/slices/retailer/orderSlice";
-import { PropagateLoader } from "react-spinners";
-import { get_all_dispatch } from "../../../redux/services/distributor/Dispatch.service";
-import { getAlldispatch } from "../../../redux/slices/distributor/DispatchSlice";
-import {
-  getFinished,
-  getPreparing,
-} from "../../../redux/slices/distributor/SliceNeworder";
-import { getAllPreparing } from "../../../redux/slices/distributor/PreparingSlice";
 import {
   FinishedOrder,
   addDataToDispatch,
   getPrepraingOrder,
   setLoadingTheOrder,
 } from "../../../redux/slices/distributor/orderPageSlice";
-import LoadingOverlay from "react-loading-overlay";
-import { styled } from "@mui/material";
-import { toast } from "react-toastify";
-import axios from "axios";
-import { over } from "stompjs";
-import SockJS from "sockjs-client";
-export default function Preparing2(props) {
-  const preparingList = useSelector((state) => state.distributorOrder.preData);
+import { sendOneSignalNotification } from "@/lib/notifications/send-onesignal-client";
+import OrderCard from "./OrderCard";
+import Product from "./Product";
+
+export default function Preparing({ toggleTab3 }) {
   const dispatch = useDispatch();
-  const [totalPage, setTotalPage] = useState(null);
-  const [page, setPage] = useState(1);
-  const [itemOffset, setItemOffset] = useState(0);
-  const [item, setItem] = useState();
-  const [error, setError] = useState("");
-  const [noData, setNoData] = useState(false);
-
-// ===================== websocket =================
-var stompClient = null;
-const Sock = null;
-const connect = () => {
-  const Sock = new SockJS("http://localhost:8888/ws");
-  stompClient = over(Sock);
-  stompClient.connect({}, onConnected, onError);
-  console.log("WS connected");
-};
-const disconnectFromSocket = () => {
-  if (Sock) {
-    Sock.close();
-  }
-};
-const onConnected = () => {
-  console.log("/user/" + localStorage.getItem("userId") + "/private");
-  stompClient.subscribe(
-    "/user/" + localStorage.getItem("userId") + "/private",
-    onPrivateMessage
-  );
-  userJoin();
-};
-const userJoin = () => {
-  var chatMessage = {
-    status: "JOIN",
-  };
-  stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
-};
-const onPrivateMessage = (payload) => {
-  var payloadData = JSON.parse(payload.body);
-  console.log(payloadData);
-  switch (payloadData.status) {
-    case "ORDER":
-      console.log("connected");
-      // window.location.reload();
-      break;
-  }
-};
-const onError = (err) => {
-  console.log(err);
-};
-useEffect(() => {
-  connect();
-}, []);
-
-
-  // ============= get data preparing =============
-  useEffect(() => {
-    get_all_preparing(dispatch)
-      .then((r) => {
-        if (r && r.data && r.data.status == 200) {
-          setNoData(false);
-          console.log(r.data.data);
-          dispatch(getPrepraingOrder(r.data.data));
-          // dispatch(getPreparing(r.data.data));
-          setItem(r.data.data);
-        } else {
-          if (r && r.response && r.response.data && r.response.data.detail) {
-            setError(r.respone.data.detail);
-          }
-          dispatch(setLoadingTheOrder(false));
-        }
-      })
-      .catch((e) => {
-        dispatch(setLoadingTheOrder(false));
-        setNoData(true);
-      })
-      .finally(() => {
-        dispatch(setLoadingTheOrder(false));
-      });
-  }, getPrepraingOrder());
+  const preparingList = useSelector((state) => state.distributorOrder.preData);
   const loading = useSelector((state) => state.distributorOrder.loading);
-  // useEffect(()=>{
-  //   get_all_preparing(page).then((r)=>{dispatch(getAllPreparing(r.data.data));setTotalPage(r.data.totalPage)});
-  //  }, getAllPreparing());
-  const endOffset = itemOffset + 6;
-  const currentPreparing = preparingList.slice(itemOffset, endOffset);
-  const pageCount = Math.ceil(preparingList.length / 6);
-  const [finishLoading, setFinishLoading] = useState(false);
-  const finishOrder = (id, data) => {
-    const message = "Your order was prepared for delivery";
-    const apiKey = "MTc0Nzk5MWEtNjI0Ni00NGFjLWJiZmItYzVjNmY0MzY3NzQ0";
-    const appId = "aaa38faa-9476-4e23-9c0c-037a9fac31ce";
-    setFinishLoading(true);
-    get_finish(id)
-      .then(async (res) => {
-        if (res.status == 409) {
-          setFinishLoading(false);
-          toast.error(res.data.detail);
-        }
-        // console.log("Response from server : ", res);
-        const notification = {
-          app_id: appId,
-          contents: { en: message },
-          include_external_user_ids: [res.data.data.userId.toString()],
-        };
-        // console.log("Await notification");
-        try {
-          const response = await axios.post(
-            "https://onesignal.com/api/v1/notifications",
-            notification,
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Basic ${apiKey}`,
-              },
-            }
-          );
 
-          console.log("Push notification sent successfully:", response.data);
-        } catch (error) {
-          console.error(
-            "Error sending push notification:",
-            error.response.data
-          );
-        }
-      })
-      .then(() => {
-        dispatch(FinishedOrder(id));
-        dispatch(addDataToDispatch(data));
-        setFinishLoading(false);
-      });
-  };
-  const productList = useSelector((state) => state.product.product);
+  const [itemOffset, setItemOffset] = useState(0);
+  const itemsPerPage = 6;
+  
+  const [isOpen, setOpen] = useState(false);
   const [loadingPro, setLoadingPro] = useState(false);
-  const detailProduct = (id) => {
-    console.log(id);
+  const [finishLoading, setFinishLoading] = useState(false);
+
+  useEffect(() => {
+    dispatch(setLoadingTheOrder(true));
+    get_all_preparing(dispatch)
+      .then(r => r?.data?.status === 200 && dispatch(getPrepraingOrder(r.data.data)))
+      .finally(() => dispatch(setLoadingTheOrder(false)));
+  }, [dispatch]);
+
+  const currentItems = preparingList.slice(itemOffset, itemOffset + itemsPerPage);
+  const pageCount = Math.ceil(preparingList.length / itemsPerPage);
+
+  const handlePageChange = (e) => setItemOffset((e.selected * itemsPerPage) % preparingList.length);
+
+  const onDispatch = async (id, item) => {
+    setFinishLoading(true);
+    try {
+      const res = await get_finish(id);
+      if (res.status === 409) {
+        toast.error(res.data.detail);
+      } else {
+        await sendOneSignalNotification({
+          contents: { en: "Your order was prepared for delivery." },
+          include_external_user_ids: [res.data.data.userId.toString()],
+        });
+        dispatch(FinishedOrder(id));
+        dispatch(addDataToDispatch(item));
+        toast.success("Order dispatched for delivery!");
+      }
+    } finally {
+      setFinishLoading(false);
+    }
+  };
+
+  const onViewDetails = (id) => {
+    setOpen(true);
     setLoadingPro(true);
     get_detail_product(id)
-      .then((r) => dispatch(getProductDetail(r.data.data.products)))
-      .then(() => setLoadingPro(false));
+      .then(r => dispatch(getProductDetail(r.data.data.products)))
+      .finally(() => setLoadingPro(false));
   };
-  const [isOpen, setOpen] = useState(false);
-  const [decline, setDecline] = useState(false);
-  const handlePro = () => {
-    setOpen(!isOpen);
-  };
-  const onPageChange = (event) => {
-    const newOffset = (event.selected * 6) % preparingList.length;
-    setItemOffset(newOffset);
-  };
+
   return (
-    <div>
-      {finishLoading ? (
-        <StyledLoader
-          active={finishLoading}
-          spinner={true}
-          text="Loading..."
-        ></StyledLoader>
-      ) : null}
-      <div class=" sm:rounded-lg mt-1 h-[600px]">
-        <div className="h-[500px]">
-          <table class="w-full text-sm text-left border-tools-table-outline  border-separate border-spacing-y-2 ">
-            <thead class="text-xs text-newGray bg-newWhite uppercase border-spacint text-center">
-              <tr className="text-[16px]">
-                <th scope="col" class="p-4">
-                  <div class="flex items-center">
-                    <label for="number">No</label>
-                  </div>
-                </th>
-                <th scope="col" class="px-6 py-3">
-                  Name
-                </th>
-                <th scope="col" class="px-6 py-3">
-                  Address
-                </th>
-                <th scope="col" class="px-6 py-3">
-                  Date
-                </th>
-                <th scope="col" class="px-6 py-3">
-                  Total
-                </th>
-                <th scope="col" class="px-6 py-3">
-                  Product
-                </th>
-                <th scope="col" class="px-6 py-3">
-                  Action
-                </th>
-              </tr>
-            </thead>
-            <tbody className="text-newGray text-center ">
-              {loading ? (
-                <div className="w-full mx-auto absolute mt-24 ">
-                  <PropagateLoader color="#0F766E" />
-                </div>
-              ) : currentPreparing.length === 0 ? (
-                noData ? (
-                  <div className="w-full mx-auto absolute ">
-                    <p className="text-center text-2xl font-semibold mt-2">
-                      {error}
-                    </p>
-                  </div>
-                ) : (
-                  <div className="w-full mx-auto absolute ">
-                    <p className="text-center text-2xl font-semibold mt-24">
-                      No data available
-                    </p>
-                  </div>
-                )
-              ) : (
-                currentPreparing.map((item, index) => (
-                  <tr
-                    key={item.id}
-                    class="rounded-full mt-1 border shadow-sm border-newGray text-[16px]"
-                  >
-                    <td class="w-4 p-4 items-center">
-                      <p>{index + 1 + itemOffset}</p>
-                    </td>
-                    <td
-                      scope="row"
-                      class="flex items-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                    >
-                      {item.retailerImage && item.retailerImage !== "String" ? (
-                        <img
-                          class="w-10 h-10 rounded-full"
-                          src={item.retailerImage}
-                          alt="retailer image"
-                        />
-                      ) : (
-                        <img
-                          class="w-10 h-10 rounded-full"
-                          src={require("../../../assets/images/distributor/photo.png")}
-                          alt="retailer image"
-                        />
-                      )}
-                      <div class="pl-3">
-                        <div class="font-normal text-gray-500">{item.name}</div>
-                      </div>
-                    </td>
-                    <td class="px-6 py-4">
-                      <p>{item.address}</p>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                      {new Date(item.date).toLocaleDateString("en-GB", {
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric",
-                      })}
-                    </td>
-                    <td class="px-6 py-4">
-                      $
-                      {item.total == null ? (
-                        <span>0.00</span>
-                      ) : (
-                        item.total.toFixed(2)
-                      )}
-                    </td>
-                    <td class="px-6 py-4">
-                      <button
-                        onClick={() => {
-                          setOpen(!isOpen);
-                          detailProduct(item.id);
-                        }}
-                      >
-                        <svg
-                          class="w-6 h-6"
-                          aria-hidden="true"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z"></path>
-                        </svg>
-                      </button>
-                    </td>
-                    <td class="px-6 py-4">
-                      <div>
-                        <button
-                          onClick={() => {
-                            finishOrder(item.id, item);
-                          }}
-                          className="bg-newGreen text-md text-white rounded-md w-24 py-[6px]"
-                        >
-                          {" "}
-                          Dispatch
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+    <div className="w-full">
+      {loading ? (
+        <div className="flex h-96 items-center justify-center">
+          <PropagateLoader color="#0f766e" />
         </div>
-        {/* pagination */}
-        {error || noData || loading || pageCount < 2 ? null : (
-          <div class="flex  items-center justify-end pt-12">
-            <ReactPaginate
-              pageCount={pageCount}
-              onPageChange={onPageChange}
-              previousLabel="< Prev"
-              className="flex"
-              breakLabel="..."
-              nextLabel="Next >"
-              pageRangeDisplayed={5}
-              containerClassName="pagination"
-              activeClassName="text-primary active"
-              pageClassName="px-2 page-item"
-              nextLinkClassName="page-item"
-            />
+      ) : preparingList.length === 0 ? (
+        <div className="flex h-96 flex-col items-center justify-center rounded-[3rem] border-2 border-dashed border-slate-200 bg-white/50 dark:border-slate-800 dark:bg-slate-900/50">
+          <Package className="h-16 w-16 text-slate-200 dark:text-slate-800" />
+          <h3 className="mt-6 text-xl font-bold text-slate-900 dark:text-white">No Orders in Preparation</h3>
+          <p className="mt-2 text-slate-500">Items you've accepted will appear here while being packed.</p>
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <AnimatePresence mode="popLayout">
+              {currentItems.map((item, idx) => (
+                <OrderCard
+                  key={item.id}
+                  index={idx}
+                  item={item}
+                  status="Preparing"
+                  actionLabel="Dispatch"
+                  actionIcon={Truck}
+                  onAction={onDispatch}
+                  onViewDetails={onViewDetails}
+                  isLoading={finishLoading}
+                />
+              ))}
+            </AnimatePresence>
           </div>
-        )}
-      </div>
-      <Product handlePro={handlePro} isOpen={isOpen} loadingPro={loadingPro} />
+
+          {pageCount > 1 && (
+            <div className="mt-16 flex justify-center">
+              <ReactPaginate
+                pageCount={pageCount}
+                onPageChange={handlePageChange}
+                previousLabel={<Plus className="h-4 w-4 rotate-90" />}
+                nextLabel={<Plus className="h-4 w-4 -rotate-90" />}
+                className="flex items-center gap-2"
+                pageClassName="h-10 w-10 flex items-center justify-center rounded-xl text-sm font-bold transition hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500"
+                activeClassName="!bg-teal-600 !text-white shadow-lg shadow-teal-600/20"
+                previousClassName="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-200 text-slate-400 hover:bg-white dark:border-slate-800"
+                nextClassName="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-200 text-slate-400 hover:bg-white dark:border-slate-800"
+                breakLabel="..."
+              />
+            </div>
+          )}
+        </>
+      )}
+
+      <Product handlePro={() => setOpen(false)} isOpen={isOpen} loadingPro={loadingPro} />
     </div>
   );
 }
-const StyledLoader = styled(LoadingOverlay)`
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-`;
-

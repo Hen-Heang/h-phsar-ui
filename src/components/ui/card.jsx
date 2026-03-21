@@ -17,12 +17,14 @@ export function CardHeader({ className, ...props }) {
   return <div className={cn("p-6 pb-2", className)} {...props} />;
 }
 
-export function CardTitle({ className, ...props }) {
+export function CardTitle({ className, children, ...props }) {
   return (
     <h3
       className={cn("text-lg font-semibold tracking-tight text-slate-900 dark:text-slate-100", className)}
       {...props}
-    />
+    >
+      {children}
+    </h3>
   );
 }
 

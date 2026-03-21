@@ -209,7 +209,7 @@ const AddProductForm = () => {
 
         add_new_product_distributor(updatedFields)
           .then((res) =>{
-            if(res.status == 409 || res.status == 404 || res.status ==401){
+            if(res.status === 409 || res.status === 404 || res.status ===401){
               toast.error("Duplicate product...!")
               setLoading(false)
             }else {
@@ -237,13 +237,13 @@ const AddProductForm = () => {
   useEffect(() => {
     get_all_category(dispatch)
       .then((r) => {
-        if (r.status == 400) {
+        if (r.status === 400) {
           // toast.error("This store have no category");
         }
-        if (r.status == 404) {
+        if (r.status === 404) {
           // toast.error("Please create a new category");
         }
-        if (r.status == 200) {
+        if (r.status === 200) {
           dispatch(getAllCategoryDistributor(r.data.data));
         }
       })
@@ -254,7 +254,7 @@ const AddProductForm = () => {
         // console.log("finally finished");
         dispatch(setLoadingCategory(false));
       });
-  }, getAllCategoryDistributor());
+  }, [dispatch]);
 
   // const [imageUrl, setImageUrl] = useState([""]);
   // const [targetImage, setTargetImage] = useState(null);
@@ -309,64 +309,68 @@ const AddProductForm = () => {
               {inputFields.map((input, index) => (
                 <div
                   key={index}
-                  class="grid grid-cols-6 gap-5 border border-1 rounded-lg  p-10 mb-5"
+                  className="grid grid-cols-6 gap-5 border border-1 rounded-lg  p-10 mb-5"
                 >
                   {/* Field input */}
-                  <div class="col-span-4">
+                  <div className="col-span-4">
                     {/* Product */}
                     <div>
                       <label
-                        class="block relative uppercase tracking-wide text-gray-700 font-bold mb-2"
-                        for="grid-password"
+                        className="block relative uppercase tracking-wide text-gray-700 font-bold mb-2"
+                        htmlFor="grid-password"
                       >
                         Product Name
-                        {/* {errorAdd == '' ? null : <span className="text-sm lowercase font-medium text-red-600 absolute right-1 top-10">{errorAdd}</span>} */}
+                        {/* {errorAdd === '' ? null : <span className="text-sm lowercase font-medium text-red-600 absolute right-1 top-10">{errorAdd}</span>} */}
                       </label>
                       <input
                         value={input.name}
                         onChange={(event) => handleFormChange(index, event)}
                         className="appearance-none block w-full  text-gray-700 border border-gray-300 rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:ring-primary focus:bg-white focus:border-primary"
-                        // class={`${errorAdd == '' ? " appearance-none block w-full text-gray-700 border border-gray-300 rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:ring-primary focus:bg-white focus:border-gray-500" :"appearance-none block w-full text-gray-700 border border-red-600 rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:ring-red-600 focus:bg-white focus:border-gray-500"}`}
+                        // className={`${errorAdd === '' ? " appearance-none block w-full text-gray-700 border border-gray-300 rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:ring-primary focus:bg-white focus:border-gray-500" :"appearance-none block w-full text-gray-700 border border-red-600 rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:ring-red-600 focus:bg-white focus:border-gray-500"}`}
                         name="name"
                         type="text"
                         placeholder="Product Name"
                       />
                     </div>
                     {/* qty & price */}
-                    <div class="flex flex-wrap -mx-3 ">
+                    <div className="flex flex-wrap -mx-3 ">
                       {/* qty */}
-                      <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                      <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                         <label
-                          class="relative block uppercase tracking-wide text-gray-700  font-bold mb-2"
-                          for="grid-first-name"
+                          className="relative block uppercase tracking-wide text-gray-700  font-bold mb-2"
+                          htmlFor="grid-first-name"
                         >
                           Quantity
                         </label>
                         <input
-                          class="appearance-none block w-full text-gray-700 border border-gray-300 rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:ring-primary focus:bg-white focus:border-primary"
+                          className="appearance-none block w-full text-gray-700 border border-gray-300 rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:ring-primary focus:bg-white focus:border-primary"
                           name="qty"
                           type="number"
                           // pattern="[0-9]*"
-                          value={parseInt(input.qty)}
+                          value={
+                            input.qty === "" || Number.isNaN(Number(input.qty))
+                              ? ""
+                              : input.qty
+                          }
                           onChange={(event) => handleFormChange(index, event)}
                           placeholder="Quantity"
                         />
                       </div>
                       {/* Price */}
-                      <div class="w-full md:w-1/2 px-3 relative">
+                      <div className="w-full md:w-1/2 px-3 relative">
                         {/* <img
-                            src={require("../../assets/images/distributor/dollar.png")}
+                            src={(require("../../assets/images/distributor/dollar.png")?.default || require("../../assets/images/distributor/dollar.png"))}
                             className="absolute top-11 left-6 "
                             alt=""
                           /> */}
                         <label
-                          class="block uppercase tracking-wide text-gray-700  font-bold mb-2"
-                          for="grid-last-name"
+                          className="block uppercase tracking-wide text-gray-700  font-bold mb-2"
+                          htmlFor="grid-last-name"
                         >
                           Price
                         </label>
-                        <div class="flex">
-                  <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
+                        <div className="flex">
+                  <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -394,7 +398,7 @@ const AddProductForm = () => {
                   </div>
                 </div>
                         {/* <input
-                          class="appearance-none block w-full text-gray-700 border border-gray-300 rounded py-2 px-4 pl-10 mb-3 leading-tight focus:outline-none focus:ring-primary focus:bg-white focus:border-primary"
+                          className="appearance-none block w-full text-gray-700 border border-gray-300 rounded py-2 px-4 pl-10 mb-3 leading-tight focus:outline-none focus:ring-primary focus:bg-white focus:border-primary"
                           name="price"
                           type="number"
                           value={input.price}
@@ -404,17 +408,17 @@ const AddProductForm = () => {
                       </div>
                     </div>
                     {/* category */}
-                    <div class="flex flex-wrap -mx-3">
-                      <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                    <div className="flex flex-wrap -mx-3">
+                      <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                         <label
-                          class="block uppercase tracking-wide text-gray-700  font-bold mb-2"
-                          for="grid-state"
+                          className="block uppercase tracking-wide text-gray-700  font-bold mb-2"
+                          htmlFor="grid-state"
                         >
                           Category
                         </label>
-                        <div class="relative">
+                        <div className="relative">
                           <select
-                            class="appearance-none capitalize block w-full text-gray-700 border border-gray-300 rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:ring-primary focus:bg-white focus:border-primary"
+                            className="appearance-none capitalize block w-full text-gray-700 border border-gray-300 rounded py-2 px-4 mb-3 leading-tight focus:outline-none focus:ring-primary focus:bg-white focus:border-primary"
                             name="categoryId"
                             type="text"
                             value={input.categoryId}
@@ -422,11 +426,12 @@ const AddProductForm = () => {
                             placeholder="Category ID"
                             // value={input.categoryId}
                           >
-                            <option selected disabled value="">
+                            <option disabled value="">
                               -- please select --
                             </option>
                             {categoryData.map((item, index) => (
                               <option
+                                key={item.id ?? `${item.name}-${index}`}
                                 value={item.id}
                                 className="hover:bg-primary"
                               >
@@ -435,19 +440,19 @@ const AddProductForm = () => {
                             ))}
                           </select>
 
-                          <div class="pointer-events-none absolute inset-y-0 right-1 flex items-center px-2 text-gray-700">
+                          <div className="pointer-events-none absolute inset-y-0 right-1 flex items-center px-2 text-gray-700">
                             {/* <img
-                                src={require("../../assets/images/distributor/down_arrow.png")}
+                                src={(require("../../assets/images/distributor/down_arrow.png")?.default || require("../../assets/images/distributor/down_arrow.png"))}
                                 alt=""
                               /> */}
                           </div>
                         </div>
                       </div>
-                      <div class="w-full md:w-1/2 px-3 mt-2 md:mb-0">
+                      <div className="w-full md:w-1/2 px-3 mt-2 md:mb-0">
                         <button
                           type="button"
                           onClick={handleShowCategory}
-                          class="inline-block rounded bg-primary mt-6 px-9 py-[8px]  font-medium  leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                          className="inline-block rounded bg-primary mt-6 px-9 py-[8px]  font-medium  leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
                         >
                           Add new{" "}
                         </button>
@@ -459,13 +464,13 @@ const AddProductForm = () => {
                     </div>
                     <div className="relative mb-6">
                       <label
-                        class="block uppercase tracking-wide text-gray-700  font-bold mb-2"
-                        for="grid-password"
+                        className="block uppercase tracking-wide text-gray-700  font-bold mb-2"
+                        htmlFor="grid-password"
                       >
                         description
                       </label>
                       <textarea
-                        class="appearance-none block w-full text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:ring-primary focus:bg-white focus:border-primary"
+                        className="appearance-none block w-full text-gray-700 border border-gray-300 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:ring-primary focus:bg-white focus:border-primary"
                         name="description"
                         value={input.description}
                         onChange={(event) => handleFormChange(index, event)}
@@ -475,22 +480,22 @@ const AddProductForm = () => {
                     </div>
                   </div>
                   {/* image */}
-                  <div class=" col-span-2">
-                    <div class="flex items-center justify-center w-full">
+                  <div className=" col-span-2">
+                    <div className="flex items-center justify-center w-full">
                       <label
-                        for={`dropzone-file${index}`}
+                        htmlFor={`dropzone-file${index}`}
                         // {...getRootProps({ className: "dropzone" })}
-                        class="flex flex-col items-center justify-center  bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                        className="flex flex-col items-center justify-center  bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
                       >
-                        {input.imageUrl == "" || input.imageUrl == null ? (
+                        {input.imageUrl === "" || input.imageUrl === null ? (
                           <>
-                            <div class="flex flex-col items-center justify-center w-full px-14 h-64 border-2 border-primaryColor border-dashed rounded-lg cursor-pointer">
+                            <div className="flex flex-col items-center justify-center w-full px-14 h-64 border-2 border-primaryColor border-dashed rounded-lg cursor-pointer">
                               <img
-                                src={require("../../assets/images/distributor/image.png")}
+                                src={(require("../../assets/images/distributor/image.png")?.default || require("../../assets/images/distributor/image.png"))}
                                 alt=""
                               />
-                              <p class="mb-2  text-center text-gray-500 dark:text-gray-400">
-                                <span class="font-semibold text-primaryColor">
+                              <p className="mb-2  text-center text-gray-500 dark:text-gray-400">
+                                <span className="font-semibold text-primaryColor">
                                   Click to upload &nbsp;
                                 </span>
                                 or <br />
@@ -504,7 +509,7 @@ const AddProductForm = () => {
                             className="h-[260px] w-auto rounded-lg "
                           />
                         )}
-                        {/* <p class=" text-gray-500 dark:text-gray-400">
+                        {/* <p className=" text-gray-500 dark:text-gray-400">
                           SVG, PNG, JPG or GIF (MAX. 800x400px)
                         </p> */}
 
@@ -515,7 +520,7 @@ const AddProductForm = () => {
                           type="file"
                           value={input.image}
                           onChange={(event) => handleFormChange(index, event)}
-                          class="hidden"
+                          className="hidden"
                         />
                       </label>
                     </div>
@@ -523,12 +528,12 @@ const AddProductForm = () => {
                     {/* visibility */}
                     <div className="mt-44 relative">
                       <label
-                        class="block text-3xl  tracking-wide text-primaryColor font-bold mb-2"
-                        for="grid-password"
+                        className="block text-3xl  tracking-wide text-primaryColor font-bold mb-2"
+                        htmlFor="grid-password"
                       >
                         Visibility
                       </label>
-                      <div class="hs-tooltip flex items-center">
+                      <div className="hs-tooltip flex items-center">
                         {/* visible */}
                         <label
                           key={index}
@@ -557,10 +562,10 @@ const AddProductForm = () => {
                     <button
                       onClick={() => removeFields(index)}
                       type="button"
-                      class="float-right -mb-10 flex text-lg items-center rounded-lg bg-[#FF7272] px-2 py-2 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                      className="float-right -mb-10 flex text-lg items-center rounded-lg bg-[#FF7272] px-2 py-2 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
                     >
                       <img
-                        src={require("../../assets/images/distributor/delete_white.png")}
+                        src={(require("../../assets/images/distributor/delete_white.png")?.default || require("../../assets/images/distributor/delete_white.png"))}
                         alt=""
                       />
                     </button>
@@ -613,7 +618,7 @@ const AddProductForm = () => {
                 <div className="flex items-center justify-center gap-3">
                   <img
                     className=""
-                    src={require("../../assets/images/distributor/add_more.png")}
+                    src={(require("../../assets/images/distributor/add_more.png")?.default || require("../../assets/images/distributor/add_more.png"))}
                     alt=""
                   />
                   <p className="text-[#777777] font-medium">Add more</p>
@@ -624,25 +629,25 @@ const AddProductForm = () => {
                 {loading ? (
                   <button
                     type="button"
-                    class="col-span-2 flex text-lg justify-center  items-center gap-3 rounded-lg bg-primary w-32  px-2 py-2 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                    className="col-span-2 flex text-lg justify-center  items-center gap-3 rounded-lg bg-primary w-32  px-2 py-2 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
                     href="#"
                   >
                     <span
-                      class="animate-spin inline-block w-4 h-4 border-[3px] border-current border-t-transparent text-white rounded-full"
+                      className="animate-spin inline-block w-4 h-4 border-[3px] border-current border-t-transparent text-white rounded-full"
                       role="status"
                       aria-label="loading"
                     >
-                      <span class="sr-only">Loading...</span>
+                      <span className="sr-only">Loading...</span>
                     </span>
                     Saving...
                   </button>
                 ) : (
                   <button
                     type="submit"
-                    class="col-span-2 flex justify-center text-lg items-center gap-3 rounded-lg bg-primary w-32 px-2 py-2 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                    className="col-span-2 flex justify-center text-lg items-center gap-3 rounded-lg bg-primary w-32 px-2 py-2 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
                   >
                     <img
-                      src={require("../../assets/images/distributor/save.png")}
+                      src={(require("../../assets/images/distributor/save.png")?.default || require("../../assets/images/distributor/save.png"))}
                       alt=""
                     />{" "}
                     Save
@@ -652,10 +657,10 @@ const AddProductForm = () => {
                 <Link
                   to="/distributor/product"
                   type="button"
-                  class="col-span-2 flex text-lg justify-center items-center gap-3 rounded-lg bg-[#FF7272] w-32 px-2 py-2 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                  className="col-span-2 flex text-lg justify-center items-center gap-3 rounded-lg bg-[#FF7272] w-32 px-2 py-2 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
                 >
                   <img
-                    src={require("../../assets/images/distributor/close_white.png")}
+                    src={(require("../../assets/images/distributor/close_white.png")?.default || require("../../assets/images/distributor/close_white.png"))}
                     alt=""
                   />{" "}
                   Cancel

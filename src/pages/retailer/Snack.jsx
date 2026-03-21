@@ -32,14 +32,14 @@ export default function Snack() {
           loop
           arrowLeft={
             <img
-              src={require("../../assets/images/retailer/back.png")}
+              src={(require("../../assets/images/retailer/back.png")?.default || require("../../assets/images/retailer/back.png"))}
               alt=""
               className="absolute z-50  top-80 -left-9 cursor-pointer"
             />
           }
           arrowRight={
             <img
-              src={require("../../assets/images/retailer/next.png")}
+              src={(require("../../assets/images/retailer/next.png")?.default || require("../../assets/images/retailer/next.png"))}
               alt=""
               className="absolute z-50 top-80 right-2 cursor-pointer"
             />
@@ -54,7 +54,7 @@ export default function Snack() {
                 <div className="w-full flex ">
                   <div className="w-1/2 flex justify-center items-center">
                     <img
-                      src={require("../../assets/images/retailer/snack1.jpg")}
+                      src={(require("../../assets/images/retailer/snack1.jpg")?.default || require("../../assets/images/retailer/snack1.jpg"))}
                       className="h-5/6"
                     />
                   </div>
@@ -89,7 +89,7 @@ export default function Snack() {
                       <button
                         onClick={handleIncrement}
                         type="button"
-                        class="inline-flex flex-shrink-0 justify-center items-center gap-2 h-[1.6rem] w-[2.1rem] rounded-sm border border-transparent  bg-orange-500 hover:bg-orange-600   focus:ring-orange-500  transition-all"
+                        className="inline-flex flex-shrink-0 justify-center items-center gap-2 h-[1.6rem] w-[2.1rem] rounded-sm border border-transparent  bg-orange-500 hover:bg-orange-600   focus:ring-orange-500  transition-all"
                       >
                         <svg
                           className="w-4 fill-white"

@@ -1,4 +1,3 @@
-import { Avatar, Dropdown, Navbar } from "flowbite-react";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Link,
@@ -11,6 +10,7 @@ import AllNotification from "./notification/AllNotification";
 import OrderNotification from "./notification/OrderNotification";
 import RestockNotification from "./notification/RestockNotification";
 import noImage from "../../assets/images/distributor/account.png";
+import { applyImageFallback, getSafeImageSrc } from "@/lib/images";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 import trolley from "../../assets/images/empty_trolley.png";
@@ -20,7 +20,6 @@ import {
   increment,
   set,
 } from "../../redux/slices/retailer/itemsQuantitySlice";
-import { Modal, Button } from "flowbite-react";
 import {
   get_search,
   get_search_category,
@@ -54,7 +53,6 @@ import {
   getProductInCart,
   setStoreId,
 } from "../../redux/slices/retailer/homepageSlice/allShopSlice";
-import axios from "axios";
 import {
   get_all_notification_retailer,
   mark_read_all_notification_retailer,
@@ -70,6 +68,38 @@ import ConfirmingNotification from "./notification/ConfirmingNotification";
 import RejectNotification from "./notification/RejectNotification";
 import { over } from "stompjs";
 import SockJS from "sockjs-client";
+import {
+  Search,
+  Bell,
+  ShoppingBag,
+  User,
+  LogOut,
+  Trash2,
+  Menu,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  Minus,
+  Plus,
+  ArrowRight,
+  Clock,
+  CheckCircle2,
+  Truck,
+  XCircle,
+  Package,
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ThemeToggle } from "../modern/theme-toggle";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { sendOneSignalNotification } from "@/lib/notifications/send-onesignal-client";
 export default function NavBarRetailerComponent() {
   const [loadingSearch, setLoadingSearch] = useState(false);
 
@@ -88,7 +118,7 @@ export default function NavBarRetailerComponent() {
   const searchProductByStore = () => {
     setLoadingSearch(true);
     console.log("onChangeSearch", onChangeSearch);
-    if (onChangeSearch == "" || onChangeSearch == null) {
+    if (onChangeSearch === "" || onChangeSearch === null) {
       toast.warn("Please input something in search bar");
     } else {
       console.log(111);
@@ -96,18 +126,18 @@ export default function NavBarRetailerComponent() {
         .then((e) => {
           // console.log("data : ",e.data)
           // console.log(e.response.status)
-          if (e.status == 401) {
+          if (e.status === 401) {
             console.log("error 401");
             dispatch(setError(true));
             dispatch(setLoading(false));
           }
-          if (e.status == 200) {
+          if (e.status === 200) {
             console.log("data : ", e.data.data);
             dispatch(getSearchStore(e.data.data));
             dispatch(setLoading(false));
             dispatch(setError(false));
           }
-          if (e.status == 404) {
+          if (e.status === 404) {
             dispatch(getSearchStore(""));
             dispatch(setLoading(false));
             dispatch(setError(false));
@@ -170,12 +200,16 @@ export default function NavBarRetailerComponent() {
   const [productCart, setPorductCart] = useState([]); // Initialize product cart state
 
   useEffect(() => {
-    get_all_product_in_cart().then((e) =>
-      dispatch(getProductInCart(e.data.data.products))
-    );
-    get_all_product_in_cart().then((e) =>
-      dispatch(getOrderInCart(e.data.data.order))
-    );
+    get_all_product_in_cart()
+      .then((response) => {
+        const cartData = response?.data?.data ?? {};
+        dispatch(getProductInCart(cartData.products ?? []));
+        dispatch(getOrderInCart(cartData.order ?? []));
+      })
+      .catch(() => {
+        dispatch(getProductInCart([]));
+        dispatch(getOrderInCart([]));
+      });
   }, []);
 
   // useEffect(()=> {
@@ -270,7 +304,7 @@ export default function NavBarRetailerComponent() {
           } catch (error) {
             // catch (error) {
             //     console.error(error);
-            //   // if(error.response.status==500 ){
+            //   // if(error.response.status===500 ){
             //   //   toast.error("hahahahaha .");
             //   // }
             //   // toast.error("You can only have one cart at a time.");
@@ -438,7 +472,7 @@ export default function NavBarRetailerComponent() {
         toast.error("Opps, connection unstable please try again.");
       }
       if (
-        response.data.detail == "Not enough product in stock. Fail on count: 1"
+        response.data.detail === "Not enough product in stock. Fail on count: 1"
       ) {
         toast.warning("Opps, this product is running out of stock.");
         setLoadingProducts((prevLoadingProducts) => {
@@ -448,7 +482,7 @@ export default function NavBarRetailerComponent() {
         });
       }
       if (
-        response.data.detail ==
+        response.data.detail ===
         "One cart is processing. Can only order once at a time. Please kindly wait for this order to be accepted."
       ) {
         toast.error("Opps, you can only have one cart at a time.");
@@ -459,7 +493,7 @@ export default function NavBarRetailerComponent() {
         });
       }
       if (
-        response.data.detail ==
+        response.data.detail ===
         "User have no profile. Please setup user profile to make order."
       ) {
         toast.error(
@@ -532,37 +566,21 @@ export default function NavBarRetailerComponent() {
   const handleClickCheckOut = (option) => {
     // confirm_order_from_cart().then((e)=> dispatch(checkoutProduct(e.data.data)))
     const message = "You have new order...!";
-    const apiKey = "MTc0Nzk5MWEtNjI0Ni00NGFjLWJiZmItYzVjNmY0MzY3NzQ0";
-    const appId = "aaa38faa-9476-4e23-9c0c-037a9fac31ce";
-    if (option == "yes") {
+    if (option === "yes") {
       confirm_order_from_cart()
         .then(async (response) => {
           // console.log("message from add to cart:", response.data.data.userId);
           // =========== push notification ==============
           const notification = {
-            app_id: appId,
             contents: { en: message },
             include_external_user_ids: [response.data.data.userId.toString()],
           };
           console.log("Await notification");
           try {
-            const response = await axios.post(
-              "https://onesignal.com/api/v1/notifications",
-              notification,
-              {
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Basic ${apiKey}`,
-                },
-              }
-            );
-
-            console.log("Push notification sent successfully:", response.data);
+            const notificationResponse = await sendOneSignalNotification(notification);
+            console.log("Push notification sent successfully:", notificationResponse);
           } catch (error) {
-            console.error(
-              "Error sending push notification:",
-              error.response.data
-            );
+            console.error("Error sending push notification:", error);
           }
           dispatch(checkoutProduct(response.data));
         })
@@ -589,13 +607,13 @@ export default function NavBarRetailerComponent() {
       });
       window.dispatchEvent(localStorageUpdatedEvent);
       setSuccess(!success);
-    } else if (option == "no") {
+    } else if (option === "no") {
       setSuccess(!success);
     }
   };
 
   const handleClickCancel = (option) => {
-    if (option == "yes") {
+    if (option === "yes") {
       cancel_order_from_cart().then((e) =>
         dispatch(cancelProductInCart(e.data))
       );
@@ -617,13 +635,13 @@ export default function NavBarRetailerComponent() {
       });
       window.dispatchEvent(localStorageUpdatedEvent);
       setDraft(!draf);
-    } else if (option == "no") {
+    } else if (option === "no") {
       setDraft(!draf);
     }
   };
 
   const draftStore = (option) => {
-    if (option == "yes") {
+    if (option === "yes") {
       save_to_draft().then((e) => dispatch(draftStore2(e.data)));
       // remove data from local storage
 
@@ -643,7 +661,7 @@ export default function NavBarRetailerComponent() {
       });
       window.dispatchEvent(localStorageUpdatedEvent);
       setSuccess2(!success2);
-    } else if (option == "no") {
+    } else if (option === "no") {
       setSuccess2(!success2);
     }
   };
@@ -651,7 +669,7 @@ export default function NavBarRetailerComponent() {
   // ================== account =================
   useEffect(() => {
     get_retailer_profile().then((res) => {
-      if (res.status == 404) {
+      if (res.status === 404) {
         console.log("error", res.status);
         dispatch(
           getRetailerInfo({
@@ -670,7 +688,7 @@ export default function NavBarRetailerComponent() {
           })
         );
       }
-      if (res.status == 200) {
+      if (res.status === 200) {
         dispatch(getRetailerInfo(res.data.data));
       }
     });
@@ -681,7 +699,9 @@ export default function NavBarRetailerComponent() {
 
   const handleBackButtonClick = () => {
     const dropdownElement = dropdownRef.current;
-    dropdownElement.classList.remove("open");
+    if (dropdownElement) {
+      dropdownElement.classList.remove("open");
+    }
   };
 
   //=================================================== Handle all notifications ==========================================
@@ -720,7 +740,7 @@ export default function NavBarRetailerComponent() {
     switch (payloadData.status) {
       case "ORDER":
         get_all_notification_retailer().then((res) => {
-          if (res.status == 200) {
+          if (res.status === 200) {
             console.log("Notifications : ", res);
             dispatch(getAllNotificationRetailers(res.data.data));
             setDataNotifications(false);
@@ -740,7 +760,7 @@ export default function NavBarRetailerComponent() {
 
   useEffect(() => {
     get_all_notification_retailer().then((res) => {
-      if (res.status == 200) {
+      if (res.status === 200) {
         console.log("Notifications : ", res);
         dispatch(getAllNotificationRetailers(res.data.data));
         setDataNotifications(false);
@@ -748,7 +768,7 @@ export default function NavBarRetailerComponent() {
         setDataNotifications(true);
       }
     });
-  }, getAllNotificationRetailers());
+  }, [dispatch]);
   const StyledBadge = styled(Badge)(({ theme }) => ({
     "& .MuiBadge-badge": {
       right: -9,
@@ -802,7 +822,7 @@ export default function NavBarRetailerComponent() {
   const handleReadAllNotifications = () => {
     mark_read_all_notification_retailer().then((res) => {
       console.log("result received", res);
-      if (res.status == 200) {
+      if (res.status === 200) {
         dispatch(setReadAllNotificationsRetailer());
       }
       if (res.status === 401) {
@@ -833,1046 +853,543 @@ export default function NavBarRetailerComponent() {
     window.scrollTo(0, 0);
   };
 
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   return (
-    <div className="bg-white sticky top-0 z-50">
+    <header className="sticky top-0 z-50 w-full border-b border-slate-200/60 bg-white/80 backdrop-blur-md transition-all dark:border-slate-800/60 dark:bg-slate-950/80">
       <ToastContainer />
-      <header className="flex flex-wrap sm:justify-start sm:flex-nowrap z-50 w-full text-sm py-4 dark:bg-gray-800 mx-auto ">
-        <nav
-          className="lg:max-w-[105rem] w-full mx-auto px-3 flex items-center justify-between"
-          aria-label="Global"
+      <div className="mx-auto flex h-20 max-w-[105rem] items-center justify-between px-4 sm:px-6 lg:px-8">
+        {/* Brand/Logo */}
+        <Link
+          to="/retailer/home"
+          onClick={handleClearSearch}
+          className="flex items-center gap-3 transition-opacity hover:opacity-90"
         >
-          <Link
-            to="/retailer/home"
-            onClick={handleClearSearch}
-            className="flex flex-row lg:w-[70px] lg:h-[70px] sm:w-12 w-9 mt-1"
-          >
+          <div className="relative h-10 w-10 overflow-hidden rounded-xl bg-orange-100 p-0.5 dark:bg-orange-950/30 sm:h-12 sm:w-12">
             <img
-              src={require("../../assets/images/retailer/retailerLogo01.png")}
-              alt=""
-              className="rounded-lg "
+              src={require("../../assets/images/retailer/retailerLogo01.png")?.default || require("../../assets/images/retailer/retailerLogo01.png")}
+              alt="H-Phsar Logo"
+              className="h-full w-full object-contain"
             />
-            <div className=" lg:text-2xl sm:text-base mt-1 font-bold ml-4 hidden sm:block">
-              StockFlow Commerce
-            </div>
-          </Link>
+          </div>
+          <span className="hidden text-xl font-black tracking-tight text-slate-900 dark:text-slate-100 sm:block">
+            H-Phsar
+          </span>
+        </Link>
 
-          {/* search filed */}
-
-          <div className="relative flex  shadow-sm  lg:ml-[200px] sm:ml-[120px] justify-center items-center ">
-            <button
-              type="button"
-              onClick={searchProductByStore}
-              // onClick={()=>{searchProductByStore(); handlePageClick();}}
-              // data-clear-search={handleClearSearch}
-              className="absolute lg:w-16 w-7 lg:py-[27px] py-[15px] lg:px-2 sm:px-5 px-2 sm:py-5 right-0 inline-flex flex-shrink-0 justify-center items-center lg:rounded-r-2xl  rounded-r-xl  bg-[#F15B22] text-white hover:bg-orange-500 focus:z-10 focus:outline-none active:bg-orange-600 transition-all lg:text-lg  text-xs"
-            >
-              {/* Search */}
-              <div className="absolute inset-y-0 lg:left-0 flex items-center pointer-events-none z-20 pl-4   lg:w-16 w-7 lg:ml-1  border-[#F15B22]  lg:rounded-r-2xl  rounded-r-xl ">
-                <svg
-                  className="lg:h-6  h-3 lg:ml-0 -ml-2.5 sm:h-4 sm:w-4 lg:w-6 w-4 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-                </svg>
-              </div>
-            </button>
+        {/* Search Bar - Desktop */}
+        <div className="hidden max-w-2xl flex-1 px-8 lg:block">
+          <div className="relative flex items-center">
+            <Search className="absolute left-4 h-5 w-5 text-slate-400" />
             <input
               type="text"
               onChange={handleFormChange}
-              onKeyDown={(event) => {
-                if (event.keyCode === 13) {
-                  searchProductByStore();
-                }
-              }}
+              onKeyDown={(event) => event.key === "Enter" && searchProductByStore()}
               value={onChangeSearch}
-              id="hs-trailing-button-add-on-with-icon-and-button"
-              name="hs-trailing-button-add-on-with-icon-and-button"
-              className="lg:pe-[73px] pe-8 lg:w-[700px] sm:w-[350px] w-[184px]  mx-auto border-s-orange-100 lg:py-3 sm:py-2 py-1.5 lg:px-4  lg:pl-5 pl-3 block border-gray-200  lg:rounded-2xl rounded-xl lg:text-xl sm:text-base text-xs focus:z-5 focus:border-[#F15B22]  focus:ring-[#F15B22]"
-              placeholder="Search..."
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 py-2.5 pl-11 pr-24 text-sm transition-all focus:border-orange-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-orange-500/10 dark:border-slate-800 dark:bg-slate-900/50 dark:text-slate-100 dark:focus:border-orange-500 dark:focus:bg-slate-900"
+              placeholder="Search products, stores..."
             />
-
-            {/* <div className="absolute inset-y-0 lg:left-0 -left-1 flex items-center pointer-events-none z-20 pl-4">
-              <svg
-                className="lg:h-4 h-3 sm:h-4 sm:w-3 lg:w-4 w-3 text-gray-400"
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                viewBox="0 0 16 16"
-              >
-                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-              </svg>
-            </div> */}
-          </div>
-
-          {/* div 3 */}
-          <div className="flex flex-row items-center lg:gap-1 sm:gap-4 gap-2 lg:mt-5 sm:justify-end sm:mt-0 sm:pl-5">
-            {/* notification icon */}
-            <Dropdown
-              arrowIcon={false}
-              inline={true}
-              label={
-                <div
-                  onClick={handleClearSearch}
-                  className="relative inline-flex flex-shrink-0 justify-center items-center lg:h-[40px]  h-[28px] lg:w-[40px] w-[28px]  font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#F15B22] transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
-                >
-                  <img
-                    src={require("../../assets/images/retailer/bell.png")}
-                    alt=""
-                    className="rounded-lg lg:w-8 lg:h-8 w-6 sm:h-8 sm:w-8 h-6"
-                  />
-                  <span className="absolute lg:top-0.5 top-0 right-0 inline-flex items-center  lg:px-1.5 px-0.5 py-0 sm:px-1   rounded-full lg:text-sm sm:text-xs text-xs  font-light transform -translate-y-1/4 translate-x-1/4 sm:-translate-y-1/3 sm:translate-x-1/3 lg:-translate-y-1/4 lg:translate-x-1/4 bg-[#F15B22] text-white">
-                    {countAllNotificationUnseen == 0
-                      ? "0"
-                      : countAllNotificationUnseen}
-                  </span>
-                </div>
-              }
+            <button
+              onClick={searchProductByStore}
+              className="absolute right-1.5 rounded-xl bg-orange-500 px-4 py-1.5 text-xs font-bold text-white transition-all hover:bg-orange-600 active:scale-95"
             >
-              <Dropdown.Header>
-                <div className="flex flex-row justify-between w-full">
-                  <span className="block  text-xl text-gray-500 font-bold">
-                    Notification
+              Search
+            </button>
+          </div>
+        </div>
+
+        {/* Action Icons */}
+        <div className="flex items-center gap-2 sm:gap-4">
+          <ThemeToggle />
+
+          {/* Notifications */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 transition-all hover:bg-slate-50 hover:text-orange-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800">
+                <Bell className="h-5 w-5" />
+                {countAllNotificationUnseen > 0 && (
+                  <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-[10px] font-bold text-white ring-2 ring-white dark:ring-slate-950">
+                    {countAllNotificationUnseen > 99 ? "99+" : countAllNotificationUnseen}
                   </span>
-                  <button
-                    className="block   text-[#F15B22] active:text-orange-600"
-                    onClick={handleReadAllNotifications}
-                  >
-                    Mark all as read
-                  </button>
-                </div>
-                <Dropdown.Divider />
-                <ul className="flex flex-row text-md mt-3 mr-6 space-x-8 text-sm">
-                  <li>
-                    <StyledBadge
-                      badgeContent={
-                        countAllNotificationUnseen == 0
-                          ? "0"
-                          : countAllNotificationUnseen
-                      }
-                      color="secondary"
-                    >
-                      <div
-                        onClick={toggleTab1}
-                        className={`${
-                          toggleState === 1
-                            ? "text-newGray dark:text-white border-b-2 border-[#F15B22]"
-                            : "outline-none cursor-pointer"
-                        } `}
-                      >
-                        All Order
-                      </div>
-                    </StyledBadge>
-                  </li>
-                  <li>
-                    <StyledBadge
-                      badgeContent={
-                        countAllNotificationUnseenOrderAccepted == 0
-                          ? "0"
-                          : countAllNotificationUnseenOrderAccepted
-                      }
-                      color="secondary"
-                    >
-                      <a
-                        href="#"
-                        onClick={toggleTab2}
-                        className={
-                          toggleState === 2
-                            ? "text-newGray dark:text-white border-b-2 border-[#F15B22]"
-                            : "outline-none cursor-pointer"
-                        }
-                      >
-                        Accepted
-                      </a>
-                    </StyledBadge>
-                  </li>
-
-                  <li>
-                    <StyledBadge
-                      badgeContent={
-                        countAllNotificationUnseenOrderDelivering == 0
-                          ? "0"
-                          : countAllNotificationUnseenOrderDelivering
-                      }
-                      color="secondary"
-                    >
-                      <div
-                        onClick={toggleTab3}
-                        className={
-                          toggleState === 3
-                            ? "text-newGray dark:text-white border-b-2 border-[#F15B22]"
-                            : "outline-none cursor-pointer"
-                        }
-                      >
-                        Delivering
-                      </div>
-                    </StyledBadge>
-                  </li>
-                  <li>
-                    <StyledBadge
-                      badgeContent={
-                        countAllNotificationUnseenOrderConfirming == 0
-                          ? "0"
-                          : countAllNotificationUnseenOrderConfirming
-                      }
-                      color="secondary"
-                    >
-                      <div
-                        onClick={toggleTab4}
-                        className={`${
-                          toggleState === 4
-                            ? "text-newGray dark:text-white border-b-2 border-[#F15B22]"
-                            : "outline-none cursor-pointer"
-                        } `}
-                      >
-                        Confirming
-                      </div>
-                    </StyledBadge>
-                  </li>
-                  <li>
-                    <StyledBadge
-                      badgeContent={
-                        countAllNotificationUnseenOrderRejected == 0
-                          ? "0"
-                          : countAllNotificationUnseenOrderRejected
-                      }
-                      color="secondary"
-                    >
-                      <div
-                        onClick={toggleTab5}
-                        className={`${
-                          toggleState === 5
-                            ? "text-newGray dark:text-white border-b-2 border-[#F15B22]"
-                            : "outline-none cursor-pointer"
-                        } `}
-                      >
-                        Reject
-                      </div>
-                    </StyledBadge>
-                  </li>
-                </ul>
-
-                {/* notification detail */}
-                <div className="flex  flex-col relative w-full h-96">
-                  <div className="flex-grow-1">
-                    <div
-                      className={
-                        toggleState === 1
-                          ? " w-full h-full block"
-                          : "bg-white w-full h-full hidden"
-                      }
-                    >
-                      {/* notification one */}
-                      <AllNotification />
-                    </div>
-                    <div
-                      className={
-                        toggleState === 2
-                          ? "bg-white w-full h-full block"
-                          : "bg-white w-full h-full hidden"
-                      }
-                    >
-                      <OrderNotification />
-                    </div>
-                    <div
-                      className={
-                        toggleState === 3
-                          ? "bg-white w-full h-full   block"
-                          : "bg-white w-full h-full hidden"
-                      }
-                    >
-                      <DeliveringNotification />
-                    </div>
-                    <div
-                      className={
-                        toggleState === 4
-                          ? "bg-white w-full h-full   block"
-                          : "bg-white w-full h-full hidden"
-                      }
-                    >
-                      <ConfirmingNotification />
-                    </div>
-                    <div
-                      className={
-                        toggleState === 5
-                          ? "bg-white w-full h-full   block"
-                          : "bg-white w-full h-full hidden"
-                      }
-                    >
-                      <RejectNotification />
-                    </div>
-                  </div>
-                </div>
-              </Dropdown.Header>
-            </Dropdown>
-
-            {/* shopping cart */}
-
-            {productInCartData.length > 0 ? (
-              <Dropdown
-                arrowIcon={false}
-                inline={true}
-                label={
-                  <button
-                    onClick={handleClearSearch}
-                    // onClick={()=> productInCartData.length === 0?  :''}
-                    className="flex flex-row items-center gap-1 lg:px-5"
-                  >
-                    <img
-                      src={require("../../assets/images/retailer/bag.png")}
-                      alt=""
-                      className="rounded-lg lg:w-8 lg:h-8 w-6 sm:h-8 sm:w-8 h-6 "
-                    />
-                    <span className="absolute lg:-mt-3 sm:-mt-3 -mt-2 sm:ml-4 ml-3  inline-flex items-center  lg:py-0  lg:px-1.5 sm:px-1 px-[3px] rounded-full lg:text-sm sm:text-xs text-xs font-light transform -translate-y-1/3 translate-x-1/3 bg-[#F15B22] text-white">
-                      {productInCartData.reduce(
-                        (sum, item) => sum + item.qty,
-                        0
-                      )}
-                    </span>
-                    <p className="font-medium text-lg mt-1 hidden lg:block">
-                      shopping
-                    </p>
-                  </button>
-                }
-              >
-                {/* back button */}
-                {/* <Dropdown.Header>
-                  <button className="flex items-center px-4 hover:opacity-80 ">
-                    <img
-                      src={require("../../assets/images/retailer/Lefticon.png")}
-                      alt=""
-                    />
-                    <p>Back</p>
-                  </button>
-       
-                </Dropdown.Header> */}
-
-                <button onClick={() => setSuccess2(!success2)}>
-                  <img
-                    className="w-16 absolute top-0 right-0 mr-2 mt-5 hover:opacity-80"
-                    src={draft}
-                  />
+                )}
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-[min(28rem,95vw)] overflow-hidden rounded-2xl p-0 shadow-2xl">
+              <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 px-5 py-4 dark:border-slate-800 dark:bg-slate-900/50">
+                <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">Notifications</h3>
+                <button
+                  onClick={handleReadAllNotifications}
+                  className="text-xs font-semibold text-orange-500 transition hover:text-orange-600"
+                >
+                  Mark all read
                 </button>
-                {/* for reder store name */}
-                <div className="px-12">
-                  <p className="">
-                    Order from{"    "}
+              </div>
+
+              <div className="border-b border-slate-100 bg-white px-2 dark:border-slate-800 dark:bg-slate-950">
+                <div className="flex gap-1 overflow-x-auto p-2 scrollbar-hide">
+                  {[
+                    { id: 1, label: "All", count: countAllNotificationUnseen },
+                    { id: 2, label: "Accepted", count: countAllNotificationUnseenOrderAccepted },
+                    { id: 3, label: "Shipping", count: countAllNotificationUnseenOrderDelivering },
+                    { id: 4, label: "Confirming", count: countAllNotificationUnseenOrderConfirming },
+                    { id: 5, label: "Rejected", count: countAllNotificationUnseenOrderRejected },
+                  ].map((tab) => (
                     <button
-                      onClick={() =>
-                        onClickGetDataShop(localStoreId, localStoreName)
-                      } 
-                      className="text-retailerPrimary font-semibold hover:text-orange-600 "
+                      key={tab.id}
+                      onClick={() => toggleTab(tab.id)}
+                      className={`relative flex items-center gap-2 whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
+                        toggleState === tab.id
+                          ? "bg-orange-50 text-orange-600 dark:bg-orange-950/30 dark:text-orange-400"
+                          : "text-slate-500 hover:bg-slate-50 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-900 dark:hover:text-slate-200"
+                      }`}
                     >
-                      {localStoreName}
+                      {tab.label}
+                      {tab.count > 0 && (
+                        <span className={`h-1.5 w-1.5 rounded-full ${toggleState === tab.id ? "bg-orange-500" : "bg-slate-300 dark:bg-slate-700"}`} />
+                      )}
                     </button>
-                  </p>
+                  ))}
                 </div>
+              </div>
 
-                <Dropdown.Divider />
-                <div className="overflow-y-auto max-h-96">
-                  {productInCartData?.map((item) => (
-                    // console.log("item ",item),
-                    <div className="flex flex-col px-10">
-                      <hr />
-                      {/* cards 1*/}
+              <div className="max-h-[32rem] overflow-y-auto scrollbar-thin">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={toggleState}
+                    initial={{ opacity: 0, x: 10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -10 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    {toggleState === 1 && <AllNotification />}
+                    {toggleState === 2 && <OrderNotification />}
+                    {toggleState === 3 && <DeliveringNotification />}
+                    {toggleState === 4 && <ConfirmingNotification />}
+                    {toggleState === 5 && <RejectNotification />}
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
-                      <div v className="flex flex-col p-4">
-                        <div className="flex justify-around shadow-sm  h-16 items-center mt-2">
-                          <div className="flex items-center w-1/4">
-                            <img
-                              className="w-14 h-14 rounded-sm"
-                              src={
-                                item.image == "" ||
-                                item.image == "string" ||
-                                item.image == null
-                                  ? noImage
-                                  : item.image
-                              }
-                              alt=""
-                            />
-                            <p className="ml-1">{item.productName}</p>
+          {/* Shopping Cart */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 transition-all hover:bg-slate-50 hover:text-orange-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800">
+                <ShoppingBag className="h-5 w-5" />
+                {productInCartData.length > 0 && (
+                  <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-[10px] font-bold text-white ring-2 ring-white dark:ring-slate-950">
+                    {productInCartData.reduce((sum, item) => sum + item.qty, 0)}
+                  </span>
+                )}
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-[min(32rem,95vw)] overflow-hidden rounded-2xl p-0 shadow-2xl">
+              <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 px-5 py-4 dark:border-slate-800 dark:bg-slate-900/50">
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">Your Cart</h3>
+                  {productInCartData.length > 0 && (
+                    <p className="text-[10px] font-medium text-slate-500">
+                      Order from <span className="text-orange-500">{localStoreName}</span>
+                    </p>
+                  )}
+                </div>
+                {productInCartData.length > 0 && (
+                  <button
+                    onClick={() => setSuccess2(!success2)}
+                    className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[10px] font-bold text-slate-600 transition hover:border-orange-200 hover:text-orange-500 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400"
+                  >
+                    <Package className="h-3 w-3" />
+                    Save Draft
+                  </button>
+                )}
+              </div>
+
+              <div className="max-h-[28rem] overflow-y-auto scrollbar-thin">
+                {productInCartData.length > 0 ? (
+                  <div className="divide-y divide-slate-50 dark:divide-slate-900">
+                    {productInCartData.map((item) => (
+                      <div key={item.productId} className="group flex items-center gap-4 p-4 transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-900/30">
+                        <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl border border-slate-100 bg-white dark:border-slate-800 dark:bg-slate-900">
+                          <img
+                            src={getSafeImageSrc(item.image, noImage)}
+                            onError={(e) => applyImageFallback(e, noImage)}
+                            alt={item.productName}
+                            className="h-full w-full object-contain p-1"
+                          />
+                        </div>
+                        <div className="flex flex-1 flex-col gap-1">
+                          <h4 className="line-clamp-1 text-xs font-bold text-slate-900 dark:text-slate-100">{item.productName}</h4>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-medium text-slate-500">${item.unitPrice}</span>
+                            <span className="text-[10px] text-slate-300">/ pack</span>
                           </div>
-                          <div className="w-1/4 ml-14">
-                            <p className="m-2">$ {item.unitPrice}</p>
-                          </div>
-
-                          <div className="flex items-center">
-                            {/*button Decrement */}
-                            <button
-                              onClick={() => handleDecrement(item.productId)}
-                              // disabled={disabledButtons.has(item.id) }
-                              type="button"
-                              className={`h-6 w-6 rounded-sm border border-orange-500 hover:border-orange-600 flex justify-center items-center ${
-                                loadingProducts2.has(item.productId) &&
-                                "bg-white hover:bg-white border border-white hover:border-white"
-                              }`}
-                            >
-                              {/* loading indicator */}
-                              <div role="status">
-                                {loadingProducts2.has(item.productId) && (
-                                  <div className="flex items-center ml-2">
-                                    <svg
-                                      aria-hidden="true"
-                                      className="w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-orange-500"
-                                      viewBox="0 0 100 101"
-                                      fill="none"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                      <path
-                                        d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                                        fill="currentColor"
-                                      />
-                                      <path
-                                        d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                                        fill="currentFill"
-                                      />
-                                    </svg>
-                                    {/* <span className="sr-only">Loading...</span> */}
-                                  </div>
-                                )}
-                              </div>
-                              {!loadingProducts2.has(item.productId) && (
-                                <svg
-                                  className="w-4 h-4 fill-orange-500"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  viewBox="0 0 448 512"
-                                >
-                                  <path d="M432 256c0 17.7-14.3 32-32 32L48 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l352 0c17.7 0 32 14.3 32 32z" />
-                                </svg>
-                              )}
-                            </button>
-
-                            {/* input field  */}
-                            <input
-                              type="text"
-                              value={
-                                counterLocalStorage[item.productId]
-                                  ? counterLocalStorage[item.productId]
-                                  : 0
-                                // item.qty || 0
-                              }
-                              onChange={(e) =>
-                                handleInputChange(item.productId, e)
-                              }
-                              className="w-10 text-center block p-2 text-gray-900 border border-[#F6F7F8] rounded-lg bg-[#F6F7F8] sm:text-xs ml-1"
-                            />
-                            {isLoadingInputs.has(item.productId) && (
-                              <div
-                                style={{
-                                  position: "fixed",
-                                  top: "50%",
-                                  left: "50%",
-                                  transform: "translate(-50%, -50%)",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  backgroundColor: "rgba(0, 0, 0, 0.5)",
-                                  width: "100vw",
-                                  height: "100vh",
-                                  zIndex: 9999,
-                                }}
+                          
+                          <div className="mt-2 flex items-center gap-3">
+                            <div className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white p-1 dark:border-slate-800 dark:bg-slate-950">
+                              <button
+                                onClick={() => handleDecrement(item.productId)}
+                                className="flex h-6 w-6 items-center justify-center rounded-md text-slate-400 transition hover:bg-slate-50 hover:text-orange-500 dark:hover:bg-slate-900"
                               >
-                                <div
-                                  className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-solid border-current border-r-transparent align-[0.125em] text-orange-500"
-                                  role="status"
-                                >
-                                  <span className="sr-only">Loading...</span>
-                                </div>
-                              </div>
-                            )}
-
-                            {/* increment button */}
-                            <button
-                              onClick={() => handleIncrement(item.productId)}
-                              disabled={disabledButtons.has(item.productId)}
-                              type="button"
-                              className={`h-6 w-6 rounded-sm border border-transparent bg-orange-500 hover:bg-orange-600 flex justify-center items-center ml-1 ${
-                                loadingProducts.has(item.productId) &&
-                                "bg-white hover:bg-white"
-                              }`}
-                            >
-                              {/* loading indicator */}
-                              <div role="status">
-                                {loadingProducts.has(item.productId) && (
-                                  <div className="flex items-center ml-2">
-                                    <svg
-                                      aria-hidden="true"
-                                      className="w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-orange-500"
-                                      viewBox="0 0 100 101"
-                                      fill="none"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                      <path
-                                        d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                                        fill="currentColor"
-                                      />
-                                      <path
-                                        d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                                        fill="currentFill"
-                                      />
-                                    </svg>
-                                    {/* <span className="sr-only">Loading...</span> */}
-                                  </div>
+                                {loadingProducts2.has(item.productId) ? (
+                                  <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} className="h-3 w-3 border-2 border-orange-500 border-t-transparent rounded-full" />
+                                ) : (
+                                  <Minus className="h-3 w-3" />
                                 )}
-                              </div>
-                              {!loadingProducts.has(item.productId) && (
-                                <svg
-                                  className="w-4 h-4 fill-white"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  viewBox="0 0 448 512"
-                                >
-                                  <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
-                                </svg>
-                              )}
-                            </button>
-                          </div>
-
-                          <div className="flex w-1/4 items-center justify-between">
-                            <p className="ml-4 w-full font-semibold">
-                              $ {item.subTotal}{" "}
-                            </p>
-
-                            <button
-                              onClick={() =>
-                                onClickDeleteProductInCart(item.productId)
-                              }
-                            >
-                              {/* delete product in cart */}
-                              <img
-                                className="ml-5"
-                                src={require("../../assets/images/retailer/trashcan-cart.png")}
-                                alt=""
+                              </button>
+                              <input
+                                type="text"
+                                value={counterLocalStorage[item.productId] || 0}
+                                onChange={(e) => handleInputChange(item.productId, e)}
+                                className="w-8 bg-transparent text-center text-xs font-bold text-slate-900 focus:outline-none dark:text-slate-100"
                               />
-                            </button>
+                              <button
+                                onClick={() => handleIncrement(item.productId)}
+                                className="flex h-6 w-6 items-center justify-center rounded-md text-slate-400 transition hover:bg-slate-50 hover:text-orange-500 dark:hover:bg-slate-900"
+                              >
+                                {loadingProducts.has(item.productId) ? (
+                                  <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} className="h-3 w-3 border-2 border-orange-500 border-t-transparent rounded-full" />
+                                ) : (
+                                  <Plus className="h-3 w-3" />
+                                )}
+                              </button>
+                            </div>
                           </div>
                         </div>
+                        <div className="flex flex-col items-end gap-3">
+                          <span className="text-sm font-black text-slate-900 dark:text-slate-100">${item.subTotal.toFixed(2)}</span>
+                          <button
+                            onClick={() => onClickDeleteProductInCart(item.productId)}
+                            className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-300 transition hover:bg-red-50 hover:text-red-500 dark:text-slate-600 dark:hover:bg-red-950/20"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  )) || ""}
-                </div>
-
-                {/* Calculate the total sum */}
-
-                {/* Button */}
-                <div className="flex justify-center -mb-5 border mt-4">
-                  <div>
-                    <button
-                      onClick={() => setSuccess(!success)}
-                      className="w-20 h-10 bg-retailerPrimary flex justify-center items-center rounded-md text-white mr-2"
-                    >
-                      Check Out
-                    </button>
-                  </div>
-
-                  <div>
-                    <button
-                      onClick={() => setDraft(!draf)}
-                      className="w-20 h-10 bg-[#FD3939] flex justify-center items-center rounded-md text-white"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-
-                {productInCartData.length > 0 && (
-                  <div className="flex-col mt-8 border border-solid border-[#EBF0FF] rounded-md p-4">
-                    {/* Render each item */}
-                    {productInCartData.map((item) => (
-                      <div key={item.productId}></div>
                     ))}
-
-                    {/* Calculate the total sum */}
-                    <div className="flex justify-between pl-8 pr-8">
-                      <p className=" font-bold font-Poppins text-lg ">
-                        Total Price :
-                      </p>
-                      <p className="text-retailerPrimary font-bold font-Poppins text-lg">
-                        $
-                        {productInCartData.reduce(
-                          (sum, item) => sum + item.subTotal,
-                          0
-                        )}
-                      </p>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
+                    <div className="rounded-full bg-slate-50 p-6 dark:bg-slate-900">
+                      <ShoppingBag className="h-10 w-10 text-slate-200 dark:text-slate-800" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100">Empty Cart</h4>
+                      <p className="text-xs text-slate-500">Your shopping cart is waiting to be filled.</p>
                     </div>
                   </div>
                 )}
-              </Dropdown>
-            ) : (
-              <Dropdown
-                className="p-5"
-                arrowIcon={false}
-                inline={true}
-                label={
-                  <button
-                    onClick={handleClearSearch}
-                    // onClick={()=> productInCartData.length === 0?  :''}
-                    className="flex flex-row items-center gap-1 lg:px-5 "
-                  >
-                    <img
-                      src={require("../../assets/images/retailer/bag.png")}
-                      alt=""
-                      className="rounded-lg lg:w-8 lg:h-8 w-5 sm:h-8 sm:w-8 h-5 "
-                    />
-                    <p className="font-medium text-lg mt-1 hidden lg:block">
-                      shopping
-                    </p>
-                  </button>
-                }
-              >
-                <img className="w-40 h-full ml-14" src={trolley} /> <br />
-                {/* for reder store name */}
-                <div className="px-12">
-                  <p className="">
-                    Your cart is currently empty.
-                    <span className="text-retailerPrimary font-semibold"></span>
-                  </p>
-                </div>
-              </Dropdown>
-            )}
+              </div>
 
-            {/* profileDropdown */}
-            <Dropdown
-              arrowIcon={false}
-              inline={true}
-              label={
+              {productInCartData.length > 0 && (
+                <div className="border-t border-slate-100 bg-slate-50/50 p-5 dark:border-slate-800 dark:bg-slate-900/50">
+                  <div className="mb-4 flex items-center justify-between">
+                    <span className="text-xs font-medium text-slate-500">Subtotal</span>
+                    <span className="text-lg font-black text-slate-900 dark:text-slate-100">
+                      ${productInCartData.reduce((sum, item) => sum + item.subTotal, 0).toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      onClick={() => setSuccess(!success)}
+                      className="flex h-11 items-center justify-center rounded-xl bg-orange-500 text-sm font-bold text-white shadow-lg shadow-orange-500/20 transition hover:bg-orange-600 active:scale-[0.98]"
+                    >
+                      Checkout
+                    </button>
+                    <button
+                      onClick={() => setDraft(!draf)}
+                      className="flex h-11 items-center justify-center rounded-xl bg-slate-200 text-sm font-bold text-slate-700 transition hover:bg-slate-300 active:scale-[0.98] dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                    >
+                      Cancel Order
+                    </button>
+                  </div>
+                </div>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* User Profile */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border-2 border-white bg-slate-100 shadow-sm transition-transform active:scale-95 dark:border-slate-800 dark:bg-slate-900">
                 <img
-                  src={profile.profileImage}
-                  className="lg:w-11 lg:h-11 w-7 h-7 sm:w-9 sm:h-9 rounded-full "
+                  src={getSafeImageSrc(profile.profileImage, noImage)}
+                  onError={(e) => applyImageFallback(e, noImage)}
+                  className="h-full w-full object-cover"
                 />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56 overflow-hidden rounded-2xl p-0 shadow-2xl">
+              <div className="bg-slate-50/50 p-4 dark:bg-slate-900/50">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Account</p>
+                <p className="line-clamp-1 text-sm font-bold text-slate-900 dark:text-slate-100">
+                  {profile.firstName} {profile.lastName}
+                </p>
+              </div>
+              <div className="p-1.5">
+                <DropdownMenuItem asChild>
+                  <NavLink
+                    to="/retailer/profile"
+                    onClick={handleClearSearch}
+                    className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-orange-500 focus:bg-slate-50 focus:text-orange-500 dark:text-slate-400 dark:hover:bg-slate-900 dark:hover:text-slate-100"
+                  >
+                    <User className="h-4 w-4" />
+                    My Profile
+                  </NavLink>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-900" />
+                <DropdownMenuItem
+                  onClick={onSignOut}
+                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-red-500 transition-colors hover:bg-red-50 hover:text-red-600 focus:bg-red-50 focus:text-red-600 dark:hover:bg-red-950/20"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Sign Out
+                </DropdownMenuItem>
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Mobile Menu Toggle */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 lg:hidden dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300"
+          >
+            {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mini Navbar - Desktop Navigation */}
+      <nav className="hidden border-t border-slate-100 bg-white dark:border-slate-800/50 dark:bg-slate-950 lg:block">
+        <div className="mx-auto flex h-12 max-w-[105rem] items-center justify-center gap-8 px-8">
+          {[
+            { to: "/retailer/home", label: "Home" },
+            { to: "/retailer/order", label: "Order" },
+            { to: "/retailer/favorite", label: "Favorite" },
+            { to: "/retailer/report", label: "Report" },
+            { to: "/retailer/draft", label: "Draft" },
+            { to: "/retailer/order-history", label: "Order History" },
+          ].map((link) => (
+            <NavLink
+              key={link.to}
+              to={link.to}
+              onClick={handleClearSearch}
+              className={({ isActive }) =>
+                `group relative text-sm font-bold transition-colors ${
+                  isActive ? "text-orange-500" : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+                }`
               }
             >
-              <Dropdown.Item>
-                <NavLink
-                  to="/retailer/profile"
-                  onClick={handleClearSearch}
-                  className="flex flex-row items-center"
-                >
-                  <img
-                    src={require("../../assets/images/retailer/editm.png")}
-                    alt=""
-                    className=" "
-                  />
-                  <div className="px-2">View Profile</div>
-                </NavLink>
-              </Dropdown.Item>
+              {({ isActive }) => (
+                <>
+                  {link.label}
+                  {isActive && (
+                    <motion.div
+                      layoutId="nav-active-retailer"
+                      className="absolute -bottom-[17px] left-0 h-0.5 w-full bg-orange-500"
+                    />
+                  )}
+                </>
+              )}
+            </NavLink>
+          ))}
+        </div>
+      </nav>
 
-              <Dropdown.Divider />
-              <Dropdown.Item>
-                <div
-                  className="flex flex-row items-center justify-start cursor-pointer"
-                  onClick={onSignOut}
-                >
-                  <img
-                    src={require("../../assets/images/retailer/logoutm.png")}
-                    alt=""
-                    className=" "
-                  />
-                  <div className="px-2">Log out</div>
+      {/* Mobile Menu - Overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="fixed inset-0 z-40 bg-slate-950/20 backdrop-blur-sm lg:hidden"
+            />
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="fixed inset-y-0 right-0 z-50 w-full max-w-xs border-l border-slate-200 bg-white shadow-2xl dark:border-slate-800 dark:bg-slate-950 lg:hidden"
+            >
+              <div className="flex flex-col h-full">
+                <div className="flex items-center justify-between p-6">
+                  <span className="text-lg font-black text-slate-900 dark:text-slate-100">Menu</span>
+                  <button
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-50 text-slate-500 dark:bg-slate-900"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
                 </div>
-              </Dropdown.Item>
-            </Dropdown>
-          </div>
-        </nav>
-      </header>
-      {/* mininavbar */}
-      <header className="flex flex-wrap font-Poppins sm:justify-start sm:flex-nowrap z-50 w-full text-sm py-2 border-solid border-b border-t mx-auto">
-        <nav
-          className="max-w-[105rem] w-full px-4 mx-auto sm:flex sm:items-center sm:justify-evenly"
-          aria-label="Global"
-        >
-          <div className="flex flex-row items-center justify-between">
-            {/* <div className="flex flex-row items-center"> */}
-            {/* <div className="mr-2">
-                <svg
-                  className="lg:w-5 sm:w-4 w-3 "
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 448 512"
-                >
-                  <path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z" />
-                </svg>
-              </div> */}
 
-            {/* categories dropdown */}
-            {/* <div onClick={handleClearSearch}>ddadad
-                <Dropdown
-                  label={
-                    <span className="font-bold text-[16px]  text-gray-500">
-                      Categoriesasdads
-                    </span>
-                  }
-                  inline
-                  className="bg-white font-bold"
-                >
-                  <Dropdown.Item className="hover:text-[#F15B22] font-medium text-[16px]">
-                    <NavLink to="/retailer/beverage">Beverages</NavLink>
-                  </Dropdown.Item>
-                  {/* <Dropdown.Divider /> */}
-            {/* </Dropdown>
-              </div> */}
-            {/* </div> */}
+                {/* Mobile Search */}
+                <div className="px-6 pb-4">
+                  <div className="relative flex items-center">
+                    <Search className="absolute left-3 h-4 w-4 text-slate-400" />
+                    <input
+                      type="text"
+                      onChange={handleFormChange}
+                      onKeyDown={(event) => event.key === "Enter" && searchProductByStore()}
+                      value={onChangeSearch}
+                      className="w-full rounded-xl border border-slate-100 bg-slate-50 py-2 pl-10 pr-4 text-xs dark:border-slate-800 dark:bg-slate-900"
+                      placeholder="Search..."
+                    />
+                  </div>
+                </div>
 
-            {/* <div className="sm:hidden">
-              <button
-                type="button"
-                className="hs-collapse-toggle  focus:ring-orange-500 p-2 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-gray-700 shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white transition-all text-sm dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-gray-700 dark:text-gray-400 dark:hover:text-white dark:focus:ring-offset-gray-800"
-                data-hs-collapse="#navbar-alignment"
-                aria-controls="navbar-alignment"
-                aria-label="Toggle navigation"
-              >
-                <svg
-                  className="hs-collapse-open:hidden w-4 h-4"
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                  viewBox="0 0 16 16"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"
-                  />
-                </svg>
-                <svg
-                  className="hs-collapse-open:block hidden w-4 h-4"
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-                </svg>
-              </button>
-            </div> */}
-          </div>
-
-          <div
-            // id="navbar-alignment"
-            className="hs-collapse font-medium text-[16px] border-collapse overflow-hidden  mx-auto transition-all duration-300 basis-full grow "
-          >
-            <div className="flex lg:gap-10 gap-2 justify-center flex-row sm:items-center sm:mt-0 ">
-              <NavLink
-                to="/retailer/home"
-                onClick={handleClearSearch}
-                className={({ isActive }) =>
-                  isActive
-                    ? "font-bold lg:text-[16px] sm:text-[15px] text-[11px]  dark:text-gray-400 dark:hover:text-gray-500 p-1 text-[#f15b22] underline decoration-[#F15B22] underline-offset-4"
-                    : "font-bold lg:text-[16px] sm:text-[15px] text-[11px] text-gray-500 hover:text-gray-400 dark:text-gray-400 dark:hover:text-gray-500 p-1"
-                }
-                // className={``}
-                // href="#"
-              >
-                Home
-              </NavLink>
-              <NavLink
-                to="/retailer/order"
-                onClick={handleClearSearch}
-                className={({ isActive }) =>
-                  isActive
-                    ? "font-bold lg:text-[16px] sm:text-[15px] text-[11px]  dark:text-gray-400 dark:hover:text-gray-500 p-1 text-[#f15b22] underline decoration-[#F15B22] underline-offset-4"
-                    : "font-bold lg:text-[16px] sm:text-[15px] text-[11px] text-gray-500 hover:text-gray-400 dark:text-gray-400 dark:hover:text-gray-500 p-1"
-                }
-              >
-                Order
-              </NavLink>
-              <NavLink
-                to="/retailer/favorite"
-                onClick={handleClearSearch}
-                className={({ isActive }) =>
-                  isActive
-                    ? "font-bold lg:text-[16px] sm:text-[15px] text-[11px] dark:text-gray-400 dark:hover:text-gray-500 p-1 text-[#f15b22] underline decoration-[#F15B22] underline-offset-4"
-                    : "font-bold lg:text-[16px] sm:text-[15px] text-[11px] text-gray-500 hover:text-gray-400 dark:text-gray-400 dark:hover:text-gray-500 p-1"
-                }
-              >
-                Favorite
-              </NavLink>
-              <NavLink
-                to="/retailer/report"
-                onClick={handleClearSearch}
-                className={({ isActive }) =>
-                  isActive
-                    ? "font-bold lg:text-[16px] sm:text-[15px] text-[11px] dark:text-gray-400 dark:hover:text-gray-500 p-1 text-[#f15b22] underline decoration-[#F15B22] underline-offset-4"
-                    : "font-bold lg:text-[16px] sm:text-[15px] text-[11px] text-gray-500 hover:text-gray-400 dark:text-gray-400 dark:hover:text-gray-500 p-1"
-                }
-              >
-                Report
-              </NavLink>
-
-              <NavLink
-                to="/retailer/draft"
-                onClick={handleClearSearch}
-                className={({ isActive }) =>
-                  isActive
-                    ? "font-bold lg:text-[16px] sm:text-[15px] text-[11px] dark:text-gray-400 dark:hover:text-gray-500 p-1 text-[#f15b22] underline decoration-[#F15B22] underline-offset-4"
-                    : "font-bold lg:text-[16px] sm:text-[15px] text-[11px] text-gray-500 hover:text-gray-400 dark:text-gray-400 dark:hover:text-gray-500 p-1"
-                }
-              >
-                Draft
-              </NavLink>
-
-              <NavLink
-                to="/retailer/order-history"
-                onClick={handleClearSearch}
-                className={({ isActive }) =>
-                  isActive
-                    ? "font-bold lg:text-[16px] sm:text-[15px] text-[11px] dark:text-gray-400 dark:hover:text-gray-500 p-1 text-[#f15b22] underline decoration-[#F15B22] underline-offset-4"
-                    : "font-bold lg:text-[16px] sm:text-[15px] text-[11px] text-gray-500 hover:text-gray-400 dark:text-gray-400 dark:hover:text-gray-500 p-1"
-                }
-              >
-                Order History
-              </NavLink>
-
-              {/* history dropdown */}
-              {/* <Dropdown
-                  label={
-                    <p className=" font-bold lg:text-[16px] sm:text-[14px] text-[12px] text-gray-500 hover:text-gray-400 dark:text-gray-400 dark:hover:text-gray-500 p-2 ">
-                      History
-                    </p>
-                  }
-                  inline
-                  className=" font-bold bg-red-400"
-                >
-                  <Dropdown.Item  className="hover:text-[#F15B22]">
-                    <NavLink to="/retailer/draft" onClick={handleClearSearch}>Draft</NavLink>
-                  </Dropdown.Item>
-                  <Dropdown.Divider className="" />
-                  <Dropdown.Item className="hover:text-[#F15B22]">
-                    <NavLink to="/retailer/draft">Draft</NavLink>
-                  </Dropdown.Item>
-                  <Dropdown.Divider />
-                  <Dropdown.Item className="hover:text-[#F15B22]">
-                    <NavLink to="/retailer/order-history">
-                      Order History
+                <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
+                  {[
+                    { to: "/retailer/home", label: "Home" },
+                    { to: "/retailer/order", label: "Order" },
+                    { to: "/retailer/favorite", label: "Favorite" },
+                    { to: "/retailer/report", label: "Report" },
+                    { to: "/retailer/draft", label: "Draft" },
+                    { to: "/retailer/order-history", label: "Order History" },
+                  ].map((link) => (
+                    <NavLink
+                      key={link.to}
+                      to={link.to}
+                      onClick={() => {
+                        handleClearSearch();
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className={({ isActive }) =>
+                        `flex items-center rounded-xl px-4 py-3 text-sm font-bold transition-all ${
+                          isActive
+                            ? "bg-orange-50 text-orange-600 dark:bg-orange-950/30 dark:text-orange-400"
+                            : "text-slate-600 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-900"
+                        }`
+                      }
+                    >
+                      {link.label}
                     </NavLink>
-                  </Dropdown.Item>
-                </Dropdown> */}
+                  ))}
+                </nav>
+
+                <div className="p-6 border-t border-slate-100 dark:border-slate-900">
+                  <button
+                    onClick={onSignOut}
+                    className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-bold text-red-600 transition hover:bg-red-100 dark:border-red-950/20 dark:bg-red-950/10"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Sign Out
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Confirmation Dialogs */}
+      <Dialog open={draf} onOpenChange={(open) => !open && setDraft(!draf)}>
+        <DialogContent className="max-w-md rounded-2xl p-0 overflow-hidden">
+          <div className="p-8 text-center">
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-red-50 text-red-500 dark:bg-red-950/20">
+              <XCircle className="h-10 w-10" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">Cancel Order?</h3>
+            <p className="mt-2 text-sm text-slate-500">
+              Are you sure you want to cancel this order? This action cannot be undone.
+            </p>
+            <div className="mt-8 flex gap-3">
+              <button
+                onClick={() => handleClickCancel("yes")}
+                className="flex-1 rounded-xl bg-red-500 py-3 text-sm font-bold text-white transition hover:bg-red-600 active:scale-[0.98]"
+              >
+                Yes, Cancel
+              </button>
+              <button
+                onClick={() => handleClickCancel("no")}
+                className="flex-1 rounded-xl bg-slate-100 py-3 text-sm font-bold text-slate-600 transition hover:bg-slate-200 active:scale-[0.98] dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+              >
+                No, Go Back
+              </button>
             </div>
           </div>
-        </nav>
-      </header>
-      <React.Fragment>
-        <Modal
-          show={draf}
-          size="md"
-          popup={true}
-          onClose={() => setDraft(!draf)}
-        >
-          <Modal.Header />
-          <Modal.Body>
-            <div className="text-center">
-              <h3 className="text-lg font-semibold">Cancel Order?</h3>
-              <p className="text-xs text-newGray mt-1">
-                Please click "Yes" to confirm your cancel
-              </p>
-              <p className="text-xs text-newGray mt-1">
-                {" "}
-                or click "No" if you want to go back.
-              </p>
-              <div className="flex justify-center gap-4 text-white mt-5">
-                <button
-                  onClick={() => handleClickCancel("yes")}
-                  className="bg-newGreen w-28 py-0.5 rounded-lg"
-                >
-                  Yes
-                </button>
-                <button
-                  onClick={() => handleClickCancel("no")}
-                  className="bg-newRed w-28 py-0.5 rounded-lg"
-                >
-                  No
-                </button>
-              </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={success} onOpenChange={(open) => !open && setSuccess(!success)}>
+        <DialogContent className="max-w-md rounded-2xl p-0 overflow-hidden">
+          <div className="p-8 text-center">
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-50 text-green-500 dark:bg-green-950/20">
+              <CheckCircle2 className="h-10 w-10" />
             </div>
-          </Modal.Body>
-        </Modal>
-      </React.Fragment>
-
-      {/* Draftment */}
-
-      <React.Fragment>
-        <Modal
-          show={success}
-          size="md"
-          popup={true}
-          onClose={() => setSuccess(!success)}
-        >
-          <Modal.Header />
-          <Modal.Body>
-            <div className="text-center">
-              <svg
-                className="mx-auto mb-4 h-20 w-20 -mt-5 fill-newGreen"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 512 512"
+            <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">Confirm Order</h3>
+            <p className="mt-2 text-sm text-slate-500">
+              Ready to place your order with <span className="text-orange-500 font-bold">{localStoreName}</span>?
+            </p>
+            <div className="mt-8 flex gap-3">
+              <button
+                onClick={() => handleClickCheckOut("yes")}
+                className="flex-1 rounded-xl bg-green-500 py-3 text-sm font-bold text-white transition hover:bg-green-600 active:scale-[0.98]"
               >
-                <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z" />
-              </svg>
-              <h3 className="text-lg font-semibold">Confirmation</h3>
-              <p className="text-xs text-newGray mt-1">
-                Please click "Yes" to confirm your order
-              </p>
-              <p className="text-xs text-newGray mt-1">
-                {" "}
-                or click "No" to cancel.
-              </p>
-              <div className="flex justify-center gap-4 text-white mt-5">
-                <button
-                  onClick={() => handleClickCheckOut("yes")}
-                  className="bg-newGreen w-36 py-0.5 rounded-lg"
-                >
-                  Yes
-                </button>
-                <button
-                  onClick={() => handleClickCheckOut("no")}
-                  className="bg-retailerPrimary w-36 py-0.5 rounded-lg"
-                >
-                  No
-                </button>
-              </div>
-            </div>
-          </Modal.Body>
-        </Modal>
-      </React.Fragment>
-
-      {/* draft button */}
-
-      <React.Fragment>
-        <Modal
-          show={success2}
-          size="md"
-          popup={true}
-          onClose={() => setSuccess2(!success2)}
-        >
-          <Modal.Header />
-          <Modal.Body>
-            <div className="text-center">
-              <svg
-                className="mx-auto mb-4 h-20 w-20 -mt-5 fill-newGreen"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 512 512"
+                Yes, Confirm
+              </button>
+              <button
+                onClick={() => handleClickCheckOut("no")}
+                className="flex-1 rounded-xl bg-slate-100 py-3 text-sm font-bold text-slate-600 transition hover:bg-slate-200 active:scale-[0.98] dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
               >
-                <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z" />
-              </svg>
-              <h3 className="text-lg font-semibold">Confirmation</h3>
-              <p className="text-xs text-newGray mt-1">
-                Please click "Yes" to save this cart.
-              </p>
-              <p className="text-xs text-newGray mt-1">
-                {" "}
-                or click "No" to cancel.
-              </p>
-              <div className="flex justify-center gap-4 text-white mt-5">
-                <button
-                  onClick={() => draftStore("yes")}
-                  className="bg-newGreen w-36 py-0.5 rounded-lg"
-                >
-                  Yes
-                </button>
-                <button
-                  onClick={() => draftStore("no")}
-                  className="bg-retailerPrimary w-36 py-0.5 rounded-lg"
-                >
-                  No
-                </button>
-              </div>
+                Not Now
+              </button>
             </div>
-          </Modal.Body>
-        </Modal>
-      </React.Fragment>
+          </div>
+        </DialogContent>
+      </Dialog>
 
-      {/* Draft*/}
-      <React.Fragment>
-        <Modal
-          show={confOrder}
-          size="md"
-          popup={true}
-          onClose={() => setConfOrder(!confOrder)}
-        >
-          <Modal.Header />
-          <Modal.Body>
-            <div className="text-center">
-              <h3 className="text-lg font-semibold">
-                Please Checkout previous order
-              </h3>
-              <p className="text-xs text-newGray mt-1">
-                Please make sure you have already checkout
-              </p>
-              <p className="text-xs text-newGray mt-1">
-                the previous order before Start new order{" "}
-              </p>
-              <div className="flex justify-center gap-4 text-white mt-5">
-                <button
-                  onClick={() => setConfOrder(!confOrder)}
-                  className="bg-newGreen w-28 py-0.5 rounded-lg"
-                >
-                  Yes
-                </button>
-                <button
-                  onClick={() => setConfOrder(!confOrder)}
-                  className="bg-newRed w-28 py-0.5 rounded-lg"
-                >
-                  No
-                </button>
-              </div>
-              <div className="flex justify-center gap-4 text-white mt-5">
-                <button
-                  onClick={() => setConfOrder(!confOrder)}
-                  className="bg-retailerPrimary w-32 py-0.5 rounded-lg"
-                >
-                  Draft
-                </button>
-              </div>
+      <Dialog open={success2} onOpenChange={(open) => !open && setSuccess2(!success2)}>
+        <DialogContent className="max-w-md rounded-2xl p-0 overflow-hidden">
+          <div className="p-8 text-center">
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-orange-50 text-orange-500 dark:bg-orange-950/20">
+              <Package className="h-10 w-10" />
             </div>
-          </Modal.Body>
-        </Modal>
-      </React.Fragment>
-
-      {/* Draft */}
-      <React.Fragment>
-        <Modal
-          show={success2}
-          size="md"
-          popup={true}
-          onClose={() => setSuccess2(!success2)}
-        >
-          <Modal.Header />
-          <Modal.Body>
-            <div className="text-center">
-              <svg
-                className="mx-auto mb-4 h-20 w-20 -mt-5 fill-newGreen"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 512 512"
+            <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">Save as Draft</h3>
+            <p className="mt-2 text-sm text-slate-500">
+              Save your current cart to finish it later?
+            </p>
+            <div className="mt-8 flex gap-3">
+              <button
+                onClick={() => draftStore("yes")}
+                className="flex-1 rounded-xl bg-orange-500 py-3 text-sm font-bold text-white transition hover:bg-orange-600 active:scale-[0.98]"
               >
-                <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z" />
-              </svg>
-              <h3 className="text-lg font-semibold">Confirmation</h3>
-              <p className="text-xs text-newGray mt-1">
-                Please click "Yes" to save this cart.
-              </p>
-              <p className="text-xs text-newGray mt-1">
-                {" "}
-                or click "No" to cancel.
-              </p>
-              <div className="flex justify-center gap-4 text-white mt-5">
-                <button
-                  onClick={() => draftStore("yes")}
-                  className="bg-newGreen w-36 py-0.5 rounded-lg"
-                >
-                  Yes
-                </button>
-                <button
-                  onClick={() => draftStore("no")}
-                  className="bg-retailerPrimary w-36 py-0.5 rounded-lg"
-                >
-                  No
-                </button>
-              </div>
+                Yes, Save Draft
+              </button>
+              <button
+                onClick={() => draftStore("no")}
+                className="flex-1 rounded-xl bg-slate-100 py-3 text-sm font-bold text-slate-600 transition hover:bg-slate-200 active:scale-[0.98] dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+              >
+                Cancel
+              </button>
             </div>
-          </Modal.Body>
-        </Modal>
-      </React.Fragment>
-    </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={confOrder} onOpenChange={(open) => !open && setConfOrder(!confOrder)}>
+        <DialogContent className="max-w-md rounded-2xl p-0 overflow-hidden">
+          <div className="p-8 text-center">
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-blue-50 text-blue-500 dark:bg-blue-950/20">
+              <Clock className="h-10 w-10" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">Ongoing Order</h3>
+            <p className="mt-2 text-sm text-slate-500">
+              Please checkout your previous order before starting a new one.
+            </p>
+            <div className="mt-8">
+              <button
+                onClick={() => setConfOrder(!confOrder)}
+                className="w-full rounded-xl bg-slate-900 py-3 text-sm font-bold text-white transition hover:bg-slate-800 active:scale-[0.98] dark:bg-slate-800 dark:hover:bg-slate-700"
+              >
+                Got it
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </header>
   );
 }
-

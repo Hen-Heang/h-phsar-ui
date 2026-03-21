@@ -12,7 +12,7 @@ export default function FooterRetailerComponent() {
     //           <div className="flex flex-row ">
     //             <div className="flex flex-row  w-28 items-center">
     //               <img
-    //                 src={require("../../assets/images/retailer/whitelogo.png")}
+    //                 src={(require("../../assets/images/retailer/whitelogo.png")?.default || require("../../assets/images/retailer/whitelogo.png"))}
     //                 alt=""
     //                 className="lg:rounded-lg lg:w-32 w-14"
     //               />
@@ -34,21 +34,21 @@ export default function FooterRetailerComponent() {
     //               <div className="flex py-2">
     //                 <div className="w-6 mt-2">
     //                   <img
-    //                     src={require("../../assets/images/retailer/facebook.png")}
+    //                     src={(require("../../assets/images/retailer/facebook.png")?.default || require("../../assets/images/retailer/facebook.png"))}
     //                     alt=""
     //                     className=""
     //                   />
     //                 </div>
     //                 <div className="w-6 mt-2 ml-2">
     //                   <img
-    //                     src={require("../../assets/images/retailer/instagram.png")}
+    //                     src={(require("../../assets/images/retailer/instagram.png")?.default || require("../../assets/images/retailer/instagram.png"))}
     //                     alt=""
     //                     className=""
     //                   />
     //                 </div>
     //                 <div className="w-10 ml-2 mt-2">
     //                   <img
-    //                     src={require("../../assets/images/retailer/telegram.png")}
+    //                     src={(require("../../assets/images/retailer/telegram.png")?.default || require("../../assets/images/retailer/telegram.png"))}
     //                     alt=""
     //                     className=""
     //                   />
@@ -69,7 +69,7 @@ export default function FooterRetailerComponent() {
     //               <div className="flex items-center">
     //                 <div className="w-6 mt-2 ml-2 h-8">
     //                   <img
-    //                     src={require("../../assets/images/retailer/telephone.png")}
+    //                     src={(require("../../assets/images/retailer/telephone.png")?.default || require("../../assets/images/retailer/telephone.png"))}
     //                     alt=""
     //                     className=" mr-4"
     //                   />
@@ -79,7 +79,7 @@ export default function FooterRetailerComponent() {
     //               <div className="flex items-center">
     //                 <div className="w-7 mt-2 ml-2 h-8">
     //                   <img
-    //                     src={require("../../assets/images/retailer/mail.png")}
+    //                     src={(require("../../assets/images/retailer/mail.png")?.default || require("../../assets/images/retailer/mail.png"))}
     //                     alt=""
     //                     className=" "
     //                   />
@@ -91,7 +91,7 @@ export default function FooterRetailerComponent() {
     //               <div className="flex items-center">
     //                 <div className="w-7 mt-3 ml-2 h-8 ">
     //                   <img
-    //                     src={require("../../assets/images/retailer/date.png")}
+    //                     src={(require("../../assets/images/retailer/date.png")?.default || require("../../assets/images/retailer/date.png"))}
     //                     alt=""
     //                     className=""
     //                   />
@@ -113,23 +113,23 @@ export default function FooterRetailerComponent() {
     //   </footer>
     // </div>
 
-    <footer class="bg-primaryColorRetailer mt-32">
-      <div class="w-full mx-auto container sm:pb-0 sm:py-2 lg:pt-4">
-        <div class="sm:flex sm:justify-between  ">
-          <div class="sm:w-1/3 lg:mb-6 sm:mb-0 lg:mt-5 sm:mt-5 ">
-            <a href="#" class="flex items-center  ">
+    <footer className="bg-primaryColorRetailer mt-32">
+      <div className="w-full mx-auto container sm:pb-0 sm:py-2 lg:pt-4">
+        <div className="sm:flex sm:justify-between  ">
+          <div className="sm:w-1/3 lg:mb-6 sm:mb-0 lg:mt-5 sm:mt-5 ">
+            <a href="#" className="flex items-center  ">
               <img
-                src={require("../../assets/images/retailer/whitelogo.png")}
-                class="lg:h-28 lg:ml-4 sm:ml-6 lg:mr-3 sm:mt-0 mt-1 mr-1 h-16"
+                src={(require("../../assets/images/retailer/whitelogo.png")?.default || require("../../assets/images/retailer/whitelogo.png"))}
+                className="lg:h-28 lg:ml-4 sm:ml-6 lg:mr-3 sm:mt-0 mt-1 mr-1 h-16"
                 alt="FlowBite Logo"
               />
-              <span class="self-center lg:text-xl text-lg font-semibold whitespace-nowrap dark:text-white text-white">
+              <span className="self-center lg:text-xl text-lg font-semibold whitespace-nowrap dark:text-white text-white">
                 Warehouse <br /> Master
               </span>
             </a>
           </div>
 
-          <div class="sm:w-2/3 w-full  grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-2 mt-3">
+          <div className="sm:w-2/3 w-full  grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-2 mt-3">
             <div className="lg:w-2/3 w-full sm:ml-1 lg:ml-0">
               <h1 className="lg:text-xl font-semibold text-white sm:text-lg text-md">
                 About us
@@ -227,8 +227,8 @@ export default function FooterRetailerComponent() {
             </div>
           </div>
         </div>
-        <div class="sm:flex sm:items-center sm:justify-between lg:mt-3 mt-5   ">
-          <span class="w-full text-center text-xs text-white sm:text-center dark:text-white lg:text-lg sm:text-sm mb-5 ">
+        <div className="sm:flex sm:items-center sm:justify-between lg:mt-3 mt-5   ">
+          <span className="w-full text-center text-xs text-white sm:text-center dark:text-white lg:text-lg sm:text-sm mb-5 ">
             ©2023 warehousemaster team. All Rights Reserved.
           </span>
         </div>

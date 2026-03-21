@@ -1,4 +1,4 @@
-import { Button } from "flowbite-react";
+import { Button } from "@/components/ui/button";
 import { Field, Form, Formik } from "formik";
 import React, { useState, CSSProperties } from "react";
 import { ClipLoader, ScaleLoader } from "react-spinners";
@@ -11,7 +11,7 @@ const LoginSchema = Yup.object().shape({
   password: Yup.string()
     .required("Password cannot be blank")
     .matches(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/,
       "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character"
     ),
   confirmPassword: Yup.string().oneOf(
@@ -41,4 +41,3 @@ const SignInPage = () => {
 };
 
 export default SignInPage;
-

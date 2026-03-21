@@ -34,8 +34,9 @@ export function ContactForm() {
 
       <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4 rounded-2xl border border-slate-200 p-6 dark:border-slate-800">
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Name</label>
+          <label htmlFor="name" className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Name</label>
           <input
+            id="name"
             {...register("name")}
             className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none ring-teal-500 transition focus:ring-2 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
             placeholder="Jane Doe"
@@ -44,8 +45,9 @@ export function ContactForm() {
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Email</label>
+          <label htmlFor="email" className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Email</label>
           <input
+            id="email"
             {...register("email")}
             className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none ring-teal-500 transition focus:ring-2 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
             placeholder="you@company.com"
@@ -54,8 +56,9 @@ export function ContactForm() {
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Message</label>
+          <label htmlFor="message" className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">Message</label>
           <textarea
+            id="message"
             {...register("message")}
             rows={4}
             className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none ring-teal-500 transition focus:ring-2 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"

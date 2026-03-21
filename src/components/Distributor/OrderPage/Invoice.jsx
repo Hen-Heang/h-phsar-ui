@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Modal } from 'flowbite-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import { useDispatch, useSelector } from 'react-redux';
 import { PropagateLoader } from 'react-spinners';
 export default function Invoice(props) {
@@ -7,17 +8,25 @@ export default function Invoice(props) {
   const invoiceOrder = useSelector((state) => state.invoiceDis.dataOrder);
   const dispatch = useDispatch()
   console.log("invoicelist", invoiceList);
+  const safeInvoiceList = Array.isArray(invoiceList) ? invoiceList : [];
+  const formatMoney = (value) => {
+    const n = Number(value);
+    return Number.isFinite(n) ? n.toFixed(2) : "0.00";
+  };
+  const invoiceDate = invoiceOrder?.date
+    ? new Date(invoiceOrder.date).toLocaleDateString("en-US")
+    : "";
   return (
     <div >
       <React.Fragment>
-        <Modal
-          show={props.invoice}
-          size="xl"
-          popup={true}
-          onClose={props.handleInvoice}
+        <Dialog
+          open={props.invoice}
+          onOpenChange={(open) => { if(!open) props.handleInvoice() }}
         >
-          <Modal.Header />
-          <Modal.Body>
+          <DialogContent className="max-w-xl">
+            <DialogHeader>
+              <DialogTitle className="sr-only">Invoice</DialogTitle>
+            </DialogHeader>
             <div>
               {!props.loadingInvoice ?
                 <div  style={{ width: "100%" }}>
@@ -26,78 +35,72 @@ export default function Invoice(props) {
                     <div className="w-2/3 flex flex-wrap text-black">
                       <div className="w-16 h-16 rounded-lg ">
                         <img className='w-full h-full rounded-lg'
-                          src={invoiceOrder.storeImage}
+                          src={invoiceOrder?.storeImage}
                           alt="store image"
                         />
                       </div>
                       <div className="w-30 text-black font-medium ml-2 ">
-                        <p className="text-lg font-semibold">{invoiceOrder.storeName}</p>
-                        <p className="text-xs">{invoiceOrder.storeAddress}</p>
+                        <p className="text-lg font-semibold">{invoiceOrder?.storeName}</p>
+                        <p className="text-xs">{invoiceOrder?.storeAddress}</p>
                       </div>
                     </div>
                     <div className="w-1/3 justify-between font-medium text-xs">
                       <h1 className="text-primary lg:text-2xl text-xl">INVOICE</h1>
-                      <p className=''>Invoice Number: #{invoiceOrder.id}</p>
-                      <p>Invoice Date: {new Date(invoiceOrder.date).toLocaleDateString("en-US")}</p>
+                      <p className=''>Invoice Number: #{invoiceOrder?.id}</p>
+                      <p>Invoice Date: {invoiceDate}</p>
                     </div>
                   </div>
                   <div className="w-full h-1 bg-primary mt-4"></div>
                   <div className="flex bg-white mt-4">
                     <div className="w-2/3 text-xs  text-black">
                       <p className="text-xs text-primary">Invoice To:</p>
-                      <p className="text-sm font-semibold">{invoiceOrder.name}</p>
-                      <p className="text-xs">Phone: {invoiceOrder.retailerPhone}</p>
-                      <p>Email: {invoiceOrder.retailerEmail} </p>
+                      <p className="text-sm font-semibold">{invoiceOrder?.name}</p>
+                      <p className="text-xs">Phone: {invoiceOrder?.retailerPhone}</p>
+                      <p>Email: {invoiceOrder?.retailerEmail} </p>
                     </div>
                     <div className="w-1/3 justify-between text-xs">
                       <h1 className="text-primary text-xs">Invoice From:</h1>
-                      <p className="text-sm font-semibold">{invoiceOrder.storeName}</p>
-                      <p>Phone: {invoiceOrder.storePrimaryPhone}</p>
-                      <p  className='text-xs  line-clamp-3 w-full '>Email:{invoiceOrder.storeEmail}</p>
+                      <p className="text-sm font-semibold">{invoiceOrder?.storeName}</p>
+                      <p>Phone: {invoiceOrder?.storePrimaryPhone}</p>
+                      <p  className='text-xs  line-clamp-3 w-full '>Email:{invoiceOrder?.storeEmail}</p>
                     </div>
                   </div>
-                  <div class="relative mt-4">
-                    <table class="w-full text-sm text-left">
-                      <thead class="text-xs text-white bg-primary uppercase ">
+                  <div className="relative mt-4">
+                    <table className="w-full text-sm text-left">
+                      <thead className="text-xs text-white bg-primary uppercase ">
                         <tr>
-                          <th scope="col" class="px-2 py-3 bg-primary text-white">
+                          <th scope="col" className="px-2 py-3 bg-primary text-white">
                             No
                           </th>
-                          <th scope="col" class="px-6 py-3 bg-primary text-white ">
+                          <th scope="col" className="px-6 py-3 bg-primary text-white ">
                             Product
                           </th>
-                          <th scope="col" class="px-6 py-3">
+                          <th scope="col" className="px-6 py-3">
                             Price
                           </th>
-                          <th scope="col" class="px-6 py-3">
+                          <th scope="col" className="px-6 py-3">
                             Qty
                           </th>
-                          <th scope="col" class="px-6 py-3">
+                          <th scope="col" className="px-6 py-3">
                             Total
                           </th>
                         </tr>
                       </thead>
                       <tbody>
-                        {invoiceList.map((item, index) => (
-                          <tr class=" border-b text-black ">
-                            <td scope="row" class="px-3 py-4 text-black whitespace-nowrap dark:text-blue-100">
+                        {safeInvoiceList.map((item, index) => (
+                          <tr className=" border-b text-black " key={index}>
+                            <td scope="row" className="px-3 py-4 text-black whitespace-nowrap dark:text-blue-100">
                               {index + 1}
                             </td>
-                            <td class="px-6 py-4">
+                            <td className="px-6 py-4">
                               {item.productName}
                             </td>
-                            <td class="px-6 py-4 ">
-                              ${item.unitPrice == null
-                                ? <span>0.00</span>
-                                : (item.unitPrice).toFixed(2)
-                              }
+                            <td className="px-6 py-4 ">
+                              ${formatMoney(item.unitPrice)}
                             </td>
-                            <td class="px-6 py-4">{item.qty}</td>
-                            <td class="px-6 py-4">
-                              ${item.subTotal == null
-                                ? <span>0.00</span>
-                                : (item.subTotal).toFixed(2)
-                              }
+                            <td className="px-6 py-4">{item.qty}</td>
+                            <td className="px-6 py-4">
+                              ${formatMoney(item.subTotal)}
                             </td>
                           </tr>
                         ))}
@@ -112,10 +115,7 @@ export default function Invoice(props) {
                       Total price
                     </div>
                     <div className='w-1/2 flex text-end justify-end font-semibold text-primary'>
-                      ${invoiceOrder.total == null
-                        ? <span>0.00</span>
-                        : (invoiceOrder.total).toFixed(2)
-                      }
+                      ${formatMoney(invoiceOrder?.total)}
                     </div>
                   </div>
                   </div>
@@ -127,9 +127,6 @@ export default function Invoice(props) {
                       Export invoice
                     </button>
                   </div>
-                  {/* <div class="flex  items-center justify-end pt-12" >
-            <ReactPaginate pageCount={props.pageCount} onPageChange={props.onPageInvoice} previousLabel="< Prev" className="flex" breakLabel="..." nextLabel="Next >" pageRangeDisplayed={5} containerClassName="pagination" activeClassName="text-primary active" pageClassName="px-2 page-item" nextLinkClassName="page-item" />
-          </div> */}
                 </div>
                 :
                 <div className='relative h-[580px]' >
@@ -168,23 +165,23 @@ export default function Invoice(props) {
                       <p className='line-clamp-1 overflow-hidden'>Email:</p>
                     </div>
                   </div>
-                  <div class="relative overflow-x-auto h-[400px] mt-2">
-                    <table class="w-full text-sm text-left">
-                      <thead class="text-xs text-white bg-primary uppercase ">
+                  <div className="relative overflow-x-auto h-[400px] mt-2">
+                    <table className="w-full text-sm text-left">
+                      <thead className="text-xs text-white bg-primary uppercase ">
                         <tr>
-                          <th scope="col" class="px-2 py-3  text-white">
+                          <th scope="col" className="px-2 py-3  text-white">
                             No
                           </th>
-                          <th scope="col" class="px-6 py-3 text-white ">
+                          <th scope="col" className="px-6 py-3 text-white ">
                             Product
                           </th>
-                          <th scope="col" class="px-6 py-3">
+                          <th scope="col" className="px-6 py-3">
                             Price
                           </th>
-                          <th scope="col" class="px-6 py-3">
+                          <th scope="col" className="px-6 py-3">
                             Qty
                           </th>
-                          <th scope="col" class="px-6 py-3">
+                          <th scope="col" className="px-6 py-3">
                             Total
                           </th>
                         </tr>
@@ -197,10 +194,9 @@ export default function Invoice(props) {
                 </div>
               }
             </div>
-          </Modal.Body>
-        </Modal>
+          </DialogContent>
+        </Dialog>
       </React.Fragment>
     </div>
   );
 }
-

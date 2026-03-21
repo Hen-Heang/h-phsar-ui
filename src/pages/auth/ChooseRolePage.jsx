@@ -9,7 +9,7 @@ const ChooseRolePage = () => {
             <div>
               <img
                 className="lg:h-full mt-12"
-                src={require("../../assets/images/Line_chooseRole.png")}
+                src={(require("../../assets/images/Line_chooseRole.png")?.default || require("../../assets/images/Line_chooseRole.png"))}
                 alt=""
               />
             </div>
@@ -40,18 +40,18 @@ const ChooseRolePage = () => {
                       </p>
                     </div>
                     <div>
-                      <div class="">
+                      <div className="">
                         {/* Distributor */}
                         <label
-                          for="distributor"
-                          class="relative flex p-8 mt-10 w-full hover:shadow-primaryColor shadow-md bg-white border border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
+                          htmlFor="distributor"
+                          className="relative flex p-8 mt-10 w-full hover:shadow-primaryColor shadow-md bg-white border border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
                         >
                           <img
-                            src={require("../../assets/images/victory_choose_role.png")}
+                            src={(require("../../assets/images/victory_choose_role.png")?.default || require("../../assets/images/victory_choose_role.png"))}
                             className="absolute top-4 lg:left-10"
                             alt=""
                           />
-                          <span class=" text-gray-500 dark:text-gray-400 absolute md:top-5 left-24 lg:left-32">
+                          <span className=" text-gray-500 dark:text-gray-400 absolute md:top-5 left-24 lg:left-32">
                             <h1 className="font-bold text-xl">Distributor</h1>
                             <p className="hidden md:block">
                               I'd like to provide the best products to my
@@ -63,21 +63,21 @@ const ChooseRolePage = () => {
                             name="picked"
                             value="distributor"
                             id="distributor"
-                            class="shrink-0 ml-auto mt-0.5 border-gray-200 rounded-full text-primaryColor pointer-events-none focus:ring-primaryColor dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
+                            className="shrink-0 ml-auto mt-0.5 border-gray-200 rounded-full text-primaryColor pointer-events-none focus:ring-primaryColor dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
                           />
                         </label>
                         {/* Retailer */}
                         <label
-                          for="retailer"
-                          class="relative flex p-8 mt-5 lg:mt-10 w-full hover:shadow-primaryColor visited:shadow-primaryColor shadow-md bg-white border border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
+                          htmlFor="retailer"
+                          className="relative flex p-8 mt-5 lg:mt-10 w-full hover:shadow-primaryColor visited:shadow-primaryColor shadow-md bg-white border border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
                         >
-                          <span class="text-sm text-gray-500 dark:text-gray-400">
+                          <span className="text-sm text-gray-500 dark:text-gray-400">
                             <img
-                              src={require("../../assets/images/trolley_choose_role.png")}
+                              src={(require("../../assets/images/trolley_choose_role.png")?.default || require("../../assets/images/trolley_choose_role.png"))}
                               className="absolute top-4 lg:left-10"
                               alt=""
                             />
-                            <span class=" text-gray-500 dark:text-gray-400 absolute md:top-5 left-24 lg:left-32">
+                            <span className=" text-gray-500 dark:text-gray-400 absolute md:top-5 left-24 lg:left-32">
                               <h1 className="font-bold text-xl">Retailer</h1>
                             
                               <p className="hidden md:block">I'd to find a good distributor for my shop.</p>
@@ -88,7 +88,7 @@ const ChooseRolePage = () => {
                             name="picked"
                             value="retailer"
                             id="retailer"
-                            class="shrink-0 ml-auto mt-0.5 border-gray-200 rounded-full text-primaryColor pointer-events-none focus:ring-primaryColor dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
+                            className="shrink-0 ml-auto mt-0.5 border-gray-200 rounded-full text-primaryColor pointer-events-none focus:ring-primaryColor dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
                           />
                         </label>
                       </div>
@@ -99,7 +99,7 @@ const ChooseRolePage = () => {
                   <div>
                     <button
                       type="submit"
-                      class="mt-7 lg:mt-20 inline-block rounded-xl bg-primaryColor w-full py-5  text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-cyan-400 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                      className="mt-7 lg:mt-20 inline-block rounded-xl bg-primaryColor w-full py-5  text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-cyan-400 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
                       data-te-ripple-init
                       data-te-ripple-color="light"
                     >

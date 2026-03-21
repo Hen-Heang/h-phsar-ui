@@ -1,10 +1,18 @@
 import React, { useEffect, useRef } from 'react'
 import { useState } from 'react';
-import { Modal } from 'flowbite-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useReactToPrint } from 'react-to-print';
 import {PropagateLoader} from 'react-spinners'
+import noImage from '../../assets/images/no_image.jpg';
+import { applyImageFallback, getSafeImageSrc } from "@/lib/images";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 export default function RetailerInvoice(props) {
+  const formatMoney = (value) => {
+    const number = Number(value);
+    return Number.isFinite(number) ? number.toFixed(2) : "0.00";
+  };
+
   const invoiceList = useSelector((state) => state.invoice.data);
   const invoiceRef = useRef();
   const hanldePrint = useReactToPrint({
@@ -20,14 +28,14 @@ export default function RetailerInvoice(props) {
     <div>
       <div>
         <React.Fragment>
-          <Modal
-            show={props.invoice}
-            size="xl"
-            popup={true}
-            onClose={props.handleClick}
+          <Dialog
+            open={props.invoice}
+            onOpenChange={(open) => { if(!open) props.handleClick() }}
           >
-            <Modal.Header />
-            <Modal.Body>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle className="sr-only">Invoice</DialogTitle>
+              </DialogHeader>
               {!props.loadingInvoice ?
               <div>
                 <div ref={props.invoiceRef} className='px-2'>
@@ -35,7 +43,9 @@ export default function RetailerInvoice(props) {
                   <div className="w-2/3 flex flex-wrap text-black">
                     <div className="w-16 h-16 rounded-lg bg-warning-50">
                       <img
-                        src={orderInvoiceList.storeImage} className='w-full h-full rounded-lg'
+                        src={getSafeImageSrc(orderInvoiceList.storeImage, noImage)}
+                        onError={(e) => applyImageFallback(e, noImage)}
+                        className='w-full h-full rounded-lg'
                         alt=""
                       />
                     </div>
@@ -76,54 +86,48 @@ export default function RetailerInvoice(props) {
                     <p className='line-clamp-1 overflow-hidden'>Email:{orderInvoiceList.storeEmail}</p>
                   </div>
                 </div>
-                <div class="relative  mt-2">
-                  <table class="w-full text-sm text-left">
-                    <thead class="text-xs text-white bg-retailerPrimary uppercase ">
+                <div className="relative  mt-2">
+                  <table className="w-full text-sm text-left">
+                    <thead className="text-xs text-white bg-retailerPrimary uppercase ">
                       <tr>
-                        <th scope="col" class="px-2 py-3  text-white">
+                        <th scope="col" className="px-2 py-3  text-white">
                           No
                         </th>
-                        <th scope="col" class="px-6 py-3 text-white ">
+                        <th scope="col" className="px-6 py-3 text-white ">
                           Product
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col" className="px-6 py-3">
                           Price
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col" className="px-6 py-3">
                           Qty
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col" className="px-6 py-3">
                           Total
                         </th>
                       </tr>
                     </thead>
                     <tbody>
                       {productList.map((item, index) => (
-                        <tr key={item.id} class=" border-b text-black ">
+                        <tr key={item.id} className=" border-b text-black ">
                           <td
                             scope="row"
-                            class="px-3 py-4 text-black whitespace-nowrap dark:text-blue-100"
+                            className="px-3 py-4 text-black whitespace-nowrap dark:text-blue-100"
                           >
                             {index + 1}
                           </td>
-                          <td class="px-6 py-4">{item.productName}</td>
-                          <td class="px-6 py-4 ">
-                            $ {item.unitPrice == null
-                              ? <span>0.00</span>
-                              : (item.unitPrice).toFixed(2)
-                            }
+                          <td className="px-6 py-4">{item.productName}</td>
+                          <td className="px-6 py-4 ">
+                            $ {formatMoney(item.unitPrice)}
                           </td>
-                          <td class="px-6 py-4">
-                            {item.qty == null
+                          <td className="px-6 py-4">
+                            {item.qty === null
                               ? <span>0</span>
                               : item.qty
                             }
                           </td>
-                          <td class="px-6 py-4">
-                            $ {item.subTotal == null
-                              ? <span>0.00</span>
-                              : (item.subTotal).toFixed(2)
-                            }
+                          <td className="px-6 py-4">
+                            $ {formatMoney(item.subTotal)}
                           </td>
                         </tr>
                       ))}
@@ -135,10 +139,7 @@ export default function RetailerInvoice(props) {
                     item({productList.length})
                   </div>
                   <div className='w-1/2 flex te text-end justify-end text-sm text-black'>
-                    ${orderInvoiceList.total == null
-                      ? <span>0.00</span>
-                      : (orderInvoiceList.total).toFixed(2)
-                    }
+                    ${formatMoney(orderInvoiceList.total)}
                   </div>
                 </div>
                 <div className="flex justify-end mt-2 px-4">
@@ -153,10 +154,7 @@ export default function RetailerInvoice(props) {
                     Total price
                   </div>
                   <div className='w-1/2 flex text-end justify-end font-semibold text-retailerPrimary'>
-                    ${orderInvoiceList.total == null
-                      ? <span>0.00</span>
-                      : (orderInvoiceList.total + 1).toFixed(2)
-                    }
+                    ${formatMoney(Number(orderInvoiceList.total) + 1)}
                   </div>
                 </div>
                 </div>
@@ -210,23 +208,23 @@ export default function RetailerInvoice(props) {
                     <p className='line-clamp-1 overflow-hidden'>Email:</p>
                   </div>
                 </div>
-                <div class="relative overflow-x-auto h-[400px] mt-2">
-                  <table class="w-full text-sm text-left">
-                    <thead class="text-xs text-white bg-retailerPrimary uppercase ">
+                <div className="relative overflow-x-auto h-[400px] mt-2">
+                  <table className="w-full text-sm text-left">
+                    <thead className="text-xs text-white bg-retailerPrimary uppercase ">
                       <tr>
-                        <th scope="col" class="px-2 py-3  text-white">
+                        <th scope="col" className="px-2 py-3  text-white">
                           No
                         </th>
-                        <th scope="col" class="px-6 py-3 text-white ">
+                        <th scope="col" className="px-6 py-3 text-white ">
                           Product
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col" className="px-6 py-3">
                           Price
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col" className="px-6 py-3">
                           Qty
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col" className="px-6 py-3">
                           Total
                         </th>
                       </tr>
@@ -238,11 +236,10 @@ export default function RetailerInvoice(props) {
             </div>
               </div>           
 }
-            </Modal.Body>
-          </Modal>
+            </DialogContent>
+          </Dialog>
         </React.Fragment>
       </div>
     </div>
   )
 }
-

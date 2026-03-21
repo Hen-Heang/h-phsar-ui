@@ -13,20 +13,21 @@ import {
 } from "../../../redux/slices/retailer/notification/notificationRetailerSlice";
 import LoadingOverlay from "react-loading-overlay";
 import { styled } from "@mui/material";
+import { applyImageFallback, getSafeImageSrc } from "@/lib/images";
 const ConfirmingNotification = () => {
   const dispatch = useDispatch();
   const [noDataNotifications, setDataNotifications] = useState(false);
   useEffect(() => {
     get_all_notification_retailer().then((res) => {
       console.log("Notifications : ", res);
-      if (res.status == 200) {
+      if (res.status === 200) {
         dispatch(getAllNotificationRetailers(res.data.data));
         setDataNotifications(false);
       } else {
         setDataNotifications(true);
       }
     });
-  }, getAllNotificationRetailers());
+  }, [dispatch]);
   const allDataNotificationRetailer = useSelector(
     (state) => state.DataNotificationRetailer.dataNotificationRetailer
   );
@@ -52,7 +53,7 @@ const ConfirmingNotification = () => {
     } else {
       setLoadingPro(true);
       seen_notification_retailer(data.id).then((res) => {
-        if (res.status == 200) {
+        if (res.status === 200) {
           dispatch(setUpdateSeenNotificationRetailer(data));
           setShowModal(true);
           setDataNotification(data);
@@ -100,11 +101,11 @@ const ConfirmingNotification = () => {
                     {/*header*/}
                     <div className="flex items-start justify-between p-3 border-b border-solid bg-primaryColorRetailer border-slate-200 rounded-t">
                       <h3 className="text-xl text-white font-semibold">
-                        {dataNotification.notificationType == "ORDER_CANCELLED"
+                        {dataNotification.notificationType === "ORDER_CANCELLED"
                           ? "Order Has Cancelled"
-                          : dataNotification.notificationType == "NEW_ORDER"
+                          : dataNotification.notificationType === "NEW_ORDER"
                           ? "New Order"
-                          : dataNotification.notificationType ==
+                          : dataNotification.notificationType ===
                             "ORDER_COMPLETE"
                           ? "Order Complete"
                           : "Out of stock"}
@@ -112,7 +113,7 @@ const ConfirmingNotification = () => {
                       <button onClick={() => setShowModal(false)}>
                         <span className="h-6 w-6 z-20">
                           <img
-                            src={require("../../../assets/images/distributor/close_white.png")}
+                            src={(require("../../../assets/images/distributor/close_white.png")?.default || require("../../../assets/images/distributor/close_white.png"))}
                             alt=""
                           />
                         </span>
@@ -128,13 +129,9 @@ const ConfirmingNotification = () => {
                                 <div className="flex flex-wrap justify-center">
                                   <img
                                     alt="..."
-                                    src={
-                                      dataNotification.image == null ||
-                                      dataNotification.image == ""
-                                        ? imageTest
-                                        : dataNotification.image
-                                    }
+                                    src={getSafeImageSrc(dataNotification.image, imageTest)}
                                     className="shadow-xl rounded-full align-middle border-none w-[100px] h-[100px]"
+                                    onError={(e) => applyImageFallback(e, imageTest)}
                                   />
                                 </div>
                                 <div className="text-center mt-6">
@@ -148,7 +145,7 @@ const ConfirmingNotification = () => {
                                   <div className="mb-2 text-gray-700 w-full">
                                     <span
                                       className={`w-[80%] mx-auto ${
-                                        dataNotification.notificationType ==
+                                        dataNotification.notificationType ===
                                         "OUT_OF_STOCK_NOTIFICATION"
                                           ? "text-red-500"
                                           : null
@@ -175,7 +172,7 @@ const ConfirmingNotification = () => {
       {noDataNotifications || countAllNotificationUnseenOrderConfirming < 0 ? (
        <div className="h-96 w-full flex flex-col gap-2 justify-center items-center text-xl text-gray-500">
        <img
-         src={require("../../../assets/images/retailer/no_notification.png")}
+         src={(require("../../../assets/images/retailer/no_notification.png")?.default || require("../../../assets/images/retailer/no_notification.png"))}
          alt=""
        />
        No data notifications
@@ -183,24 +180,25 @@ const ConfirmingNotification = () => {
       ) : (
         <div className="flex flex-col gap-1 overflow-auto h-96">
           {allDataNotificationRetailer.map((item) =>
-            item.notificationType == "ORDER_CONFIRMING" ? (
+            item.notificationType === "ORDER_CONFIRMING" ? (
               <div
                 key={item.id}
                 className={`${
-                  item.seen == false ? "bg-blue-100" : null
+                  item.seen === false ? "bg-blue-100" : null
                 } w-full rounded cursor-pointer`}
                 onClick={() => handleGetDataNotification(item)}
               >
                 <div className="flex mx-auto justify-evenly items-center w-[95%] py-2">
                   <img
-                    src={item.image}
+                    src={getSafeImageSrc(item.image, imageTest)}
                     alt=""
                     className=" w-10 h-10 rounded-full"
+                    onError={(e) => applyImageFallback(e, imageTest)}
                   />
                   <div className="w-72 ml-5">
                     <h2
                       className={`text-base font-medium ${
-                        item.name == "Notice product unavailable"
+                        item.name === "Notice product unavailable"
                           ? "text-red-600"
                           : null
                       }`}
@@ -209,7 +207,7 @@ const ConfirmingNotification = () => {
                     </h2>
                     <p
                       className={`text-xs ${
-                        item.title == "Out of stock." ? "text-red-600" : null
+                        item.title === "Out of stock." ? "text-red-600" : null
                       }`}
                     >
                       {item.title}

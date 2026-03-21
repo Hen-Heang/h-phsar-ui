@@ -26,10 +26,11 @@ import { getDetailProduct } from "../../redux/slices/retailer/detailProductSlice
 import AllProducts from "./AllProducts";
 import { PropagateLoader } from "react-spinners";
 import { setStoreId } from "../../redux/slices/retailer/homepageSlice/allShopSlice";
+import { applyImageFallback, getSafeImageSrc } from "@/lib/images";
 // import { useNavigate } from "react-router-dom";
 export default function FavoriteProduct() {
   useEffect(() => {
-    document.title = "StockFlow Commerce | Favorite";
+    document.title = "H-Phsar | Favorite";
   }, []);
   const dispatch = useDispatch(); //update state
   const navigate = useNavigate();
@@ -55,7 +56,7 @@ export default function FavoriteProduct() {
   };
 
   const bookMarkList = useSelector((state) => state.favorite.data);
-  console.log("no data :", bookMarkList.length == 0);
+  console.log("no data :", bookMarkList.length === 0);
 
   const loading = useSelector((state) => state.favorite.loading);
 
@@ -98,7 +99,7 @@ export default function FavoriteProduct() {
           <div className="w-full h-[490px] flex justify-center items-center text-sm text-center border-none text-gray-500 dark:text-gray-400 border border-separate border-spacing-y-3">
             <PropagateLoader color="#F15B22" />
           </div>
-        ) : bookMarkList.length == 0 ? (
+        ) : bookMarkList.length === 0 ? (
           <div className="h-[490px]">
             <p className="mx-auto text-center text-3xl font-semibold p-60">
               No favorites available
@@ -112,7 +113,7 @@ export default function FavoriteProduct() {
             arrowLeft={() =>
               bookMarkList && bookMarkList.length >= 9 ? (
                 <img
-                  src={require("../../assets/images/retailer/back.png")}
+                  src={(require("../../assets/images/retailer/back.png")?.default || require("../../assets/images/retailer/back.png"))}
                   alt=""
                   className="absolute z-5 top-80 -left-9 cursor-pointer"
                 />
@@ -121,7 +122,7 @@ export default function FavoriteProduct() {
             arrowRight={() =>
               bookMarkList && bookMarkList.length >= 9 ? (
                 <img
-                  src={require("../../assets/images/retailer/next.png")}
+                  src={(require("../../assets/images/retailer/next.png")?.default || require("../../assets/images/retailer/next.png"))}
                   alt=""
                   className="absolute z-5 top-80 right-2 cursor-pointer"
                 />
@@ -138,13 +139,13 @@ export default function FavoriteProduct() {
                     <div className="w-1/2 flex justify-center items-center relative">
                       {item.bannerImage ? (
                         <img
-                          // src={require("../../assets/images/retailer/store.jpg")}
-                          src={item.bannerImage}
+                          src={getSafeImageSrc(item.bannerImage, noImage)}
                           className="h-56 rounded-lg p-1"
+                          onError={(e) => applyImageFallback(e, noImage)}
                         />
                       ) : (
                         <img
-                          src={require("../../assets/images/no_image.jpg")}
+                          src={noImage}
                           className="h-56 rounded-lg p-1"
                         />
                       )}
@@ -238,4 +239,3 @@ export default function FavoriteProduct() {
     </div>
   );
 }
-

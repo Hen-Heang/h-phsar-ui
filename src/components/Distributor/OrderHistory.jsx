@@ -1,6 +1,5 @@
 import React, { useRef, useState } from "react";
 import { Dropdown } from "flowbite-react";
-import { Modal } from "flowbite-react";
 import Invoice from "./OrderPage/Invoice";
 import { useEffect } from "react";
 import { get_order_history } from "../../redux/services/distributor/OrderHistory.service";
@@ -25,7 +24,7 @@ import LoadingOverlay from "react-loading-overlay";
 import { styled } from "@mui/material";
 export default function OrderHistory() {
   useEffect(() => {
-    document.title = "StockFlow Commerce | Order-Report";
+    document.title = "H-Phsar | Order-Report";
   }, []);
   const [invoice, setInvoice] = useState(false);
   const [totalPage, setTotalPage] = useState(null);
@@ -61,7 +60,7 @@ export default function OrderHistory() {
       .finally(() => {
         dispatch(setLoadingHistory(false));
       });
-  }, getOrderHistory());
+  }, [dispatch]);
   const onPageChange = (event) => {
     const newOffset = (event.selected * 7) % orderHistoryList.length;
     setItemOffset(newOffset);
@@ -149,79 +148,87 @@ export default function OrderHistory() {
           <p className="text-[16px] text-newGray">
             Click on a Preview button to get the invoice and you can download!
           </p>
-          <div class="lg:h-[620px] h-[600px] w-[100%]">
+          <div className="lg:h-[620px] h-[600px] w-[100%]">
             <div className="lg:h-[620px] h-[600px] w-[100%] overflow-x-auto">
-              <table class="text-[16px] text-left text-gray-500  border-tools-table-outline  border-separate lg:border-spacing-y-2 border-spacing-y-0 w-full ">
-                <thead class="text-[16px] text-newGray bg-newWhite uppercase ">
+              <table className="text-[16px] text-left text-gray-500  border-tools-table-outline  border-separate lg:border-spacing-y-2 border-spacing-y-0 w-full ">
+                <thead className="text-[16px] text-newGray bg-newWhite uppercase ">
                   <tr>
-                    <th scope="col" class="px-8 py-3">
+                    <th scope="col" className="px-8 py-3">
                       No
                     </th>
-                    <th scope="col" class="px-16 py-3">
+                    <th scope="col" className="px-16 py-3">
                       Name
                     </th>
-                    <th scope="col" class="px-20 py-3 ">
+                    <th scope="col" className="px-20 py-3 ">
                       Status
                     </th>
-                    <th scope="col" class="px-32 py-3">
+                    <th scope="col" className="px-32 py-3">
                       Action
                     </th>
                   </tr>
                 </thead>
                 <tbody className="text-newGray">
                   {loading ? (
-                    <div className="w-full mx-auto absolute mt-24 text-center ">
-                      <PropagateLoader color="#0F766E" />
-                    </div>
+                    <tr>
+                      <td colSpan={4} className="py-20">
+                        <div className="w-full mx-auto flex justify-center">
+                          <PropagateLoader color="#0F766E" />
+                        </div>
+                      </td>
+                    </tr>
                   ) : currentOrderHistoryList.length === 0 ? (
                     noData ? (
-                      <div className="w-full mx-auto absolute ">
-                        <p className="text-center text-2xl font-semibold mt-2">
-                          {error}
-                        </p>
-                      </div>
+                      <tr>
+                        <td colSpan={4} className="py-6">
+                          <p className="text-center text-2xl font-semibold">
+                            {error}
+                          </p>
+                        </td>
+                      </tr>
                     ) : (
-                      <div className="w-full mx-auto absolute ">
-                        <p className="text-center text-2xl font-semibold mt-24">
-                          No data available
-                        </p>
-                      </div>
+                      <tr>
+                        <td colSpan={4} className="py-20">
+                          <p className="text-center text-2xl font-semibold">
+                            No data available
+                          </p>
+                        </td>
+                      </tr>
                     )
                   ) : (
                     currentOrderHistoryList.map((item, index) => (
                       <tr
                         key={index}
-                        class="rounded-lg mt-4 shadow-sm bg-gray-50"
+                        className="rounded-lg mt-4 shadow-sm bg-gray-50"
                       >
-                        <td class="px-16 py-3 pl-8 ">
+                        <td className="px-16 py-3 pl-8 ">
                           {index + 1 + itemOffset}
                         </td>
-                        <td class="px-16 py-3 flex items-center whitespace-nowrap">
+                        <td className="px-16 py-3 flex items-center whitespace-nowrap">
                           {item.order.image !== "String" && item.order.image ? (
                             <img
-                              class="w-10 h-10 rounded-full"
+                              className="w-10 h-10 rounded-full"
                               src={item.order.image}
                               alt="retailerImage"
                             />
                           ) : null}
-                          <div class="pl-3">
-                            <div class="font-normal text-gray-500">
+                          <div className="pl-3">
+                            <div className="font-normal text-gray-500">
                               {item.order.name}
                             </div>
                           </div>
                         </td>
-                        <td class="px-16 py-3">
+                        <td className="px-16 py-3">
                           <button
                             className={`text-white text-md items-center rounded-md w-28 py-[6px] ${
-                              item.order.status == "Pending"
+                              item.order.status === "Pending"
                                 ? "bg-requesting opacity-50"
-                                : item.order.status == "Preparing"
+                                : item.order.status === "Preparing"
                                 ? "bg-preparing opacity-50"
-                                : item.order.status == "Declined"
+                                : item.order.status === "Declined"
                                 ? "bg-rejected opacity-50"
-                                : item.order.status == "Complete"
+                                : item.order.status === "Complete"
                                 ? "bg-complete opacity-50"
-                                : item.order.status == "Confirming"
+                                : item.order.status === "Confirming"
                                 ? "bg-confirm opacity-50"
                                 : "bg-delivering opacity-50"
                             }`}
@@ -229,8 +236,8 @@ export default function OrderHistory() {
                             <p className="text-center">{item.order.status}</p>
                           </button>
                         </td>
-                        <td class="px-16 py-3 whitespace-nowrap">
-                          {item.order.status == "Complete" ? (
+                        <td className="px-16 py-3 whitespace-nowrap">
+                          {item.order.status === "Complete" ? (
                             <div>
                               <button
                                 onClick={() => {
@@ -261,7 +268,7 @@ export default function OrderHistory() {
               </table>
             </div>
             {error || noData || loading || pageCount < 2 ? null : (
-              <div class="flex  items-center justify-end">
+              <div className="flex  items-center justify-end">
                 <ReactPaginate
                   pageCount={pageCount}
                   onPageChange={onPageChange}
@@ -291,5 +298,4 @@ export default function OrderHistory() {
     </div>
   );
 }
-
 

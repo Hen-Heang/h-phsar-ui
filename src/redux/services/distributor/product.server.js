@@ -1,22 +1,11 @@
-import axios from "axios";
-import { api } from "../../../utils/api";
-import productSlice, {
-  setLoading,
-} from "../../slices/distributor/productSlice";
+import { apiDelete, apiGet, apiPost, apiPut } from "@/lib/http/api-client";
+import { setLoading } from "../../slices/distributor/productSlice";
 
 export const get_all_product_distributor = async (dispatch) => {
-  try {
-    // console.log("work");
-    dispatch(setLoading(true));
-    const response = await api.get(
-      `/distributor/products/sort?sort=desc&by=createdDate&pageNumber=1&pageSize=1000`
-    );
-    // console.log("Response : ", response);
-    return response;
-  } catch (e) {
-    console.log("Error :", e.response);
-    return e.response;
-  }
+  dispatch(setLoading(true));
+  return apiGet("/api/v1/distributor/products/sort", {
+    query: { sort: "desc", by: "createdDate", pageNumber: 1, pageSize: 1000 },
+  });
 };
 
 export const add_new_product_distributor = async (data) => {
@@ -29,65 +18,23 @@ export const add_new_product_distributor = async (data) => {
     price: parseFloat(item.price),
     qty: parseInt(item.qty),
   }));
-  try {
-    console.log("data : ", products);
-    const response = await api.post(`/distributor/products`, products);
-    console.log("Response : ", response);
-    return response;
-  } catch (e) {
-    console.log("Error :", e.response);
-    return e.response;
-  }
+  return apiPost("/api/v1/distributor/products", { body: products });
 };
 
 export const update_product_distributor = async (data, id) => {
-  try {
-    console.log("data : ", data);
-    console.log("id : ", id);
-    console.log("image service : ", data.image);
-    const response = await api.put(`/distributor/products/${id}`, data);
-    console.log("Response : ",response.data);
-    return response;
-  } catch (e) {
-    console.log("Error :", e);
-    return e;
-  }
+  return apiPut(`/api/v1/distributor/products/${id}`, { body: data });
 };
 
 export const delete_product_distributor = async (id) => {
-  try {
-    // console.log("work", id);
-    const response = await api.delete(`/distributor/products/${id}`);
-    console.log("Response : ", response);
-    return response;
-  } catch (e) {
-    console.log("Error :", e.response);
-    return e.response;
-  }
+  return apiDelete(`/api/v1/distributor/products/${id}`);
 };
 
 // publish  products
 export const publish_product_distributor = async (id) => {
-  try {
-    console.log("work", id);
-    const response = await api.put(`/distributor/products/${id}/publish`);
-    console.log("Response : ", response);
-    return response;
-  } catch (e) {
-    console.log("Error :", e.response);
-    return e;
-  }
+  return apiPut(`/api/v1/distributor/products/${id}/publish`);
 };
 export const unPublish_product_distributor = async (id) => {
-  try {
-    console.log("work", id);
-    const response = await api.put(`/distributor/products/${id}/unlist`);
-    console.log("Response : ", response);
-    return response;
-  } catch (e) {
-    console.log("Error :", e.response);
-    return e;
-  }
+  return apiPut(`/api/v1/distributor/products/${id}/unlist`);
 };
 // import products
 export const import_product_distributor = async (data) => {
@@ -98,14 +45,5 @@ export const import_product_distributor = async (data) => {
       price: parseFloat(data.price)
     }
   ];
-  try {
-    console.log("payload : ", payload);
-    console.log("Data : ", data);
-    const response = await api.post(`/distributor/products/import`, payload);
-    console.log("Response : ", response);
-    return response;
-  } catch (e) {
-    console.log("Error :", e.response);
-    return e;
-  }
+  return apiPost("/api/v1/distributor/products/import", { body: payload });
 };

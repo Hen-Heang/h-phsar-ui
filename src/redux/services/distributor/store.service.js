@@ -1,50 +1,17 @@
-import axios from "axios";
-import { api } from "../../../utils/api";
+import { apiGet, apiPost, apiPut } from "@/lib/http/api-client";
 
-export const get_store_distributor_profile = async (distributor) => {
-  
-  try {
-    // console.log("work");
-    const response = await api.get(
-      "/distributor/stores/user/"
-    );
-    // console.log("Response : ",response);
-    return response;
-  } catch (e) {
-    console.log("Error :", e);
-    return e.response;
-  }
-  
-}; 
+export const get_store_distributor_profile = async () => {
+  return apiGet("/api/v1/distributor/stores/user/");
+};
+
 export const add_new_store = async (data) => {
-  try {
-    console.log("data service :", data);
-    const response = await api.post(
-      "/distributor/stores",data
-    );
-    console.log("Response : ",response);
-    return response;
-  } catch (e) {
-    console.log("Error aaaaaa :", e.response);
-    return e.response;
-  }
+  return apiPost("/api/v1/distributor/stores", {
+    body: data,
+  });
 };
 
 export const update_store_distributor = async (data) => {
-  try {
-    // console.log("work");
-    const response = await api.put(
-      "/distributor/stores",data
-    );
-    console.log("Response : ",response);
-    return response;
-  } catch (e) {
-    console.log("Error :", e.response);
-    return e.response;
-  }
+  return apiPut("/api/v1/distributor/stores", {
+    body: data,
+  });
 };
-
-
-
-
-

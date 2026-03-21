@@ -8,7 +8,7 @@ const TestUploadImageFirebase = () => {
   const [uploadImage, setUploadImage] = useState(null);
 
   const onUploadImage = () => {
-    if (uploadImage == null) return ;
+    if (uploadImage === null) return ;
     const imageRef = ref(storageFirebase, `image/${uploadImage.name + v4()}`);
     uploadBytes(imageRef, uploadImage).then(() => {
       return getDownloadURL(imageRef);

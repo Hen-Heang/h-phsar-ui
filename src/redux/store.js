@@ -37,6 +37,7 @@ import notificationSlice from "./slices/distributor/notification/notificationSli
 import retailerReportSlice from "./slices/retailer/retailerReportSlice"
 import notificationRetailerSlice from "./slices/retailer/notification/notificationRetailerSlice";
 import homeReportSlice from "./slices/distributor/homeReportSlice";
+import inDecreaseProductSlice from "./slices/retailer/inDecreaseProductSlice";
 export const store = configureStore({
   reducer: {
     newOrder: SliceNeworder,
@@ -77,5 +78,6 @@ export const store = configureStore({
     retailerReport: retailerReportSlice,
     DataNotificationRetailer: notificationRetailerSlice,
     homeReport: homeReportSlice,
+    inDecrementProduct: inDecreaseProductSlice,
   },
 });

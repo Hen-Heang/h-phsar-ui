@@ -1,135 +1,138 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { 
+  Store, 
+  Star, 
+  MapPin, 
+  Tag, 
+  ChevronRight, 
+  SearchX,
+  Sparkles
+} from "lucide-react";
 import { PropagateLoader } from "react-spinners";
+import noImage from "../../assets/images/no_image.jpg";
+import { applyImageFallback, getSafeImageSrc } from "@/lib/images";
+import { Button } from "@/components/ui/button";
+
 export default function SearchingRetailer() {
   const SearchList = useSelector((state) => state.search.item);
   const loadingSearch = useSelector((state) => state.search.loading);
   const error = useSelector((state) => state.search.error);
-  console.log(error)
-  console.log("search", SearchList);
-  const dispatch= useDispatch();
-  const {id} = useParams();
   const navigate = useNavigate();
-  const onClickGetDataShop = (id,storeName) => {
-    // get_store_by_id(id).then((e) => dispatch(getShopById(e.data.data)));
 
-    // get_all_product_by_storeId(id).then((e) =>
-    //   dispatch(getAllProductByStoreId(e.data.data))
-    // );
-    // get_all_category_by_storeId(id).then((e)=> dispatch(getAllCategoryByStoreId(e.data.data)));
-    // // const storeId= id;
-    // setStoreId(id);
-
-    // dispatch(setStoreId(id)); // Dispatch the setStoreId action
-
+  const onClickGetDataShop = (id, storeName) => {
     navigate(`/retailer/distributor-shop?storeId=${id}&storeName=${encodeURIComponent(storeName)}`);
     window.scrollTo(0, 0);
-
-
   };
+
+  if (loadingSearch) return (
+    <div className="flex min-h-[70vh] flex-col items-center justify-center gap-6">
+      <PropagateLoader color="#f97316" size={15} />
+      <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Searching Marketplace...</p>
+    </div>
+  );
+
   return (
-
-    <div className=" min-h-screen">
-      {loadingSearch? (
-        <div className="flex justify-center lg:p-72 sm:p-64 p-40">
-          <PropagateLoader color="#ff5a1f" /> 
-        </div>
-      ) : (
-        <div className="flex flex-wrap m-auto w-11/12 ">
-          {SearchList === "" || SearchList === null || error ? (
-            <div className="lg:text-3xl sm:text-2xl text-lg text-gray-600 h-screen mx-auto flex items-center">
-              Search Not Found
+    <div className="min-h-screen bg-slate-50/50 pb-20 dark:bg-slate-950">
+      <div className="mx-auto w-[90%] max-w-7xl pt-12">
+        {(!SearchList || SearchList === "" || SearchList.length === 0 || error) ? (
+          <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
+            <div className="rounded-full bg-white p-8 shadow-xl shadow-slate-200/50 dark:bg-slate-900 dark:shadow-none">
+              <SearchX className="h-16 w-16 text-slate-300 dark:text-slate-700" />
             </div>
-          ) : (
-            SearchList.map((item) => (
-              //   <div class="flex flex-col justify-center h-60 cursor-pointer">
-              <div  className="flex flex-col justify-center mt-3 lg:mb-0 -mb-2 lg:w-1/3 md:w-2/4 sm:w-2/6 p-4 cursor-pointer">
-                <div className="relative grid grid-cols-2 lg:h-64 h-52 md:flex-row md:space-y-0 w-full rounded-xl shadow-lg p-3 max-w-xs md:max-w-3xl mx-auto border border-white bg-white" onClick={()=>onClickGetDataShop(item.id,item.name)}>
-                  <div className="grid place-items-center  w-full h-full">
-                    <img
-                      src={item.bannerImage}
-                      alt="tailwind logo"
-                      className=" rounded-md lg:h-[227px] h-[183px] w-full"
-                    />
-                  </div>
-                  <div class="w-full flex flex-col space-y-2 p-3 relative">
-                    <h3 class="font-black capitalize text-gray-800 lg:text-lg text-base line-clamp overflow-hidden h-6">
-                      {item.name}
-                    </h3>
-                    <p className="flex lg:text-[16px] text-[14px] items-center font-bold gap-2">
-                      Rating:
-                      <span>
-                        <img
-                          // src={require("../../../assets/images/retailer/star.png")}
-                          alt=""
-                        />
-                      </span>{" "}
-                      {/* 4.8 (87) */}
-                      <span className="font-normal"> { parseFloat( item.rating).toFixed(2) }   </span>
-                      <span className="-ml-1 font-normal text-gray-500">{`(${item.ratingCount})`}</span>
-                    </p>
-                    <p className="text-gray-500 lg:text-sm text-xs line-clamp overflow-hidden">
-                      {item.address}
-                    </p>
-                    {/* category */}
-                    <p className="flex flex-wrap line-clamp2 overflow-hidden h-12">
-                      <span className="font-bold lg:text-base text-sm ">
-                        Category : &nbsp;
-                      </span>
-                      {item.categories.map((data) => (
-                      <span className="text-sm ">{data.name}, &nbsp;</span>
-                    ))}
-                    </p>
-
-                    <button onClick={()=>onClickGetDataShop(item.id,item.name)} className="absolute -right-3 lg:text-sm text-xs lg:bottom-0  bottom-0 py-1 px-2 bg-[#f15b22] rounded-l-full text-white">
-                      View detail
-                    </button>
-                  </div>
-                </div>
+            <h2 className="mt-8 text-3xl font-black tracking-tight text-slate-900 dark:text-slate-100">No Results Found</h2>
+            <p className="mt-2 max-w-xs text-slate-500">We couldn't find any distributors matching your search criteria.</p>
+            <Button variant="outline" className="mt-8 h-12 rounded-2xl border-slate-200 dark:border-slate-800" onClick={() => navigate('/retailer/home')}>
+              Back to Marketplace
+            </Button>
+          </div>
+        ) : (
+          <>
+            <header className="mb-10">
+              <div className="mb-2 flex items-center gap-2 text-orange-500">
+                <Sparkles className="h-5 w-5" />
+                <span className="text-xs font-black uppercase tracking-[0.2em]">Search Results</span>
               </div>
-              // </div>
-              //     <div class="flex flex-cols-4 w-[550px] h-[310px] cursor-pointer p-4 m-auto">
-              //     <div class="flex flex-row  rounded-xl shadow-lg p-3 max-w-xs md:max-w-3xl mx-auto border border-white bg-white">
-              //       <div class="w-full">
-              //         <img
-              //           src={item.bannerImage}
-              //           alt="tailwind logo"
-              //           className="h-[00px] w-full"
-              //         />
-              //       </div>
-              //       <div class="w-full bg-gray-100">
-              //         <h3 class="font-black text-gray-800 text-lg line-clamp overflow-hidden h-6">
-              //           {item.name}
-              //         </h3>
-              //         <p className="flex text-[16px] items-center gap-2">
-              //           Rating :{" "}
-              //           <span>
-              //             <img
-              //               // src={require("../../../assets/images/retailer/star.png")}
-              //               alt=""
-              //             />
-              //           </span>{" "}
-              //           4.8 (87)
-              //         </p>
-              //         <p className="text-[#7777] text-sm">{item.address}</p>
-              //         {/* category */}
-              //         <p className="flex flex-wrap line-clamp2 overflow-hidden h-12">
-              //           <span className="font-bold ">Category : &nbsp;</span>
-              //           {/* {item.category.map((data) => (
-              //             <span className="text-sm ">{data.categoryName}, &nbsp;</span>
-              //           ))} */}
-              //         </p>
-              //         <div className="absolute right-0 text-sm bottom-2 py-1 px-2 bg-[#f15b22] rounded-l-full text-white">
-              //           View detail
-              //         </div>
-              //       </div>
-              //     </div>
-              //   </div>
-            ))
-          )}
-        </div>
-      )}
+              <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl">
+                Found {SearchList.length} Distributors
+              </h1>
+            </header>
+
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+              {SearchList.map((item, idx) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.05 }}
+                  onClick={() => onClickGetDataShop(item.id, item.name)}
+                  className="group cursor-pointer overflow-hidden rounded-[2.5rem] border border-slate-200 bg-white shadow-lg shadow-slate-200/50 transition-all hover:-translate-y-1 hover:border-orange-200 hover:shadow-2xl hover:shadow-orange-500/10 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none"
+                >
+                  {/* Banner Image */}
+                  <div className="relative h-48 w-full overflow-hidden">
+                    <img
+                      src={getSafeImageSrc(item.bannerImage, noImage)}
+                      onError={(e) => applyImageFallback(e, noImage)}
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      alt={item.name}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+                    
+                    <div className="absolute left-6 top-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/90 text-orange-600 shadow-xl backdrop-blur-md dark:bg-slate-900/90">
+                      <Store className="h-6 w-6" />
+                    </div>
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-8">
+                    <div className="flex items-start justify-between gap-4">
+                      <h3 className="line-clamp-1 text-xl font-black text-slate-900 dark:text-slate-100">
+                        {item.name}
+                      </h3>
+                      <div className="flex items-center gap-1.5 rounded-full bg-orange-50 px-2.5 py-1 text-orange-600 dark:bg-orange-950/30 dark:text-orange-400">
+                        <Star className="h-3.5 w-3.5 fill-current" />
+                        <span className="text-[10px] font-black">{parseFloat(item.rating || 0).toFixed(1)}</span>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 flex items-start gap-2 text-slate-500">
+                      <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-orange-500" />
+                      <p className="line-clamp-2 text-sm font-medium leading-relaxed">
+                        {item.address}
+                      </p>
+                    </div>
+
+                    <div className="mt-6 flex flex-wrap gap-2">
+                      {item.categories?.slice(0, 3).map((cat) => (
+                        <span key={cat.id} className="inline-flex items-center gap-1.5 rounded-xl border border-slate-100 bg-slate-50 px-3 py-1 text-[10px] font-bold text-slate-500 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-400">
+                          <Tag className="h-2.5 w-2.5" />
+                          {cat.name}
+                        </span>
+                      ))}
+                      {item.categories?.length > 3 && (
+                        <span className="text-[10px] font-bold text-slate-400">+{item.categories.length - 3} more</span>
+                      )}
+                    </div>
+
+                    <div className="mt-8 flex items-center justify-between border-t border-slate-50 pt-6 dark:border-slate-800">
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Distributor</span>
+                        <span className="text-xs font-bold text-slate-700 dark:text-slate-300">Verified Seller</span>
+                      </div>
+                      <Button variant="ghost" size="sm" className="h-10 rounded-xl font-bold text-orange-500 hover:bg-orange-50 group-hover:bg-orange-50">
+                        View Store
+                        <ChevronRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      </Button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }

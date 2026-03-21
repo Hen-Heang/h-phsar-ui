@@ -15,7 +15,7 @@ export default function AllShop() {
   return (
     <div>
 <div className='flex flex-row justify-center w-full mt-10 animate-pulse'>
-    <div class="h-16 bg-gray-200 rounded-md  dark:bg-gray-700 w-[80%] mb-4"></div>
+    <div className="h-16 bg-gray-200 rounded-md  dark:bg-gray-700 w-[80%] mb-4"></div>
 
     </div>
     {/* div 5 */}

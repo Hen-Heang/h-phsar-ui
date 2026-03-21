@@ -23,13 +23,13 @@ export default function CompleteOrder(props) {
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
-                stroke-width="1.5"
+                strokeWidth="1.5"
                 stroke="currentColor"
-                class="w-6 h-6 font-bold text-white"
+                className="w-6 h-6 font-bold text-white"
               >
                 <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                   d="M6 18L18 6M6 6l12 12"
                 />
               </svg>
@@ -64,19 +64,19 @@ export default function CompleteOrder(props) {
                   <div className="flex flex-wrap p-4 overflow-hidden">
                     <div className="w-4/5 flex">
                       <img
-                        class="w-14 h-14 "
+                        className="w-14 h-14 "
                         src={item.image}
                         alt="product image"
                       />
-                      <div class="pl-3">
-                        <div class="text-base font-semibold text-black mt-4">
+                      <div className="pl-3">
+                        <div className="text-base font-semibold text-black mt-4">
                           {item.productName}
                         </div>
                       </div>
                     </div>
                     <div className="w-1/5 justify-end text-end">
                       <h1 className="text-black font-semibold">
-                      $ {item.subTotal == null
+                      $ {item.subTotal === null
                               ? <span>0.00</span>
                               : (item.subTotal).toFixed(2)
                             }
@@ -109,8 +109,8 @@ export default function CompleteOrder(props) {
                 <div className="flex flex-wrap p-4">
                   <div className="w-4/5 flex">
                     <div className='w-14 h-14 bg-slate-300'></div>
-                    <div class="pl-3">
-                      <div class="text-base font-semibold text-black w-14 mt-4 h-2 bg-slate-300">
+                    <div className="pl-3">
+                      <div className="text-base font-semibold text-black w-14 mt-4 h-2 bg-slate-300">
                       </div>
                     </div>
                   </div>
@@ -172,7 +172,7 @@ export default function CompleteOrder(props) {
                   <div className="w-2/12  p-4">
                     <img
                       className="w-16"
-                      src={require("../../assets/images/rating 1.png")}
+                      src={(require("../../assets/images/rating 1.png")?.default || require("../../assets/images/rating 1.png"))}
                       alt=""
                     />
                   </div>

@@ -4,6 +4,7 @@ import { get_all_history } from '../../redux/services/retailer/history.service';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllHistory, setLoadingHistoryRetail } from '../../redux/slices/retailer/historySlice';
 import noImage from '../../assets/images/no_image.jpg';
+import { applyImageFallback, getSafeImageSrc } from "@/lib/images";
 import ReactPaginate from 'react-paginate';
 import { useReactToPrint } from 'react-to-print';
 import { get_invoice } from '../../redux/services/retailer/invoice.service';
@@ -17,7 +18,7 @@ import { PropagateLoader } from "react-spinners";
 import { toast } from "react-toastify"
 export default function OrderHistoryRetail() {
   useEffect(() => {
-    document.title = "StockFlow Commerce | Order-History";
+    document.title = "H-Phsar | Order-History";
   }, []);
   const orderHistory = useSelector((state) => state.history.data);
   const dispatch = useDispatch();
@@ -33,7 +34,7 @@ export default function OrderHistoryRetail() {
   const [item, setItem] = useState();
   useEffect(() => {
     get_all_history(dispatch).then((r) => {
-      if (r.status == 401) {
+      if (r.status === 401) {
         toast.error("Something went wrong...!")
       }
       if (r && r.data && r.data.status === 200) {
@@ -56,7 +57,7 @@ export default function OrderHistoryRetail() {
       .finally(() => {
         dispatch(setLoadingHistoryRetail(false))
       })
-  }, getAllHistory());
+  }, [dispatch]);
   const endOffset = itemOffset + 6;
   const currentOrderHistory = orderHistory.slice(itemOffset, endOffset);
   const pageCount = Math.ceil(orderHistory.length / 6);
@@ -113,24 +114,24 @@ export default function OrderHistoryRetail() {
             <p className="text-lg text-newGray">
               Click on a view button to get the invoice and you can download!
             </p>
-            <div class="sm:rounded-lg h-[560px] w-[100%] ">
+            <div className="sm:rounded-lg h-[560px] w-[100%] ">
               <div className='h-[560px] relative overflow-x-auto w-[100%]'>
-                <table class="w-full lg:text-[16px] text-[14px] text-left text-gray-500 border-tools-table-outline  border-separate border-spacing-y-2">
-                  <thead class="lg:text-[16px] text-[14px] text-newGray bg-newWhite uppercase">
+                <table className="w-full lg:text-[16px] text-[14px] text-left text-gray-500 border-tools-table-outline  border-separate border-spacing-y-2">
+                  <thead className="lg:text-[16px] text-[14px] text-newGray bg-newWhite uppercase">
                     <tr>
-                      <th scope="col" class="px-8 py-3">
+                      <th scope="col" className="px-8 py-3">
                         No
                       </th>
-                      <th scope="col" class="px-8 py-3 whitespace-nowrap">
+                      <th scope="col" className="px-8 py-3 whitespace-nowrap">
                         Shop Name
                       </th>
-                      <th scope="col" class="px-8 py-3">
+                      <th scope="col" className="px-8 py-3">
                         <p className='ml-4'>Date</p>
                       </th>
-                      <th scope="col" class="px-8 py-3">
+                      <th scope="col" className="px-8 py-3">
                         <p className='ml-6'>Status</p>
                       </th>
-                      <th scope="col" class="px-8 py-3 w-16">
+                      <th scope="col" className="px-8 py-3 w-16">
                         <p className='ml-14'>Action</p>
                       </th>
                     </tr>
@@ -139,44 +140,53 @@ export default function OrderHistoryRetail() {
                   <tbody>
                     {loading
                       ? (
-                        <div className='w-full mx-auto absolute mt-24 text-center '>
-                          <PropagateLoader color="#F15B22" />
-                        </div>
+                        <tr>
+                          <td colSpan={5} className="py-20">
+                            <div className="w-full mx-auto flex justify-center">
+                              <PropagateLoader color="#F15B22" />
+                            </div>
+                          </td>
+                        </tr>
                       ) : currentOrderHistory.length === 0
                         ? noData ? (
-                          <div className='w-full mx-auto absolute '>
-                            <p className='text-center text-2xl font-semibold mt-2'>{error}</p>
-                          </div>
+                          <tr>
+                            <td colSpan={5} className="py-6">
+                              <p className="text-center text-2xl font-semibold">{error}</p>
+                            </td>
+                          </tr>
 
                         ) : (
-                          <div className='w-full mx-auto absolute '>
-                            <p className='text-center text-2xl font-semibold mt-24'>No data available</p>
-                          </div>
+                          <tr>
+                            <td colSpan={5} className="py-20">
+                              <p className="text-center text-2xl font-semibold">No data available</p>
+                            </td>
+                          </tr>
                         )
                         :
                         (currentOrderHistory.map((item, index) => (
-                          <tr key={index} class="rounded-lg mt-2  lg:text-[16px] text-[14px] bg-gray-50  dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer">
-                            <td class="px-10 py-4 ">
+                          <tr key={index} className="rounded-lg mt-2  lg:text-[16px] text-[14px] bg-gray-50  dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer">
+                            <td className="px-10 py-4 ">
                               {index + 1 + itemOffset}
                             </td>
-                            <td class="px-10 py-4 flex items-center whitespace-nowrap">
+                            <td className="px-10 py-4 flex items-center whitespace-nowrap">
                               <img
-                                class="w-10 h-10 rounded-full"
-                                src={item.order.image}
+                                className="w-10 h-10 rounded-full"
+                                src={getSafeImageSrc(item.order.image, noImage)}
+                                onError={(e) => applyImageFallback(e, noImage)}
                                 alt="products image"
                               />
-                              <div class="pl-3">
-                                <div class="font-normal text-gray-500">
+                              <div className="pl-3">
+                                <div className="font-normal text-gray-500">
                                   {item.order.name}
                                 </div>
                               </div>
                             </td>
-                            <td class="px-10 py-4 ">
+                            <td className="px-10 py-4 ">
                               {new Date(item.order.date).toLocaleDateString("en-GB")}
                             </td>
-                            <td class="px-10 py-4 text-[16px]">
-                              <button className={`flex flex-row mr-2 items-center rounded-md w-28  py-[4px] px-1 ${item.order.status == "Complete" ? " bg-colorComplete text-newGreen" : "text-newRed bg-colorCancel"}`}>
-                                {item.order.status == "Complete"
+                            <td className="px-10 py-4 text-[16px]">
+                              <button className={`flex flex-row mr-2 items-center rounded-md w-28  py-[4px] px-1 ${item.order.status === "Complete" ? " bg-colorComplete text-newGreen" : "text-newRed bg-colorCancel"}`}>
+                                {item.order.status === "Complete"
                                   ?
                                    <svg
                                     className="w-6 fill-newGreen"
@@ -197,13 +207,13 @@ export default function OrderHistoryRetail() {
                                 <p className='text-16px mr-2'>{item.order.status}</p>
                               </button>
                             </td>
-                            {item.order.status == "Complete"
-                              ? <td class="px-10 py-4">
+                            {item.order.status === "Complete"
+                              ? <td className="px-10 py-4">
                                 <button onClick={() => { handleClick(); handleInvoice(item.order.id) }} className="text-white text-[16px] mr-2 bg-newGreen rounded-md w-48  py-[6px]">
                                   View invoice
                                 </button>
                               </td>
-                              : <td class="px-10 py-4">
+                              : <td className="px-10 py-4">
                                 <button onClick={() => { handleProductById(item.order.id); setOpen(!isOpen) }} className="bg-retailerPrimary text-[16px] text-white rounded-md w-48  py-[6px]">
                                   View products
                                 </button>
@@ -215,7 +225,7 @@ export default function OrderHistoryRetail() {
                 </table>
               </div>
               {error || noData || loading || pageCount < 2 ? null : (
-                <div class="flex items-center justify-end" >
+                <div className="flex items-center justify-end" >
                   <ReactPaginate pageCount={pageCount} onPageChange={onPageChange} previousLabel="< Prev" className="flex" breakLabel="..." nextLabel="Next >" pageRangeDisplayed={5} containerClassName="pagination" activeClassName="text-retailerPrimary active" pageClassName="px-2 page-item" nextLinkClassName="page-item" />
                 </div>
               )}
@@ -230,4 +240,3 @@ export default function OrderHistoryRetail() {
     </div>
   )
 }
-

@@ -24,12 +24,22 @@ import { get_retailer_report } from "../../redux/services/retailer/retailerRepor
 import { useDispatch, useSelector } from "react-redux";
 import { getRetailerReport } from "../../redux/slices/retailer/retailerReportSlice";
 
+ChartJS.register(
+  ArcElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
 export default function ReportPageRetailer() {
   useEffect(() => {
 
-    document.title = "StockFlow Commerce | Report";
+    document.title = "H-Phsar | Report";
   }, []);
-  ChartJS.register(ArcElement, Tooltip, Legend);
   const dispatch = useDispatch();
 
   // For filter the date
@@ -60,7 +70,7 @@ export default function ReportPageRetailer() {
       // console.log("Else start : ", newValue);
       // setStartDate(newValue);
 
-      if (newValue != null) {
+      if (newValue !== null) {
         const formattedStartDate = dayjs(newValue).format("YYYY-MM");
         setFormattedStartDate(formattedStartDate);
         setStartDateIsAfterCurrentDate(false);
@@ -84,7 +94,7 @@ export default function ReportPageRetailer() {
       console.log("Hi end date");
 
       setEndDate(newValue);
-      if (newValue != null) {
+      if (newValue !== null) {
         const formattedEndDate = dayjs(newValue).format("YYYY-MM");
         setFormattedEndDate(formattedEndDate);
         setEndDateIsAfterCurrentDate(false);
@@ -105,14 +115,14 @@ export default function ReportPageRetailer() {
 
   const handleSubmit = () => {
     console.log("isClicked: ", isClicked);
-    // if (startDate != null && endDate != null) {
+    // if (startDate !== null && endDate !== null) {
     setIsClicked(!isClicked);
     // }
     localStorage.setItem("startDate", formattedStartDate);
     localStorage.setItem("endDate", formattedEndDate);
     setOpen(true);
 
-    if (formattedStartDate == null && formattedEndDate == null) {
+    if (formattedStartDate === null && formattedEndDate === null) {
       console.log("Hi message");
       setOpen(false);
       toast.error("Please select date", {
@@ -207,7 +217,7 @@ export default function ReportPageRetailer() {
         //   })
         //   .catch((error) => {
         //     console.log("error : ", error);
-        //     if (error.response.status == 400) {
+        //     if (error.response.status === 400) {
         //       toast.error(error.response.data.detail);
         //       setOpen(false);
         //     }
@@ -556,4 +566,3 @@ export default function ReportPageRetailer() {
     }
   }
 }
-

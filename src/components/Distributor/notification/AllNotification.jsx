@@ -1,8 +1,21 @@
-import React from "react";
-import { useEffect } from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import oggy from "../../../assets/images/profile_acc.png";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  Bell, 
+  Package, 
+  CheckCircle2, 
+  XCircle, 
+  MapPin, 
+  Phone, 
+  Clock, 
+  ChevronRight,
+  Info,
+  AlertTriangle,
+  X
+} from "lucide-react";
+import { toast } from "react-toastify";
+
 import {
   get_all_notification,
   read_notification_distributor,
@@ -11,244 +24,184 @@ import {
   getAllNotificationsDistributor,
   setUpdateDateNotification,
 } from "../../../redux/slices/distributor/notification/notificationSlice";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
-import Avatar from "@mui/material/Avatar";
-import ImageIcon from "@mui/icons-material/Image";
-import WorkIcon from "@mui/icons-material/Work";
-import BeachAccessIcon from "@mui/icons-material/BeachAccess";
-import { toast } from "react-toastify";
-import { styled } from "@mui/material";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+
 export const AllNotification = () => {
   const dispatch = useDispatch();
   const [showModal, setShowModal] = useState(false);
   const [noDataNotifications, setNoDataNotifications] = useState(false);
+  const [selectedNotification, setSelectedNotification] = useState(null);
+
   useEffect(() => {
     get_all_notification(dispatch).then((res) => {
       if (res.status === 200) {
-        // toast.error("Something went wrong");
-
         dispatch(getAllNotificationsDistributor(res.data.data));
         setNoDataNotifications(false);
       } else {
         setNoDataNotifications(true);
-        // console.log("Hellloooooo");
       }
     });
-  }, []);
+  }, [dispatch]);
 
   const allNotifications = useSelector(
     (state) => state.allDataNotification.dataNotification
   );
-  // ======================== handle read notifications ========================
-  const [dataNotification, setDataNotification] = useState([
-    {
-      store: "",
-      image: "",
-      title: "",
-      description: "",
-      seen: false,
-      createdDate: "",
-      notificationType: "",
-      retailerName: "",
-      address: "",
-      retailerImage: "",
-      phone: "",
-    },
-  ]);
-  const handleGetDataNotification = (data) => {
-    // console.log("Seen dataNotification", data);
+
+  const handleReadNotification = (data) => {
+    setSelectedNotification(data);
     if (data.seen) {
-      // console.log("Seen dataNotification", data.seen);
       setShowModal(true);
-      setDataNotification(data);
     } else {
       read_notification_distributor(data.id).then((res) => {
-        if (res.status == 200) {
+        if (res.status === 200) {
           dispatch(setUpdateDateNotification(data));
           setShowModal(true);
-          setDataNotification(data);
         } else {
-          toast.error("Something went wrong");
+          toast.error("Failed to mark as read");
         }
       });
     }
   };
 
-  const imageTest =
-    "https://firebasestorage.googleapis.com/v0/b/wm-file-upload.appspot.com/o/download.png?alt=media&token=f3aa8608-77b4-4437-af13-993de6ac2e84";
+  const getNotificationIcon = (type) => {
+    switch (type) {
+      case "NEW_ORDER": return <Package className="w-4 h-4 text-blue-500" />;
+      case "ORDER_COMPLETE": return <CheckCircle2 className="w-4 h-4 text-emerald-500" />;
+      case "ORDER_CANCELLED": return <XCircle className="w-4 h-4 text-rose-500" />;
+      case "OUT_OF_STOCK_NOTIFICATION": return <AlertTriangle className="w-4 h-4 text-amber-500" />;
+      default: return <Info className="w-4 h-4 text-slate-400" />;
+    }
+  };
+
+  const getNotificationTitle = (type) => {
+    switch (type) {
+      case "NEW_ORDER": return "New Order Received";
+      case "ORDER_COMPLETE": return "Order Completed";
+      case "ORDER_CANCELLED": return "Order Cancelled";
+      case "OUT_OF_STOCK_NOTIFICATION": return "Stock Alert";
+      default: return "Notification";
+    }
+  };
+
   return (
-    <div>
-      <>
-        {showModal ? (
-          <>
-            <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
-              <div className="relative w-auto mx-auto max-w-3xl">
-                {/*content*/}
-                <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
-                  {/*header*/}
-                  <div className="flex items-start justify-between p-3 border-b border-solid bg-primaryColor border-slate-200 rounded-t">
-                    <h3 className="text-xl text-white font-semibold">
-                      {dataNotification.notificationType == "ORDER_CANCELLED"
-                        ? "Order Has Cancelled"
-                        : dataNotification.notificationType == "NEW_ORDER"
-                        ? "New Order"
-                        : dataNotification.notificationType == "ORDER_COMPLETE"
-                        ? "Order Complete"
-                        : "Out of stock"}
-                    </h3>
-                    <button onClick={() => setShowModal(false)}>
-                      <span className="h-6 w-6 z-20">
-                        <img
-                          src={require("../../../assets/images/distributor/close_white.png")}
-                          alt=""
-                        />
-                      </span>
-                    </button>
-                  </div>
-                  {/*body*/}
-                  <div className="relative p-6 flex-auto">
-                    <main className="profile-page">
-                      <section className="">
-                        <div className="container mx-auto">
-                          <div className="relative flex flex-col min-w-0 break-words bg-white w-full ">
-                            <div className="">
-                              <div className="flex flex-wrap justify-center">
-                                <img
-                                  alt="..."
-                                  src={
-                                    dataNotification.retailerImage == null ||
-                                    dataNotification.retailerImage == ""
-                                      ? imageTest
-                                      : dataNotification.retailerImage
-                                  }
-                                  className="shadow-xl rounded-full align-middle border-none w-[100px] h-[100px]"
-                                />
-                              </div>
-                              <div className="text-center mt-6">
-                                <h3 className="text-2xl font-semibold leading-normal mb-2 text-gray-800 mb-2 text-primaryColor">
-                                  {dataNotification.retailerName}
-                                </h3>
-                                <div className="text-sm leading-normal mt-0 mb-2 text-gray-500 font-bold">
-                                  {/* <i className="fas fa-map-marker-alt mr-2 text-lg text-gray-500"></i>{" "} */}
-                                  {dataNotification.phone} /{" "}
-                                  {dataNotification.address}
-                                </div>
-                                <div className="text-sm leading-normal mt-0 mb-2 text-gray-500 font-bold uppercase">
-                                  {/* <i className="fas fa-map-marker-alt mr-2 text-lg text-gray-500"></i>{" "} */}
-                                  {dataNotification.title}
-                                </div>
-                                <div className="mb-2 text-gray-700 w-full">
-                                  <span
-                                    className={`w-[80%] mx-auto ${
-                                      dataNotification.notificationType ==
-                                      "OUT_OF_STOCK_NOTIFICATION"
-                                        ? "text-red-500"
-                                        : null
-                                    }`}
-                                  >
-                                    {dataNotification.description}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </section>
-                    </main>
-                  </div>
-                </div>
-              </div>
+    <div className="w-full">
+      <div className="flex flex-col gap-1.5 max-h-[400px] overflow-y-auto custom-scrollbar pr-1">
+        {noDataNotifications || allNotifications.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <div className="w-12 h-12 rounded-full bg-slate-50 dark:bg-slate-900 flex items-center justify-center mb-3">
+              <Bell className="w-6 h-6 text-slate-300 dark:text-slate-700" />
             </div>
-            <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
-          </>
-        ) : null}
-      </>
-      <div className="flex flex-col gap-1 mt-3 overflow-auto h-96 -mx-3">
-        {noDataNotifications ? (
-          <div className="w-full h-full">
-            <div className="flex mx-auto justify-center items-center flex-col h-full gap-2">
-              <img
-                src={require("../../../assets/images/distributor/no_notification.png")}
-                className=""
-                alt="loading.."
-              />
-              No notifications
-            </div>
+            <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">No notifications</p>
           </div>
         ) : (
-          allNotifications.map((item) => (
-            <div
+          allNotifications.map((item, idx) => (
+            <motion.div
               key={item.id}
-              className={`${
-                item.seen == false ? "bg-blue-100" : null
-              } w-full rounded-xl cursor-pointer`}
-              onClick={() => handleGetDataNotification(item)}
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.03 }}
+              onClick={() => handleReadNotification(item)}
+              className={`group relative flex items-start gap-3 p-3 rounded-xl cursor-pointer transition-all ${
+                item.seen 
+                  ? "hover:bg-slate-50 dark:hover:bg-slate-900" 
+                  : "bg-teal-50/50 dark:bg-teal-900/10 border-l-4 border-teal-500"
+              }`}
             >
-              <div className="flex mx-auto justify-evenly items-center w-[95%] py-2">
+              <div className="relative flex-shrink-0">
                 <img
                   src={item.image}
                   alt=""
-                  className=" w-12 h-12 rounded-full"
+                  className="w-10 h-10 rounded-full object-cover border border-slate-100 dark:border-slate-800"
                 />
-                <div className="w-72 ml-5">
-                  <h2
-                    className={`text-lg font-medium ${
-                      item.name == "Notice product unavailable"
-                        ? "text-red-600"
-                        : null
-                    }`}
-                  >
+                {!item.seen && (
+                  <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-teal-500 rounded-full border-2 border-white dark:border-slate-950" />
+                )}
+              </div>
+              
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-2 mb-0.5">
+                  <h4 className="text-sm font-black text-slate-900 dark:text-white truncate">
                     {item.store}
-                  </h2>
-                  <p
-                    className={`text-xs ${
-                      item.title == "Out of stock." ? "text-red-600" : null
-                    }`}
-                  >
-                    {item.title}
-                  </p>
-                </div>
-                <div className="text-sm w-5 flex justify-center">
-                  {item.seen ? null : (
-                    <span className="w-2 h-2 rounded-full bg-primaryColor"></span>
-                  )}
-                </div>
-                <div className="text-sm w-20 flex justify-center">
-                  <span>
-                    {new Date(item.createdDate).toLocaleDateString("en-US", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                  </h4>
+                  <span className="text-[10px] font-medium text-slate-400 whitespace-nowrap">
+                    {new Date(item.createdDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
+                <p className={`text-xs line-clamp-1 ${!item.seen ? 'text-slate-700 dark:text-slate-300 font-bold' : 'text-slate-500'}`}>
+                  {item.title}
+                </p>
               </div>
-            </div>
+              
+              <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                <ChevronRight className="w-4 h-4 text-slate-300" />
+              </div>
+            </motion.div>
           ))
         )}
       </div>
-      {/* <div className="flex flex-col gap-1 mt-3 overflow-auto h-96 ">
-        <List
-          sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
-        >
-          {allNotifications.map((item) => (
-            <ListItem  className={`${
-              item.seen == false ? "bg-blue-100" : null
-            } w-full rounded-xl cursor-pointer`}>
-              <ListItemAvatar>
-              <img src={item.image} alt="" className=" w-10 h-10 rounded-full" />
-              </ListItemAvatar>
-              <ListItemText primary={item.store} secondary={item.title}  className={`text-xs ${
-                    item.title == "Out of stock."
-                      ? "text-red-600"
-                      : null
-                  }`}/>
-            </ListItem>
-          ))}
-        </List>
-      </div> */}
+
+      <Dialog open={showModal} onOpenChange={setShowModal}>
+        <DialogContent className="max-w-md rounded-[2.5rem] p-0 overflow-hidden border-none shadow-2xl">
+          {selectedNotification && (
+            <>
+              <div className="bg-teal-600 px-8 py-10 text-white relative">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2 bg-white/20 backdrop-blur-md rounded-xl">
+                    {getNotificationIcon(selectedNotification.notificationType)}
+                  </div>
+                  <span className="text-xs font-black uppercase tracking-widest text-teal-100">
+                    {getNotificationTitle(selectedNotification.notificationType)}
+                  </span>
+                </div>
+                <h3 className="text-2xl font-black tracking-tight">{selectedNotification.title}</h3>
+                <button 
+                  onClick={() => setShowModal(false)}
+                  className="absolute top-6 right-6 p-2 rounded-full hover:bg-white/10 transition-colors"
+                >
+                  <X className="w-5 h-5 text-white" />
+                </button>
+              </div>
+              
+              <div className="p-8">
+                <div className="flex items-center gap-4 mb-8">
+                  <img 
+                    src={selectedNotification.retailerImage || "https://ui-avatars.com/api/?name=" + selectedNotification.retailerName} 
+                    className="w-16 h-16 rounded-2xl object-cover shadow-lg"
+                    alt=""
+                  />
+                  <div>
+                    <h4 className="text-lg font-black text-slate-900 dark:text-white">{selectedNotification.retailerName}</h4>
+                    <div className="flex items-center gap-3 mt-1">
+                      <div className="flex items-center gap-1 text-xs text-slate-500 font-medium">
+                        <Phone className="w-3 h-3 text-teal-500" /> {selectedNotification.phone}
+                      </div>
+                      <div className="flex items-center gap-1 text-xs text-slate-500 font-medium">
+                        <MapPin className="w-3 h-3 text-teal-500" /> {selectedNotification.address}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800">
+                  <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                    {selectedNotification.description}
+                  </p>
+                </div>
+
+                <div className="mt-10">
+                  <Button 
+                    className="w-full h-14 rounded-2xl bg-teal-600 hover:bg-teal-700 font-bold text-white shadow-lg shadow-teal-600/20"
+                    onClick={() => setShowModal(false)}
+                  >
+                    Dismiss Notification
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
