@@ -5,5 +5,6 @@ export const get_invoice = async (id) => {
     const response = await api.get(`/retailer/orders/invoice/${id}`);
     return response;
   } catch (e) {
+    return e.response;
   }
 };

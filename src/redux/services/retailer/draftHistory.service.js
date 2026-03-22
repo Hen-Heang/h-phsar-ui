@@ -9,6 +9,7 @@ export const get_draft_history = async (dispatch) => {
     );
     return response;
   } catch (e) {
+    return e.response;
   }
 };
 export const delete_draft = async (id) => {
@@ -16,6 +17,7 @@ export const delete_draft = async (id) => {
     const response = await api.delete(`/retailer/history/draft/${id}`);
     return response;
   } catch (error) {
+    return error.response;
   }
 };
 export const draft_to_request = async (data) => {

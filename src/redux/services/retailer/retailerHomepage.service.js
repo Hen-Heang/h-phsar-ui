@@ -19,6 +19,7 @@ export const get_all_highest_rate = async (sort, pageNumber, pageSize) => {
     // console.log("hahaha : " ,response.data.data);
     return response;
   } catch (e) {
+    return e.response;
   }
 };
 
@@ -28,6 +29,7 @@ export const get_all_store = async () => {
     // console.log("response : ",response);
     return response;
   } catch (e) {
+    return e.response;
   }
 };
 
@@ -39,6 +41,7 @@ export const get_all_new_store = async (sort, pageNumber, pageSize) => {
     // console.log("fetchg get_all_new_store : ",response);
     return response;
   } catch (e) {
+    return e.response;
   }
 };
 
@@ -50,6 +53,7 @@ export const get_all_orders = async (sort, pageNumber, pageSize) => {
     // console.log(" response : ", response);
     return response;
   } catch (e) {
+    return e.response;
   }
 };
 
@@ -61,6 +65,7 @@ export const get_all_favorite = async (pageNumber, pageSize) => {
     // console.log(" response : ", response);
     return response;
   } catch (e) {
+    return e.response;
   }
 };
 
@@ -72,6 +77,7 @@ export const get_all_order_history = async (sort, pageNumber, pageSize) => {
     // console.log(response);
     return response;
   } catch (e) {
+    return e.response;
   }
 };
 
@@ -83,6 +89,7 @@ export const get_all_order_draft = async (sort, pageNumber, pageSize) => {
     // console.log("response : ", response);
     return response;
   } catch (e) {
+    return e.response;
   }
 };
 
@@ -98,6 +105,7 @@ export const get_store_by_id = async (storeId, dispatch) => {
     // console.log("response get_store_by_id : ", response);
     return response;
   } catch (e) {
+    return e.response;
   }
   dispatch(setLoadingStore(false));
 };
@@ -111,6 +119,7 @@ export const get_all_product_by_storeId = async (storeId, dispatch) => {
     // console.log("response get_all_product_by_storeId : ", response);
     return response;
   } catch (e) {
+    return e.response;
   }
   dispatch(setLoadingCard(false));
 };
@@ -122,6 +131,7 @@ export const get_all_category_by_storeId = async (storeId, dispatch) => {
     // console.log("response get_all_category_by_storeId : ", response);
     return response;
   } catch (e) {
+    return e.response;
   }
   dispatch(setLoadingCategoryByShop(false));
 };
@@ -165,6 +175,7 @@ export const get_all_product_by_category = async (storeId, categoryId) => {
     // console.log("get_all_product_by_category dwdww: ", response);
     return response;
   } catch (e) {
+    return e.response;
   }
 };
 

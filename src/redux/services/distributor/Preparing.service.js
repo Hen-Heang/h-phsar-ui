@@ -8,6 +8,7 @@ export const get_all_preparing = async(dispatch)=>{
         return response;
     }
     catch(e){
+        return e.response;
     }
 }
 export const get_finish = async(id)=>{
@@ -20,5 +21,6 @@ export const get_finish = async(id)=>{
         return response;
     }
     catch(e){
+        return e.response;
     }
 }

@@ -5,5 +5,6 @@ export const get_detail_product= async(id)=>{
         return response;
     }
     catch(e){
+        return e.response;
     }
 }

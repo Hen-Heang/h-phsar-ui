@@ -6,6 +6,7 @@ export const get_all_history=async(dispatch)=>{
         const response= await api.get(`/retailer/history/order?sort=desc&pageNumber=1&pageSize=1000`)
         return response;
     } catch (e) {
+        return e.response;
     }
 }
 

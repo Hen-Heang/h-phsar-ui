@@ -45,7 +45,7 @@ export default function History() {
     dispatch(setLoadingHistory(true));
     get_import_history(dispatch)
       .then((r) => {
-        if (r.status === 401) {
+        if (r?.status === 401) {
           toast.error("Session expired. Please sign in again.");
         }
         if (r && r.data && r.data.status === 200) {
