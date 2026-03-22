@@ -15,7 +15,7 @@ export default function AllShop() {
   return (
     <div>
 <div className='flex flex-row justify-center w-full mt-10 animate-pulse'>
-    <div className="h-16 bg-gray-200 rounded-md  dark:bg-gray-700 w-[80%] mb-4"></div>
+    <div className="h-16 bg-gray-200 rounded-md   w-[80%] mb-4"></div>
 
     </div>
     {/* div 5 */}
@@ -25,11 +25,11 @@ export default function AllShop() {
           <div
             key={card.id}
             role="status"
-            className="max-w-sm flex flex-row rounded-md bg-white border mb-9 border-gray-200 shadow animate-pulse p-4 dark:border-gray-700"
+            className="max-w-sm flex flex-row rounded-md bg-white border mb-9 border-gray-200 shadow animate-pulse p-4 "
           >
-            <div className="flex items-center w-1/2 justify-center mt-1 h-24 bg-gray-300 rounded dark:bg-gray-700">
+            <div className="flex items-center w-1/2 justify-center mt-1 h-24 bg-gray-300 rounded ">
               <svg
-                className="w-10 h-10 text-gray-200 dark:text-gray-600"
+                className="w-10 h-10 text-gray-200 "
                 xmlns="http://www.w3.org/2000/svg"
                 aria-hidden="true"
                 fill="currentColor"
@@ -40,10 +40,10 @@ export default function AllShop() {
             </div>
             <div className="w-1/2">
               <div className="flex flex-col justify-center items-center mt-6 ">
-                <div className="h-2.5 bg-gray-200 rounded-sm dark:bg-gray-700 w-10 sm:w-14 lg:w-36 mb-5"></div>
-                <div className="h-2 bg-gray-200 rounded-md dark:bg-gray-700 w-10 sm:w-14 lg:w-32 mb-4"></div>
-                <div className="h-2 bg-gray-200 rounded-md dark:bg-gray-700 w-10 sm:w-14 lg:w-32 mb-4 "></div>
-                <div className="h-2 bg-gray-200 rounded-md dark:bg-gray-700 w-10 sm:w-14 lg:w-32 mb-4"></div>
+                <div className="h-2.5 bg-gray-200 rounded-sm  w-10 sm:w-14 lg:w-36 mb-5"></div>
+                <div className="h-2 bg-gray-200 rounded-md  w-10 sm:w-14 lg:w-32 mb-4"></div>
+                <div className="h-2 bg-gray-200 rounded-md  w-10 sm:w-14 lg:w-32 mb-4 "></div>
+                <div className="h-2 bg-gray-200 rounded-md  w-10 sm:w-14 lg:w-32 mb-4"></div>
               </div>
             </div>
           </div>

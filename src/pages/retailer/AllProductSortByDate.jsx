@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useSearchParams } from "next/navigation";
 import { ToastContainer, toast } from 'react-toastify';
 import { ShoppingCart } from "lucide-react";
 import ProductCard from "../../components/retailler/ProductCard";
@@ -21,11 +21,11 @@ import {
 
 export default function AllProductSortByDate() {
   const dispatch = useDispatch();
-  const location = useLocation();
+  const searchParams = useSearchParams();
   const timeoutRef = useRef();
-  
-  const id = new URLSearchParams(location.search).get("storeId");
-  const storeName = new URLSearchParams(location.search).get("storeName");
+
+  const id = searchParams.get("storeId");
+  const storeName = searchParams.get("storeName");
   
   const { productByDateData } = useSelector((state) => state.getDataAllShop);
   const { productInCartData } = useSelector((state) => state.getDataAllShop);
@@ -111,7 +111,6 @@ export default function AllProductSortByDate() {
       localStorage.setItem("counter", JSON.stringify(updatedCounters));
       window.dispatchEvent(new CustomEvent("localStorageUpdated", { detail: updatedCounters }));
     } catch (error) {
-      console.error(error);
     } finally {
       setLoadingProducts2((prev) => { const n = new Set(prev); n.delete(productId); return n; });
       setDisabledButtons((prev) => { const n = new Set(prev); n.delete(productId); return n; });
@@ -173,11 +172,11 @@ export default function AllProductSortByDate() {
           ))}
         </div>
       ) : (
-        <div className="flex min-h-[400px] w-full flex-col items-center justify-center rounded-[2rem] border-2 border-dashed border-slate-200 bg-white/50 dark:border-slate-800 dark:bg-slate-900/50">
-          <div className="rounded-full bg-slate-100 p-6 dark:bg-slate-800">
-            <ShoppingCart className="h-12 w-12 text-slate-300 dark:text-slate-600" />
+        <div className="flex min-h-[400px] w-full flex-col items-center justify-center rounded-[2rem] border-2 border-dashed border-slate-200 bg-white/50  ">
+          <div className="rounded-full bg-slate-100 p-6 ">
+            <ShoppingCart className="h-12 w-12 text-slate-300 " />
           </div>
-          <h3 className="mt-6 text-xl font-bold text-slate-900 dark:text-slate-100">No Recent Products</h3>
+          <h3 className="mt-6 text-xl font-bold text-slate-900 ">No Recent Products</h3>
           <p className="mt-2 text-slate-500">No products found for this period.</p>
         </div>
       )}

@@ -39,7 +39,7 @@ import { Button } from "@/components/ui/button";
 
 export default function HomeComponent() {
   useEffect(() => {
-    document.title = "H-Phsar | Home";
+    document.title = "StockFlow | Home";
   }, []);
 
   const dispatch = useDispatch();
@@ -125,7 +125,7 @@ export default function HomeComponent() {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="min-h-screen bg-slate-50/50 pb-20 dark:bg-slate-950"
+      className="min-h-screen bg-slate-50/50 pb-20 "
     >
       {/* Hero Section */}
       <section className="relative h-[400px] w-full overflow-hidden sm:h-[500px]">
@@ -194,10 +194,10 @@ export default function HomeComponent() {
         <motion.section variants={itemVariants} className="mt-16">
           <div className="mb-8 flex items-end justify-between">
             <div>
-              <h2 className="text-2xl font-black tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
+              <h2 className="text-2xl font-black tracking-tight text-slate-900  sm:text-3xl">
                 Browse Categories
               </h2>
-              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+              <p className="mt-1 text-sm text-slate-500 ">
                 Find exactly what your store needs.
               </p>
             </div>
@@ -211,14 +211,14 @@ export default function HomeComponent() {
         {/* New Shops Section */}
         <motion.section variants={itemVariants} className="mt-20">
           <div className="mb-8 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-100 text-orange-600 dark:bg-orange-950/30">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-100 text-orange-600 ">
               <TrendingUp className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-2xl font-black tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
+              <h2 className="text-2xl font-black tracking-tight text-slate-900  sm:text-3xl">
                 Recent Joiners
               </h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400">Discover new distributors in your area.</p>
+              <p className="text-sm text-slate-500 ">Discover new distributors in your area.</p>
             </div>
           </div>
           <NewShopCarousel />
@@ -226,18 +226,18 @@ export default function HomeComponent() {
 
         {/* All Shops Grid & Filter */}
         <motion.section variants={itemVariants} className="mt-24">
-          <div className="mb-10 flex flex-col gap-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mb-10 flex flex-col gap-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm   sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-600  ">
                 <ShoppingBag className="h-5 w-5" />
               </div>
-              <h2 className="text-xl font-black text-slate-900 dark:text-slate-100">Marketplace</h2>
+              <h2 className="text-xl font-black text-slate-900 ">Marketplace</h2>
             </div>
             
             <div className="flex items-center gap-3">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="h-11 min-w-[160px] justify-between rounded-xl border-slate-200 dark:border-slate-800">
+                  <Button variant="outline" className="h-11 min-w-[160px] justify-between rounded-xl border-slate-200 ">
                     <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500">
                       Sort: {selectedOption === 'all' ? 'All Shops' : selectedOption === 'newest' ? 'Newest' : 'Highest Rated'}
                     </span>
@@ -247,23 +247,23 @@ export default function HomeComponent() {
                 <DropdownMenuContent align="end" className="w-56 overflow-hidden rounded-2xl p-1.5 shadow-2xl">
                   <DropdownMenuItem 
                     onClick={() => handleDropdownChange("all")}
-                    className={`gap-3 rounded-xl py-2.5 ${selectedOption === 'all' ? 'bg-orange-50 text-orange-600 dark:bg-orange-950/30 dark:text-orange-400' : ''}`}
+                    className={`gap-3 rounded-xl py-2.5 ${selectedOption === 'all' ? 'bg-orange-50 text-orange-600  ' : ''}`}
                   >
                     <LayoutGrid className="h-4 w-4" />
                     <span className="font-bold">All Shops</span>
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-800" />
+                  <DropdownMenuSeparator className="bg-slate-100 " />
                   <DropdownMenuItem 
                     onClick={() => handleDropdownChange("newest")}
-                    className={`gap-3 rounded-xl py-2.5 ${selectedOption === 'newest' ? 'bg-orange-50 text-orange-600 dark:bg-orange-950/30 dark:text-orange-400' : ''}`}
+                    className={`gap-3 rounded-xl py-2.5 ${selectedOption === 'newest' ? 'bg-orange-50 text-orange-600  ' : ''}`}
                   >
                     <Calendar className="h-4 w-4" />
                     <span className="font-bold">Newest First</span>
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-800" />
+                  <DropdownMenuSeparator className="bg-slate-100 " />
                   <DropdownMenuItem 
                     onClick={() => handleDropdownChange("rate")}
-                    className={`gap-3 rounded-xl py-2.5 ${selectedOption === 'rate' ? 'bg-orange-50 text-orange-600 dark:bg-orange-950/30 dark:text-orange-400' : ''}`}
+                    className={`gap-3 rounded-xl py-2.5 ${selectedOption === 'rate' ? 'bg-orange-50 text-orange-600  ' : ''}`}
                   >
                     <Star className="h-4 w-4" />
                     <span className="font-bold">Highest Rated</span>
@@ -301,7 +301,7 @@ export default function HomeComponent() {
           <div className="relative z-10 mx-auto max-w-2xl">
             <h2 className="text-3xl font-black tracking-tight sm:text-4xl">Ready to restock?</h2>
             <p className="mt-4 text-lg text-orange-100">
-              Join thousands of retailers growing their business with H-Phsar.
+              Join thousands of retailers growing their business with StockFlow.
             </p>
             <div className="mt-10 flex flex-wrap justify-center gap-4">
               <Button size="lg" className="h-14 rounded-2xl bg-white px-8 text-base font-bold text-orange-600 hover:bg-orange-50">

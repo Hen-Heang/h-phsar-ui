@@ -16,7 +16,15 @@ import {
   Trash2,
   ChevronLeft,
   ChevronRight,
-  ClipboardList
+  ClipboardList,
+  Store,
+  Calendar,
+  DollarSign,
+  ArrowRight,
+  ExternalLink,
+  Loader2,
+  Activity,
+  RefreshCcw
 } from "lucide-react";
 import { toast } from "react-toastify";
 import { over } from "stompjs";
@@ -45,17 +53,18 @@ import { rating_star } from "../../redux/services/retailer/rating.service";
 import ProductDetail from "./ProductDetail";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import noImage from "../../assets/images/retailer/No_image_available.png";
 import { applyImageFallback, getSafeImageSrc } from "@/lib/images";
 import { sendOneSignalNotification } from "@/lib/notifications/send-onesignal-client";
+import { cn } from "@/lib/cn";
 
 export default function OrderPage() {
   const dispatch = useDispatch();
   const orderList = useSelector((state) => state.order.data);
   const loading = useSelector((state) => state.order.loading);
   const orderDetail = useSelector((state) => state.orderDetail.data);
-  const orderProduct = useSelector((state) => state.orderDetail.dataOrder);
-
+  
   const [itemOffset, setItemOffset] = useState(0);
   const [isOpen, setOpen] = useState(false);
   const [complete, setComplete] = useState(false);
@@ -68,7 +77,7 @@ export default function OrderPage() {
   const [hoverRating, setHoverValue] = useState(undefined);
 
   useEffect(() => {
-    document.title = "H-Phsar | Orders";
+    document.title = "StockFlow | Orders";
     connect();
     fetchOrders();
     return () => disconnectFromSocket();
@@ -85,16 +94,16 @@ export default function OrderPage() {
       .finally(() => dispatch(setLoadingOrder(false)));
   };
 
-  // WebSocket Logic - preserved
+  // WebSocket Logic
   let stompClient = null;
   const connect = () => {
-    const Sock = new SockJS("http://localhost:8888/ws");
+    const Sock = new SockJS(`${process.env.NEXT_PUBLIC_WS_URL || "http://localhost:8888"}/ws`);
     stompClient = over(Sock);
-    stompClient.connect({}, onConnected, (err) => console.log(err));
+    stompClient.connect({}, onConnected, () => {});
   };
 
   const disconnectFromSocket = () => {
-    if (stompClient) stompClient.disconnect();
+    if (stompClient && stompClient.connected) stompClient.disconnect();
   };
 
   const onConnected = () => {
@@ -108,11 +117,15 @@ export default function OrderPage() {
 
   const handleProductById = (id) => {
     setLoadingPro(true);
-    get_orderById(id).then((r) => dispatch(getOrderById(r.data.data.products)));
-    get_orderById(id).then((r) => dispatch(getOrderProduct(r.data.data.order))).then(() => setLoadingPro(false));
+    get_orderById(id).then((r) => {
+      dispatch(getOrderById(r.data.data.products));
+      dispatch(getOrderProduct(r.data.data.order));
+      setLoadingPro(false);
+    });
   };
 
   const handleConfirmOrder = async () => {
+    if (loadingPro) return;
     setLoadingPro(true);
     try {
       const res = await confirm_transaction(confirmData?.id);
@@ -128,7 +141,7 @@ export default function OrderPage() {
         toast.success("Order completed successfully!");
       }
     } catch (err) {
-      console.error(err);
+      toast.error("Failed to confirm order");
     } finally {
       setLoadingPro(false);
     }
@@ -146,269 +159,329 @@ export default function OrderPage() {
   const pageCount = Math.ceil(orderList.length / itemsPerPage);
   const currentOrders = orderList.slice(itemOffset, itemOffset + itemsPerPage);
 
-  const getStatusStyle = (status) => {
+  const getStatusConfig = (status) => {
     switch (status) {
       case "Pending":
-      case "Draft": return "bg-orange-100 text-orange-600 border-orange-200 dark:bg-orange-950/30 dark:text-orange-400 dark:border-orange-800";
-      case "Preparing": return "bg-blue-100 text-blue-600 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800";
-      case "Shipping": return "bg-purple-100 text-purple-600 border-purple-200 dark:bg-purple-950/30 dark:text-purple-400 dark:border-purple-800";
-      case "Confirming": return "bg-yellow-100 text-yellow-600 border-yellow-200 dark:bg-yellow-950/30 dark:text-yellow-400 dark:border-yellow-800";
-      case "Complete": return "bg-green-100 text-green-600 border-green-200 dark:bg-green-950/30 dark:text-green-400 dark:border-green-800";
-      case "Declined": return "bg-red-100 text-red-600 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800";
-      default: return "bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-400";
-    }
-  };
-
-  const getStatusIcon = (status) => {
-    switch (status) {
-      case "Pending": return <ClipboardList className="h-3.5 w-3.5" />;
-      case "Preparing": return <Package className="h-3.5 w-3.5" />;
-      case "Shipping": return <Truck className="h-3.5 w-3.5" />;
-      case "Confirming": return <Clock className="h-3.5 w-3.5" />;
-      case "Complete": return <CheckCircle2 className="h-3.5 w-3.5" />;
-      case "Declined": return <XCircle className="h-3.5 w-3.5" />;
-      default: return <History className="h-3.5 w-3.5" />;
+      case "Draft": return { 
+        color: "text-orange-600", 
+        bg: "bg-orange-50", 
+        border: "border-orange-100",
+        icon: ClipboardList,
+        progress: 20
+      };
+      case "Preparing": return { 
+        color: "text-blue-600", 
+        bg: "bg-blue-50", 
+        border: "border-blue-100",
+        icon: Package,
+        progress: 40
+      };
+      case "Shipping": return { 
+        color: "text-purple-600", 
+        bg: "bg-purple-50", 
+        border: "border-purple-100",
+        icon: Truck,
+        progress: 60
+      };
+      case "Confirming": return { 
+        color: "text-yellow-600", 
+        bg: "bg-yellow-50", 
+        border: "border-yellow-100",
+        icon: Clock,
+        progress: 80
+      };
+      case "Complete": return { 
+        color: "text-emerald-600", 
+        bg: "bg-emerald-50", 
+        border: "border-emerald-100",
+        icon: CheckCircle2,
+        progress: 100
+      };
+      case "Declined": return { 
+        color: "text-rose-600", 
+        bg: "bg-rose-50", 
+        border: "border-rose-100",
+        icon: XCircle,
+        progress: 0
+      };
+      default: return { 
+        color: "text-slate-600", 
+        bg: "bg-slate-50", 
+        border: "border-slate-100",
+        icon: History,
+        progress: 0
+      };
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/50 pb-20 dark:bg-slate-950">
+    <div className="min-h-screen bg-slate-50/50 pb-20 font-family-retailer">
       <div className="mx-auto w-[90%] max-w-7xl pt-12">
-        <header className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        {/* Header */}
+        <header className="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <div className="mb-2 flex items-center gap-2 text-orange-500">
-              <History className="h-5 w-5" />
-              <span className="text-xs font-black uppercase tracking-[0.2em]">Activity Log</span>
+              <Activity className="h-5 w-5" />
+              <span className="text-xs font-black uppercase tracking-[0.2em]">Order Lifecycle</span>
             </div>
-            <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl">
-              Order Tracking
+            <h1 className="text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
+              Tracking & Activity
             </h1>
-            <p className="mt-2 text-slate-500 dark:text-slate-400">Monitor your stock deliveries and order history.</p>
+            <p className="mt-2 text-slate-500 max-w-xl">
+              Real-time monitoring of your procurement requests and delivery status from distributors.
+            </p>
           </div>
-          <Button variant="outline" className="h-12 rounded-2xl border-slate-200 dark:border-slate-800" onClick={fetchOrders}>
-            Refresh Status
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button 
+              variant="outline" 
+              className="h-12 rounded-2xl border-slate-200 bg-white hover:bg-slate-50 font-bold px-6 shadow-sm gap-2" 
+              onClick={fetchOrders}
+              disabled={loading}
+            >
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCcw className="h-4 w-4" />}
+              Sync Orders
+            </Button>
+          </div>
         </header>
 
-        <div className="overflow-hidden rounded-[2.5rem] border border-slate-200 bg-white shadow-xl shadow-slate-200/50 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="border-b border-slate-100 bg-slate-50/50 text-[10px] font-black uppercase tracking-widest text-slate-400 dark:border-slate-800 dark:bg-slate-900/50">
-                  <th className="px-8 py-5">Order Reference</th>
-                  <th className="px-6 py-5 text-center">Status</th>
-                  <th className="px-6 py-5">Distributor</th>
-                  <th className="px-6 py-5">Order Date</th>
-                  <th className="px-6 py-5 text-right">Total Amount</th>
-                  <th className="px-8 py-5 text-center">Details</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
-                {loading ? (
-                  <tr>
-                    <td colSpan={6} className="py-32">
-                      <div className="flex flex-col items-center justify-center gap-4">
-                        <PropagateLoader color="#f97316" size={12} />
-                        <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Syncing orders...</p>
-                      </div>
-                    </td>
-                  </tr>
-                ) : currentOrders.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="py-32 text-center">
-                      <div className="flex flex-col items-center justify-center gap-4">
-                        <div className="rounded-full bg-slate-50 p-6 dark:bg-slate-800">
-                          <Package className="h-12 w-12 text-slate-200 dark:text-slate-700" />
-                        </div>
-                        <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">No active orders found</p>
-                      </div>
-                    </td>
-                  </tr>
-                ) : (
-                  currentOrders.map((item, idx) => (
-                    <motion.tr 
-                      key={item.id}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: idx * 0.05 }}
-                      className="group transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-800/30"
-                    >
-                      <td className="px-8 py-6">
-                        <div className="flex flex-col">
-                          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">REF-ORD</span>
-                          <span className="text-sm font-black text-slate-900 dark:text-slate-100">#{item.id.slice(-8).toUpperCase()}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-6">
-                        <div className="flex justify-center">
-                          <div className={`flex items-center gap-2 rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-wider ${getStatusStyle(item.status)}`}>
-                            {getStatusIcon(item.status)}
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-40 gap-4">
+            <PropagateLoader color="#f97316" size={12} />
+            <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mt-4 animate-pulse">Establishing Connection...</p>
+          </div>
+        ) : currentOrders.length === 0 ? (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col items-center justify-center py-32 bg-white rounded-[3rem] border border-slate-100 shadow-sm"
+          >
+            <div className="rounded-full bg-slate-50 p-8 mb-6">
+              <Package className="h-16 w-16 text-slate-200" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-900">No active orders found</h3>
+            <p className="text-slate-500 mt-2">Your recent activity log will appear here.</p>
+          </motion.div>
+        ) : (
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <AnimatePresence mode="popLayout">
+              {currentOrders.map((item, idx) => {
+                const config = getStatusConfig(item.status);
+                const StatusIcon = config.icon;
+                return (
+                  <motion.div
+                    key={item.id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ delay: idx * 0.05 }}
+                  >
+                    <Card className="group relative overflow-hidden border-none rounded-[2.5rem] shadow-sm hover:shadow-xl transition-all duration-300 bg-white">
+                      <CardContent className="p-0">
+                        {/* Status Header */}
+                        <div className={cn("flex items-center justify-between px-8 py-5 border-b", config.bg, config.border)}>
+                          <div className={cn("flex items-center gap-2 font-black text-[10px] uppercase tracking-widest", config.color)}>
+                            <StatusIcon className="h-4 w-4" />
                             {item.status}
                           </div>
+                          <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">#{item.id.slice(-8).toUpperCase()}</span>
                         </div>
-                      </td>
-                      <td className="px-6 py-6">
-                        <div className="flex items-center gap-3">
-                          <div className="h-9 w-9 overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800">
-                            <img 
-                              src={getSafeImageSrc(item.storeImage, noImage)} 
-                              className="h-full w-full object-cover"
-                              onError={(e) => applyImageFallback(e, noImage)}
-                            />
+
+                        {/* Order Progress Bar */}
+                        <div className="h-1.5 w-full bg-slate-100 overflow-hidden">
+                          <motion.div 
+                            initial={{ width: 0 }}
+                            animate={{ width: `${config.progress}%` }}
+                            className={cn("h-full transition-all duration-1000", config.progress === 100 ? "bg-emerald-500" : "bg-orange-500")}
+                          />
+                        </div>
+
+                        <div className="p-8">
+                          {/* Distributor Info */}
+                          <div className="flex items-start justify-between mb-8">
+                            <div className="flex items-center gap-4">
+                              <div className="h-14 w-14 overflow-hidden rounded-2xl bg-slate-50 border border-slate-100 p-1 shadow-inner">
+                                <img 
+                                  src={getSafeImageSrc(item.storeImage, noImage)} 
+                                  className="h-full w-full object-cover rounded-xl"
+                                  onError={(e) => applyImageFallback(e, noImage)}
+                                />
+                              </div>
+                              <div>
+                                <h3 className="font-black text-slate-900 line-clamp-1">{item.storeName}</h3>
+                                <div className="flex items-center gap-1 text-slate-400 mt-0.5">
+                                  <Calendar className="h-3 w-3" />
+                                  <span className="text-[10px] font-bold uppercase tracking-wider">
+                                    {new Date(item.date).toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric' })}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="flex items-center justify-end text-orange-600 font-black text-lg">
+                                <DollarSign className="h-4 w-4" />
+                                {item.total?.toFixed(2)}
+                              </div>
+                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Value</span>
+                            </div>
                           </div>
-                          <span className="text-sm font-bold text-slate-700 dark:text-slate-300">{item.storeName}</span>
+
+                          {/* Actions */}
+                          <div className="flex items-center gap-3">
+                            {item.status === "Confirming" ? (
+                              <Button 
+                                className="flex-1 h-12 rounded-2xl bg-orange-500 font-black text-xs uppercase tracking-widest text-white shadow-lg shadow-orange-500/20 hover:bg-orange-600 active:scale-[0.98] transition-all"
+                                onClick={() => {
+                                  setConfirmData(item);
+                                  setComplete(true);
+                                  handleProductById(item.id);
+                                  setStoreId(item.storeId);
+                                }}
+                              >
+                                Finalize Order
+                              </Button>
+                            ) : (
+                              <Button 
+                                variant="outline"
+                                className="flex-1 h-12 rounded-2xl border-slate-100 bg-slate-50 text-slate-600 font-black text-xs uppercase tracking-widest hover:bg-white hover:border-orange-200 hover:text-orange-500 active:scale-[0.98] transition-all"
+                                onClick={() => {
+                                  setOpen(true);
+                                  handleProductById(item.id);
+                                }}
+                              >
+                                View Receipt
+                              </Button>
+                            )}
+                            
+                            {(item.status === "Pending" || item.status === "Draft") && (
+                              <button 
+                                onClick={() => {
+                                  setDataRequest(item);
+                                  setRequestModal(true);
+                                }}
+                                className="h-12 w-12 flex items-center justify-center rounded-2xl bg-rose-50 text-rose-500 hover:bg-rose-100 active:scale-[0.95] transition-all"
+                              >
+                                <Trash2 className="h-5 w-5" />
+                              </button>
+                            )}
+                          </div>
                         </div>
-                      </td>
-                      <td className="px-6 py-6">
-                        <span className="text-sm font-medium text-slate-500">
-                          {new Date(item.date).toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric' })}
-                        </span>
-                      </td>
-                      <td className="px-6 py-6 text-right">
-                        <span className="text-sm font-black text-slate-900 dark:text-slate-100">
-                          ${(item.total || 0).toFixed(2)}
-                        </span>
-                      </td>
-                      <td className="px-8 py-6">
-                        <div className="flex items-center justify-center gap-2">
-                          {item.status === "Confirming" ? (
-                            <Button 
-                              size="sm" 
-                              className="h-9 rounded-xl bg-orange-500 font-bold text-white shadow-lg shadow-orange-500/20 hover:bg-orange-600"
-                              onClick={() => {
-                                setConfirmData(item);
-                                setComplete(true);
-                                handleProductById(item.id);
-                                setStoreId(item.storeId);
-                              }}
-                            >
-                              Finalize
-                            </Button>
-                          ) : (
-                            <button 
-                              onClick={() => {
-                                setOpen(true);
-                                handleProductById(item.id);
-                              }}
-                              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 text-slate-400 transition hover:border-orange-200 hover:text-orange-500 dark:border-slate-800 dark:text-slate-600"
-                            >
-                              <MoreHorizontal className="h-5 w-5" />
-                            </button>
-                          )}
-                          {(item.status === "Pending" || item.status === "Draft") && (
-                            <button 
-                              onClick={() => {
-                                setDataRequest(item);
-                                setRequestModal(true);
-                              }}
-                              className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-50 text-red-400 transition hover:bg-red-100 hover:text-red-600 dark:bg-red-950/20 dark:text-red-500"
-                            >
-                              <Trash2 className="h-4.5 w-4.5" />
-                            </button>
-                          )}
-                        </div>
-                      </td>
-                    </motion.tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
           </div>
-          
-          {pageCount > 1 && (
-            <div className="border-t border-slate-50 bg-slate-50/30 px-8 py-6 dark:border-slate-800 dark:bg-slate-900/30">
+        )}
+
+        {/* Pagination */}
+        {!loading && pageCount > 1 && (
+          <div className="mt-12 flex justify-center">
+            <div className="bg-white p-3 rounded-[2rem] border border-slate-100 shadow-sm">
               <ReactPaginate
                 pageCount={pageCount}
-                onPageChange={(e) => setItemOffset(e.selected * itemsPerPage)}
-                previousLabel={<ChevronLeft className="h-4 w-4" />}
-                nextLabel={<ChevronRight className="h-4 w-4" />}
-                className="flex items-center justify-end gap-2"
-                pageClassName="h-9 w-9 flex items-center justify-center rounded-xl text-sm font-bold transition hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500"
-                activeClassName="!bg-orange-500 !text-white shadow-lg shadow-orange-500/20"
-                previousClassName="h-9 w-9 flex items-center justify-center rounded-xl border border-slate-200 text-slate-400 hover:bg-white dark:border-slate-800 dark:hover:bg-slate-800"
-                nextClassName="h-9 w-9 flex items-center justify-center rounded-xl border border-slate-200 text-slate-400 hover:bg-white dark:border-slate-800 dark:hover:bg-slate-800"
+                onPageChange={(e) => {
+                  setItemOffset(e.selected * itemsPerPage);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                previousLabel={<ChevronLeft className="h-5 w-5" />}
+                nextLabel={<ChevronRight className="h-5 w-5" />}
+                className="flex items-center gap-2"
+                pageLinkClassName="h-10 w-10 flex items-center justify-center rounded-xl text-sm font-black transition-all hover:bg-slate-50 text-slate-400"
+                activeLinkClassName="!bg-orange-500 !text-white shadow-lg shadow-orange-500/20"
+                previousLinkClassName="h-10 w-10 flex items-center justify-center rounded-xl text-slate-400 hover:text-orange-500 transition-all"
+                nextLinkClassName="h-10 w-10 flex items-center justify-center rounded-xl text-slate-400 hover:text-orange-500 transition-all"
+                disabledClassName="opacity-30 cursor-not-allowed"
                 breakLabel="..."
               />
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Completion & Rating Modal */}
       <Dialog open={complete} onOpenChange={setComplete}>
-        <DialogContent className="max-w-xl overflow-hidden rounded-[2.5rem] p-0 border-none shadow-2xl">
-          <div className="bg-orange-500 px-8 py-10 text-white">
-            <h3 className="text-2xl font-black tracking-tight">Finalize Delivery</h3>
-            <p className="mt-2 text-orange-100">Please confirm receipt and rate your experience.</p>
+        <DialogContent className="max-w-xl overflow-hidden rounded-[3rem] p-0 border-none shadow-2xl">
+          <div className="bg-orange-500 px-10 py-12 text-white relative">
+            <div className="absolute right-10 top-12 opacity-20">
+              <CheckCircle2 className="h-24 w-24" />
+            </div>
+            <h3 className="text-3xl font-black tracking-tight">Receipt Confirmation</h3>
+            <p className="mt-2 text-orange-100 font-medium">Verify your stock delivery and rate the distributor.</p>
           </div>
           
-          <div className="p-8">
+          <div className="p-10">
             {loadingPro ? (
-              <div className="flex flex-col items-center justify-center py-12 gap-4">
-                <PropagateLoader color="#f97316" size={10} />
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Loading Order Details...</span>
+              <div className="flex flex-col items-center justify-center py-16 gap-4">
+                <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
+                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Inventory Sync in Progress...</span>
               </div>
             ) : (
               <>
-                <div className="mb-8 rounded-3xl border border-slate-100 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-900/50">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-xs font-black uppercase tracking-widest text-slate-400">Items Ordered</span>
-                    <span className="text-sm font-bold text-slate-900 dark:text-slate-100">{orderDetail.length} Products</span>
+                <div className="mb-10 rounded-[2rem] border border-slate-100 bg-slate-50/50 p-8">
+                  <div className="flex items-center justify-between mb-6">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Consignment Summary</span>
+                    <span className="px-3 py-1 bg-white rounded-lg text-xs font-bold text-slate-600 shadow-sm border border-slate-100">
+                      {orderDetail.length} Products
+                    </span>
                   </div>
-                  <div className="flex -space-x-3 overflow-hidden">
-                    {orderDetail.slice(0, 5).map((item, i) => (
-                      <div key={i} className="h-12 w-12 rounded-xl border-4 border-white bg-white shadow-sm dark:border-slate-900">
+                  <div className="flex -space-x-4 overflow-hidden">
+                    {orderDetail.slice(0, 6).map((item, i) => (
+                      <div key={i} className="h-14 w-14 rounded-2xl border-4 border-white bg-white shadow-md relative z-[10]">
                         <img 
                           src={getSafeImageSrc(item.image, noImage)} 
-                          className="h-full w-full object-contain" 
+                          className="h-full w-full object-contain p-1 rounded-xl" 
                           onError={(e) => applyImageFallback(e, noImage)}
                         />
                       </div>
                     ))}
-                    {orderDetail.length > 5 && (
-                      <div className="flex h-12 w-12 items-center justify-center rounded-xl border-4 border-white bg-slate-100 text-xs font-black text-slate-400 dark:border-slate-900 dark:bg-slate-800">
-                        +{orderDetail.length - 5}
+                    {orderDetail.length > 6 && (
+                      <div className="flex h-14 w-14 items-center justify-center rounded-2xl border-4 border-white bg-slate-100 text-xs font-black text-slate-400 shadow-md relative z-0">
+                        +{orderDetail.length - 6}
                       </div>
                     )}
                   </div>
                 </div>
 
-                <div className="text-center">
-                  <h4 className="text-sm font-black uppercase tracking-widest text-slate-400">Rate Distributor</h4>
-                  <div className="mt-4 flex justify-center gap-3">
+                <div className="text-center mb-10">
+                  <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-6">Rate your experience</h4>
+                  <div className="flex justify-center gap-4">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <button
                         key={star}
                         onClick={() => setCurrentValue(star)}
                         onMouseOver={() => setHoverValue(star)}
                         onMouseLeave={() => setHoverValue(undefined)}
-                        className="transition-transform active:scale-90"
+                        className="transition-all transform hover:scale-125 active:scale-90"
                       >
                         <Star 
-                          className={`h-10 w-10 transition-colors ${
+                          className={cn(
+                            "h-12 w-12 transition-colors duration-200",
                             (hoverRating || currentRating) >= star 
-                            ? "fill-orange-500 text-orange-500" 
-                            : "text-slate-200 dark:text-slate-800"
-                          }`} 
+                            ? "fill-orange-500 text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.3)]" 
+                            : "text-slate-200"
+                          )} 
                         />
                       </button>
                     ))}
                   </div>
                 </div>
 
-                <div className="mt-10 flex gap-3">
+                <div className="flex gap-4">
                   <Button 
-                    className="h-14 flex-1 rounded-2xl bg-orange-500 font-bold text-white shadow-lg shadow-orange-500/25 hover:bg-orange-600"
+                    className="h-16 flex-1 rounded-[1.5rem] bg-slate-900 font-black text-sm uppercase tracking-widest text-white shadow-xl shadow-slate-900/20 hover:bg-slate-800 active:scale-[0.98] transition-all disabled:opacity-50"
                     onClick={handleConfirmOrder}
+                    disabled={loadingPro}
                   >
-                    Confirm Delivery
+                    {loadingPro ? <Loader2 className="h-5 w-5 animate-spin" /> : "Confirm Receipt"}
                   </Button>
                   <Button 
                     variant="outline" 
-                    className="h-14 flex-1 rounded-2xl border-slate-200 font-bold dark:border-slate-800"
+                    className="h-16 px-8 rounded-[1.5rem] border-slate-200 font-black text-sm uppercase tracking-widest text-slate-500 hover:bg-slate-50"
                     onClick={() => setComplete(false)}
                   >
-                    Wait
+                    Later
                   </Button>
                 </div>
               </>
@@ -419,25 +492,25 @@ export default function OrderPage() {
 
       {/* Cancel Confirmation Modal */}
       <Dialog open={requestModal} onOpenChange={setRequestModal}>
-        <DialogContent className="max-w-md rounded-[2.5rem] p-8 text-center border-none">
-          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-red-50 text-red-500 dark:bg-red-950/30">
-            <AlertTriangle className="h-10 w-10" />
+        <DialogContent className="max-w-md rounded-[3rem] p-10 text-center border-none shadow-2xl">
+          <div className="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-rose-50 text-rose-500 ">
+            <AlertTriangle className="h-12 w-12" />
           </div>
-          <h3 className="text-2xl font-black tracking-tight text-slate-900 dark:text-slate-100">Cancel Request?</h3>
-          <p className="mt-4 text-slate-500">
-            Are you sure you want to cancel the order request from <span className="font-bold text-orange-500">{dataRequest?.storeName}</span>? 
-            This will move the items back to your draft.
+          <h3 className="text-2xl font-black tracking-tight text-slate-900 ">Withdraw Request?</h3>
+          <p className="mt-4 text-slate-500 leading-relaxed font-medium">
+            Are you sure you want to cancel your order from <span className="font-bold text-orange-500">{dataRequest?.storeName}</span>? 
+            The items will be returned to your active draft.
           </p>
-          <div className="mt-10 flex gap-3">
+          <div className="mt-10 flex gap-4">
             <Button 
-              className="h-14 flex-1 rounded-2xl bg-red-500 font-bold text-white shadow-lg shadow-red-500/20 hover:bg-red-600"
+              className="h-14 flex-1 rounded-2xl bg-rose-500 font-black text-xs uppercase tracking-widest text-white shadow-lg shadow-rose-500/20 hover:bg-rose-600 active:scale-[0.98] transition-all"
               onClick={handleDeleteRequest}
             >
-              Yes, Cancel
+              Withdraw
             </Button>
             <Button 
               variant="outline" 
-              className="h-14 flex-1 rounded-2xl border-slate-200 font-bold dark:border-slate-800"
+              className="h-14 flex-1 rounded-2xl border-slate-200 font-black text-xs uppercase tracking-widest text-slate-500 hover:bg-slate-50 active:scale-[0.98] transition-all"
               onClick={() => setRequestModal(false)}
             >
               Go Back

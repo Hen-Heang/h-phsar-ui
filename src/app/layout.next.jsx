@@ -1,11 +1,12 @@
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v16-appRouter";
 import "../index.css";
+import "react-toastify/dist/ReactToastify.css";
 import Providers from "./providers.next";
 
 export const metadata = {
-  title: "H-Phsar",
-  description: "H-Phsar platform for distributor and retailer operations.",
+  title: "StockFlow Commerce",
+  description: "StockFlow Commerce platform for distributor and retailer operations.",
 };
 
 export default function RootLayout({ children }) {

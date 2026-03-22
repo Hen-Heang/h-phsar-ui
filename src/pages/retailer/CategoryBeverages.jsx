@@ -1,6 +1,7 @@
 import Carousel from "react-grid-carousel";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { decrement, increment } from "../../redux/slices/retailer/inDecreaseProductSlice";
 
 export default function CategoryBeverages() {
@@ -43,17 +44,13 @@ export default function CategoryBeverages() {
           rows={3}
           loop
           arrowLeft={
-            <img
-              src={(require("../../assets/images/retailer/back.png")?.default || require("../../assets/images/retailer/back.png"))}
-              alt=""
-              className="absolute z-50  top-80 -left-9 cursor-pointer"
+            <ChevronLeft
+              className="absolute z-50 top-80 -left-9 cursor-pointer w-8 h-8 text-gray-600 hover:text-orange-500"
             />
           }
           arrowRight={
-            <img
-              src={(require("../../assets/images/retailer/next.png")?.default || require("../../assets/images/retailer/next.png"))}
-              alt=""
-              className="absolute z-50 top-80 right-2 cursor-pointer"
+            <ChevronRight
+              className="absolute z-50 top-80 right-2 cursor-pointer w-8 h-8 text-gray-600 hover:text-orange-500"
             />
           }
         >

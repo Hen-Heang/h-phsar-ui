@@ -20,9 +20,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { get_all_category } from "../../redux/services/distributor/category.service";
 import { getAllCategoryDistributor } from "../../redux/slices/distributor/categorySlice";
 import { toast } from "react-toastify";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { storageFirebase } from "../../firebaseUploadImage";
-import { v4 } from "uuid";
+import { uploadImage } from "@/lib/uploadImage";
 import { CategoryComponent } from "./CategoryComponent";
 import { Package, Plus, Image as ImageIcon, DollarSign, List, Layout, X, Check } from "lucide-react";
 
@@ -89,43 +87,47 @@ export default function NewImport(props) {
   const onNewProductSubmit = async (data) => {
     setLoading(true);
     let uploadedUrl = "";
-    if (targetImage) {
-      const imageRef = ref(storageFirebase, `image/${targetImage.name + v4()}`);
-      const snapshot = await uploadBytes(imageRef, targetImage);
-      uploadedUrl = await getDownloadURL(snapshot.ref);
-    }
-
-    const newProduct = { ...data, image: uploadedUrl, isPublish: visible, qty: 0, price: 0 };
-    add_new_product_distributor([newProduct]).then((res) => {
-      if (res.status === 201 || res.data?.status === 201) {
-        dispatch(addNewProduct(res.data.data));
-        resetNew();
-        setShowAddProduct(false);
-        toast.success("New product created!");
+    try {
+      if (targetImage) {
+        uploadedUrl = await uploadImage(targetImage);
       }
-    }).finally(() => setLoading(false));
+
+      const newProduct = { ...data, image: uploadedUrl, isPublish: visible, qty: 0, price: 0 };
+      add_new_product_distributor([newProduct]).then((res) => {
+        if (res.status === 201 || res.data?.status === 201) {
+          dispatch(addNewProduct(res.data.data));
+          resetNew();
+          setShowAddProduct(false);
+          toast.success("New product created!");
+        }
+      });
+    } catch (error) {
+      toast.error("Failed to upload image or save product");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <>
       <Dialog open={props.isOpenNewImport} onOpenChange={(o) => !o && props.handleShowImport()}>
         <DialogContent className="max-w-md p-0 overflow-hidden">
-          <DialogHeader className="bg-teal-700 text-white p-6 relative">
+          <DialogHeader className="bg-blue-700 text-white p-6 relative">
             <DialogTitle className="text-xl font-bold">Import Inventory</DialogTitle>
-            <p className="text-teal-100 text-xs">Add stock to your existing products.</p>
+            <p className="text-blue-100 text-xs">Add stock to your existing products.</p>
           </DialogHeader>
           
           <form onSubmit={handleSubmitImport(onImportSubmit)} className="p-6 space-y-5">
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Select Product</label>
-                <button type="button" onClick={() => setShowAddProduct(true)} className="text-[10px] font-bold text-teal-600 uppercase hover:underline">+ New Product</button>
+                <button type="button" onClick={() => setShowAddProduct(true)} className="text-[10px] font-bold text-blue-600 uppercase hover:underline">+ New Product</button>
               </div>
               <div className="relative">
                 <Package className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
-                <select {...registerImport("id")} className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-teal-500 appearance-none bg-white">
+                <select {...registerImport("id")} className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-blue-600 appearance-none bg-white">
                   <option value="">Choose a product...</option>
-                  {productList.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                  {(Array.isArray(productList) ? productList : []).map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                 </select>
               </div>
               {errorsImport.id && <p className="text-[10px] text-rose-500 font-bold">{errorsImport.id.message}</p>}
@@ -134,14 +136,14 @@ export default function NewImport(props) {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Quantity</label>
-                <input {...registerImport("qty")} type="number" placeholder="0" className="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-teal-500" />
+                <input {...registerImport("qty")} type="number" placeholder="0" className="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-blue-600" />
                 {errorsImport.qty && <p className="text-[10px] text-rose-500 font-bold">{errorsImport.qty.message}</p>}
               </div>
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Cost Price ($)</label>
                 <div className="relative">
                   <DollarSign className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
-                  <input {...registerImport("price")} type="number" step="0.01" placeholder="0.00" className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-teal-500" />
+                  <input {...registerImport("price")} type="number" step="0.01" placeholder="0.00" className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-blue-600" />
                 </div>
                 {errorsImport.price && <p className="text-[10px] text-rose-500 font-bold">{errorsImport.price.message}</p>}
               </div>
@@ -149,7 +151,7 @@ export default function NewImport(props) {
 
             <div className="flex gap-3 pt-4">
               <Button type="button" variant="outline" className="flex-1" onClick={props.handleShowImport}>Cancel</Button>
-              <Button type="submit" disabled={loading} className="flex-1 bg-teal-600 hover:bg-teal-700">
+              <Button type="submit" disabled={loading} className="flex-1 bg-blue-600 hover:bg-blue-700">
                 {loading ? <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" /> : "Confirm Import"}
               </Button>
             </div>
@@ -173,7 +175,7 @@ export default function NewImport(props) {
                   <input type="file" onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer" />
                 </div>
                 <div className="flex items-center gap-3">
-                  <button type="button" onClick={() => setVisible(!visible)} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${visible ? 'bg-teal-600' : 'bg-slate-200'}`}>
+                  <button type="button" onClick={() => setVisible(!visible)} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${visible ? 'bg-blue-600' : 'bg-slate-200'}`}>
                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${visible ? 'translate-x-6' : 'translate-x-1'}`} />
                   </button>
                   <span className="text-xs font-bold text-slate-600">Visible to Retailers</span>
@@ -183,24 +185,24 @@ export default function NewImport(props) {
               <div className="space-y-4">
                 <div className="space-y-1">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Product Name</label>
-                  <input {...registerNew("name")} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-teal-500" placeholder="e.g. Premium Coffee" />
+                  <input {...registerNew("name")} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-blue-600" placeholder="e.g. Premium Coffee" />
                   {errorsNew.name && <p className="text-[10px] text-rose-500 font-bold">{errorsNew.name.message}</p>}
                 </div>
 
                 <div className="space-y-1">
                   <div className="flex justify-between">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Category</label>
-                    <button type="button" onClick={() => setIsOpenCategory(true)} className="text-[10px] font-bold text-teal-600 uppercase">+ New</button>
+                    <button type="button" onClick={() => setIsOpenCategory(true)} className="text-[10px] font-bold text-blue-600 uppercase">+ New</button>
                   </div>
-                  <select {...registerNew("categoryId")} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-teal-500 appearance-none bg-white">
+                  <select {...registerNew("categoryId")} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-blue-600 appearance-none bg-white">
                     <option value="">Select category...</option>
-                    {categoryData.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                    {(Array.isArray(categoryData) ? categoryData : []).map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                 </div>
 
                 <div className="space-y-1">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Description</label>
-                  <textarea {...registerNew("description")} rows="3" className="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-teal-500 resize-none" placeholder="Brief details..." />
+                  <textarea {...registerNew("description")} rows="3" className="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-blue-600 resize-none" placeholder="Brief details..." />
                 </div>
 
                 <div className="flex gap-3 pt-2">

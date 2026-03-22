@@ -11,7 +11,7 @@ import { ShoppingBag, Package, Truck, CheckCircle2, Clock } from "lucide-react";
 
 export default function Order() {
   useEffect(() => {
-    document.title = "H-Phsar | Orders";
+    document.title = "StockFlow | Orders";
   }, []);
 
   const [activeTab, setActiveTab] = useState(1);
@@ -33,16 +33,16 @@ export default function Order() {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="p-4 md:p-6 space-y-6 dark:bg-slate-950 min-h-screen"
+      className="p-4 md:p-6 space-y-6  min-h-screen"
     >
-      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
+      <div className="bg-white  rounded-2xl shadow-sm border border-slate-100  overflow-hidden">
         <div className="p-6 md:p-8">
           <div className="mb-8">
-            <h1 className="text-3xl font-black text-slate-900 dark:text-white">Order Activity</h1>
+            <h1 className="text-3xl font-black text-slate-900 ">Order Activity</h1>
             <p className="text-slate-500 mt-1">Monitor and manage your incoming retailer orders.</p>
           </div>
 
-          <div className="border-b border-slate-100 dark:border-slate-800 mb-6">
+          <div className="border-b border-slate-100  mb-6">
             <div className="flex flex-wrap gap-1">
               {tabs.map((tab) => (
                 <button
@@ -50,8 +50,8 @@ export default function Order() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`relative flex items-center gap-2 px-6 py-3 text-sm font-bold transition-all ${
                     activeTab === tab.id
-                      ? "text-teal-600"
-                      : "text-slate-400 hover:text-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-t-xl"
+                      ? "text-blue-600"
+                      : "text-slate-400 hover:text-slate-600 hover:bg-slate-50  rounded-t-xl"
                   }`}
                 >
                   {tab.icon}
@@ -59,7 +59,7 @@ export default function Order() {
                   {activeTab === tab.id && (
                     <motion.div
                       layoutId="activeTab"
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-teal-600"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
                     />
                   )}
                 </button>

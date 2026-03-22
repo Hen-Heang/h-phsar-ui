@@ -16,9 +16,7 @@ const categorySlice = createSlice({
     onClickCurrentPage: () => {},
     onChangeTodosPage: () => {},
     getAllCategoryDistributor: (state, action) => {
-      console.log(action.payload);
       state.categories = action.payload;
-      console.log(state.categories);
     },
     addNewCategoryDistributor: (state, action) => {
       // console.log("New category :", action.payload);
@@ -32,7 +30,6 @@ const categorySlice = createSlice({
         categoryToUpdate.name = name;
       }
     
-      console.log('Updated categories:', state.categories);
     },
     deleteCategoryDistributor: (state, action) => {
       // state.categories.map((category) => {

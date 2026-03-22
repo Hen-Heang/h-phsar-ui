@@ -1,8 +1,10 @@
+"use client";
+
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import imageTest from "../../../assets/images/retailer/profileone.jpg";
+import { X, BellOff } from "lucide-react";
 import {
   get_all_notification_retailer,
   seen_notification_retailer,
@@ -19,7 +21,6 @@ const AllNotification = () => {
   const [noDataNotifications, setDataNotifications] = useState(false);
   useEffect(() => {
     get_all_notification_retailer().then((res) => {
-      console.log("Notifications : ", res);
       if (res.status === 200) {
         dispatch(getAllNotificationRetailers(res.data.data));
         setDataNotifications(false);
@@ -105,12 +106,7 @@ const AllNotification = () => {
                           : "Out of stock"}
                       </h3>
                       <button onClick={() => setShowModal(false)}>
-                        <span className="h-6 w-6 z-20">
-                          <img
-                            src={(require("../../../assets/images/distributor/close_white.png")?.default || require("../../../assets/images/distributor/close_white.png"))}
-                            alt=""
-                          />
-                        </span>
+                        <X className="h-6 w-6 text-white" />
                       </button>
                     </div>
                     {/*body*/}
@@ -165,10 +161,7 @@ const AllNotification = () => {
       )}
       {noDataNotifications ? (
         <div className="h-96 w-full flex flex-col gap-2 justify-center items-center text-xl text-gray-500">
-          <img
-            src={(require("../../../assets/images/retailer/no_notification.png")?.default || require("../../../assets/images/retailer/no_notification.png"))}
-            alt=""
-          />
+          <BellOff className="w-12 h-12 text-slate-300 mb-2" />
           No data notifications
         </div>
       ) : (

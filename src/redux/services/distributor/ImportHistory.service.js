@@ -6,7 +6,6 @@ export const get_import_history=async(dispatch)=>{
         const response= await api.get(`/distributor/history/import?sort=asc&pageNumber=1&pageSize=1000`)
         return response;
     } catch (e) {
-        console.log("Error",e);
         return e.response;
     }
 }

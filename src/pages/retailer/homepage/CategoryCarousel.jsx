@@ -6,7 +6,7 @@ import {
   setStoreId,
 } from "../../../redux/slices/retailer/homepageSlice/allShopSlice";
 import noImage from "../../../assets/images/no_image.jpg";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import Top10highestRated from "../../../components/retailler/skeletons/Top10highestRated";
 import {
   applyImageFallback,
@@ -32,12 +32,12 @@ const CategoryCarousel = () => {
 
   const { highestRateData } = useSelector((state) => state.getDataAllShop);
   const topShops = useMemo(() => highestRateData.slice(0, 5), [highestRateData]);
-  const navigate = useNavigate();
+  const router = useRouter();
 
 const onClickGetDataShop = (id,storeName) => {
   dispatch(setStoreId(id));
 
-  navigate(`/retailer/distributor-shop?storeId=${id}&storeName=${encodeURIComponent(storeName)}`);
+  router.push(`/retailer/distributor-shop?storeId=${id}&storeName=${encodeURIComponent(storeName)}`);
 
   window.scrollTo(0, 0);
 
@@ -66,7 +66,7 @@ const onClickGetDataShop = (id,storeName) => {
               <div
                 onClick={() => onClickGetDataShop(item.id,item.name)}
                 key={item.id}
-                className="flex bg-white flex-col lg:w-60  lg:h-60 sm:w-28 sm:h-28 w-16 h-16 rounded-xl dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7] border border-solid border-slate-200"
+                className="flex bg-white flex-col lg:w-60  lg:h-60 sm:w-28 sm:h-28 w-16 h-16 rounded-xl   /[.7] border border-solid border-slate-200"
               >
                 <div className="w-full flex flex-row justify-center">
                   <div className="w-full flex justify-center items-center overflow-hidden rounded-t-lg">

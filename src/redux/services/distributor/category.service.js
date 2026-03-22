@@ -9,7 +9,6 @@ export const get_all_category = async (dispatch) => {
 };
 
 export const add_new_category = async (data) => {
-  console.log("category ", data);
 
   const category = data.name;
   return apiPost("/api/v1/distributor/categories", {
@@ -19,7 +18,6 @@ export const add_new_category = async (data) => {
 
 // delete the category
 export const delete_category = async (id) => {
-  console.log("category ID ", id);
   return apiDelete(`/api/v1/distributor/categories/${id}`);
 };
 // delete the category

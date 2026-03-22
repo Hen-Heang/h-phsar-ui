@@ -1,14 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  Heart, 
+  Star, 
+  MapPin, 
+  Eye, 
+  Store, 
+  Tag, 
+  Search, 
+  LayoutGrid,
+  Trash2,
+  ChevronRight,
+  ArrowRight
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { PropagateLoader } from "react-spinners";
+
 import {
-  decrement,
-  increment,
-} from "../../redux/slices/retailer/inDecreaseProductSlice";
-import noImage from "../../assets/images/no_image.jpg";
-import Carousel from "react-grid-carousel";
-import {
-  get_detail_product,
-  get_detail_shop,
   get_only_bookmark,
   remove_bookmark,
 } from "../../redux/services/retailer/favourite.service";
@@ -17,224 +26,227 @@ import {
   getOnlyBookmark,
   setLoadingFavorite,
 } from "../../redux/slices/retailer/favoriteSlice";
-import { data } from "autoprefixer";
-import { cleanString } from "@mui/x-date-pickers/internals/hooks/useField/useField.utils";
-import { useNavigate } from "react-router-dom";
-import { getDetailShop } from "../../redux/slices/retailer/detailShopSlice";
-import DistributorStoreRetailer from "./DistributorStoreRetailer";
-import { getDetailProduct } from "../../redux/slices/retailer/detailProductSlice";
-import AllProducts from "./AllProducts";
-import { PropagateLoader } from "react-spinners";
 import { setStoreId } from "../../redux/slices/retailer/homepageSlice/allShopSlice";
 import { applyImageFallback, getSafeImageSrc } from "@/lib/images";
-// import { useNavigate } from "react-router-dom";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import noImage from "../../assets/images/no_image.jpg";
+
 export default function FavoriteProduct() {
-  useEffect(() => {
-    document.title = "H-Phsar | Favorite";
-  }, []);
-  const dispatch = useDispatch(); //update state
-  const navigate = useNavigate();
-  const { item, setItem } = useState([]);
-  const [error, setError] = useState("");
-  const [noData, setNoData] = useState(false);
-  // const [currentIndex, setCurrentIndex] = useState(0);
-
-  const onClickGetDataShop = (id,storeName) => {
-    dispatch(setStoreId(id)); // Dispatch the setStoreId action
-    navigate(`/retailer/distributor-shop?storeId=${id}&storeName=${encodeURIComponent(storeName)}`);
-    // navigate(`/retailer/distributor-shop/${id}`);
-    // navigate("/retailer/skeleton-store");
-    window.scrollTo(0, 0);
-  };
-
-  // function handle click of increase
-  const handleIncrement = () => {
-    dispatch(increment());
-  };
-  const handleDecrement = () => {
-    dispatch(decrement());
-  };
-
+  const dispatch = useDispatch();
+  const router = useRouter();
   const bookMarkList = useSelector((state) => state.favorite.data);
-  console.log("no data :", bookMarkList.length === 0);
-
   const loading = useSelector((state) => state.favorite.loading);
-
-  const deleteBookmarkById = (id) => {
-    console.log(id);
-    remove_bookmark(id).then(dispatch(deleteBookMark(id)));
-  };
-
-  // console.log("Loading from favorite : ",loading)
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
+    document.title = "StockFlow | My Favorites";
+    fetchFavorites();
+  }, []);
+
+  const fetchFavorites = () => {
+    dispatch(setLoadingFavorite(true));
     get_only_bookmark(dispatch)
       .then((r) => {
         if (r && r.data && r.data.status === 200) {
-          setNoData(false);
           dispatch(getOnlyBookmark(r.data.data));
-          setItem(r.data.data);
-        } else {
-          if (r && r.response && r.response.data && r.response.data.detail) {
-            setError(r.response.data.detail);
-          }
-          dispatch(setLoadingFavorite(false));
         }
-      })
-      .catch((e) => {
-        dispatch(setLoadingFavorite(false));
-        setNoData(true);
       })
       .finally(() => {
         dispatch(setLoadingFavorite(false));
       });
-  }, [dispatch, item]);
-  console.log(bookMarkList);
+  };
+
+  const onClickGetDataShop = (id, storeName) => {
+    dispatch(setStoreId(id));
+    router.push(`/retailer/distributor-shop?storeId=${id}&storeName=${encodeURIComponent(storeName)}`);
+    window.scrollTo(0, 0);
+  };
+
+  const handleDeleteBookmark = (e, id) => {
+    e.stopPropagation();
+    remove_bookmark(id).then(() => {
+      dispatch(deleteBookMark(id));
+    });
+  };
+
+  const filteredFavorites = (bookMarkList || []).filter(item => 
+    item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.categories?.some(cat => cat.name.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1 },
+    exit: { scale: 0.9, opacity: 0 }
+  };
 
   return (
-    <div>
-      <div className="w-[80%] mx-auto ">
-        {/* Loading side before show data*/}
-        {loading ? (
-          <div className="w-full h-[490px] flex justify-center items-center text-sm text-center border-none text-gray-500 dark:text-gray-400 border border-separate border-spacing-y-3">
-            <PropagateLoader color="#F15B22" />
-          </div>
-        ) : bookMarkList.length === 0 ? (
-          <div className="h-[490px]">
-            <p className="mx-auto text-center text-3xl font-semibold p-60">
-              No favorites available
+    <div className="min-h-screen bg-slate-50/50 pb-20 font-family-retailer">
+      <div className="mx-auto w-[90%] max-w-7xl pt-12">
+        {/* Header */}
+        <header className="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <div className="mb-2 flex items-center gap-2 text-orange-500">
+              <Heart className="h-5 w-5 fill-orange-500" />
+              <span className="text-xs font-black uppercase tracking-[0.2em]">Curated Collection</span>
+            </div>
+            <h1 className="text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
+              Saved Distributors
+            </h1>
+            <p className="mt-2 text-slate-500 max-w-xl">
+              Quickly access your preferred supply partners and their latest stock updates.
             </p>
           </div>
-        ) : (
-          <Carousel
-            cols={3}
-            rows={3}
-            // loop
-            arrowLeft={() =>
-              bookMarkList && bookMarkList.length >= 9 ? (
-                <img
-                  src={(require("../../assets/images/retailer/back.png")?.default || require("../../assets/images/retailer/back.png"))}
-                  alt=""
-                  className="absolute z-5 top-80 -left-9 cursor-pointer"
-                />
-              ) : null
-            }
-            arrowRight={() =>
-              bookMarkList && bookMarkList.length >= 9 ? (
-                <img
-                  src={(require("../../assets/images/retailer/next.png")?.default || require("../../assets/images/retailer/next.png"))}
-                  alt=""
-                  className="absolute z-5 top-80 right-2 cursor-pointer"
-                />
-              ) : null
-            }
+
+          <div className="relative group w-full lg:w-80">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-orange-500 transition-colors" />
+            <input 
+              type="text"
+              placeholder="Filter favorites..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full h-12 pl-11 pr-4 rounded-2xl border-none bg-white shadow-sm focus:ring-2 focus:ring-orange-500/20 transition-all font-medium text-sm"
+            />
+          </div>
+        </header>
+
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-40 gap-4">
+            <PropagateLoader color="#f97316" size={12} />
+            <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mt-4 animate-pulse">Syncing Favorites...</p>
+          </div>
+        ) : filteredFavorites.length === 0 ? (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col items-center justify-center py-32 bg-white rounded-[3rem] border border-slate-100 shadow-sm text-center px-6"
           >
-            {bookMarkList?.map((item, idex) => (
-              <Carousel.Item>
-                <button
-                  onClick={() => onClickGetDataShop(item.id,item.name)}
-                  className="border-2 w-[370px] h-56 rounded-lg flex item-center gap-8 mt-3 "
+            <div className="rounded-full bg-orange-50 p-8 mb-6">
+              <Store className="h-16 w-16 text-orange-200" />
+            </div>
+            <h3 className="text-2xl font-black text-slate-900">
+              {searchQuery ? "No matches found" : "Your collection is empty"}
+            </h3>
+            <p className="text-slate-500 mt-2 max-w-xs">
+              {searchQuery 
+                ? "Try adjusting your search terms to find what you're looking for." 
+                : "Bookmark distributors you frequently work with to see them here."}
+            </p>
+            {!searchQuery && (
+              <Button 
+                onClick={() => router.push('/retailer/home')}
+                className="mt-8 h-12 px-8 rounded-xl bg-orange-500 hover:bg-orange-600 font-bold gap-2"
+              >
+                Explore Shops
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            )}
+          </motion.div>
+        ) : (
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+          >
+            <AnimatePresence mode="popLayout">
+              {filteredFavorites.map((item) => (
+                <motion.div
+                  key={item.id}
+                  layout
+                  variants={itemVariants}
+                  exit="exit"
                 >
-                  <div className="w-full flex ">
-                    <div className="w-1/2 flex justify-center items-center relative">
-                      {item.bannerImage ? (
-                        <img
-                          src={getSafeImageSrc(item.bannerImage, noImage)}
-                          className="h-56 rounded-lg p-1"
+                  <Card 
+                    className="group relative h-full overflow-hidden border-none rounded-[2.5rem] shadow-sm hover:shadow-xl transition-all duration-500 bg-white cursor-pointer"
+                    onClick={() => onClickGetDataShop(item.id, item.name)}
+                  >
+                    <CardContent className="p-0 flex flex-col h-full">
+                      {/* Image Section */}
+                      <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
+                        <img 
+                          src={getSafeImageSrc(item.bannerImage, noImage)} 
+                          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                           onError={(e) => applyImageFallback(e, noImage)}
                         />
-                      ) : (
-                        <img
-                          src={noImage}
-                          className="h-56 rounded-lg p-1"
-                        />
-                      )}
-                    </div>
-
-                    {/* Remove book mark */}
-                    <div
-                      onClick={(e) => {deleteBookmarkById(item.id);
-                                      e.stopPropagation(); // Prevent event from bubbling up
-                    } }
-                      
-                      className="bg-white w-8 h-8 rounded-full ml-2 mt-2 absolute cursor-pointer hover:opacity-80"
-                    >
-                      <svg
-                        className="fill-orange-500 w-5 ml-[6px] mt-[6px]"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 512 512"
-                      >
-                        <path d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z" />
-                      </svg>
-                    </div>
-                    <div className="p-3 mt-2 w-1/2 ml-2 relative">
-                      <p className="text-xl font-semibold line-clamp-1 overflow-hidden h-8  text-start">
-                        {item.name}
-                      </p>
-                      <p className="text-black font-semibold flex flex-wrap mt-1 text-xs ">
-                        Rating :
-                        <svg
-                          className="w-3 ml-2 fill-orange-500 flex flex-wrap -mt-0.5"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 576 512"
-                        >
-                          <path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z" />
-                        </svg>
-                        <p className="text-gray-500 font-normal text-sm -mt-0.5 ml-1  ">
-                          {parseFloat(item.rating).toFixed(2)}
-                        </p>
-                      </p>
-
-                      <div className="flex flex-wrap mr-1">
-                        <svg
-                          className="w-3 mr-2  fill-gray-500 -mt-0"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 384 512"
-                        >
-                          <path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z" />
-                        </svg>
-
-                        <div>
-                          <p className="text-gray-500 text-md mt-1 line-clamp2 overflow-hidden ">
-                            {item.address}
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* <p className="text-gray-400 text-xs mt-1">{item.address}</p> */}
-                      <p className="flex flex-wrap line-clamp2 overflow-hidden h-12  text-start">
-                        <span className="font-bold  text-start">Category : &nbsp;</span>
-
-                        {item.categories && item.categories.length > 0 ? (
-                          item.categories.map((data, index) => (
-                            <span key={index} className="text-sm">
-                              {data.name}, &nbsp;
-                            </span>
-                          ))
-                        ) : (
-                          <span className="text-sm">
-                            No categories available
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                        
+                        {/* Rating Badge */}
+                        <div className="absolute top-4 left-4 flex items-center gap-1.5 rounded-full bg-white/90 backdrop-blur-md px-3 py-1.5 shadow-lg">
+                          <Star className="h-3.5 w-3.5 fill-orange-500 text-orange-500" />
+                          <span className="text-[11px] font-black text-slate-900">
+                            {parseFloat(item.rating).toFixed(1)}
                           </span>
-                        )}
-                      </p>
-                      <div className="absolute bottom-0 right-0 mb-3">
-                        <div className="rounded-l-lg mt-4 bg-orange-500 p-1  w-20 border-2 ">
-                          <p
-                            onClick={() => onClickGetDataShop(item.id,item.name)}
-                            className="text-white text-xs cursor-pointer hover:text-slate-700 "
-                          >
-                            View Detail
-                          </p>
+                        </div>
+
+                        {/* Unfavorite Action */}
+                        <button
+                          onClick={(e) => handleDeleteBookmark(e, item.id)}
+                          className="absolute top-4 right-4 h-10 w-10 flex items-center justify-center rounded-full bg-white/90 backdrop-blur-md text-orange-500 shadow-lg hover:bg-orange-500 hover:text-white transition-all transform hover:rotate-12"
+                        >
+                          <Heart className="h-5 w-5 fill-current" />
+                        </button>
+                      </div>
+
+                      {/* Content Section */}
+                      <div className="p-8 flex flex-col flex-1">
+                        <div className="mb-4">
+                          <h3 className="text-xl font-black text-slate-900 line-clamp-1 group-hover:text-orange-500 transition-colors">
+                            {item.name}
+                          </h3>
+                          <div className="mt-2 flex items-start gap-2 text-slate-400">
+                            <MapPin className="h-4 w-4 flex-shrink-0 mt-0.5 text-slate-300" />
+                            <p className="text-xs font-medium leading-relaxed line-clamp-2">
+                              {item.address}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Categories */}
+                        <div className="mt-auto pt-6 border-t border-slate-50 flex flex-wrap gap-2">
+                          {item.categories && item.categories.length > 0 ? (
+                            item.categories.slice(0, 3).map((cat, idx) => (
+                              <span 
+                                key={idx} 
+                                className="px-3 py-1 rounded-lg bg-slate-50 text-[10px] font-black uppercase tracking-wider text-slate-500 group-hover:bg-orange-50 group-hover:text-orange-600 transition-colors"
+                              >
+                                {cat.name}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">
+                              General Stock
+                            </span>
+                          )}
+                          {item.categories?.length > 3 && (
+                            <span className="text-[10px] font-black text-slate-300 pt-1">
+                              +{item.categories.length - 3}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Hover Action Link */}
+                        <div className="mt-6 flex items-center justify-between text-orange-500 font-black text-xs uppercase tracking-widest opacity-0 transform translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                          <span>Visit Store</span>
+                          <ArrowRight className="h-4 w-4" />
                         </div>
                       </div>
-                    </div>
-                  </div>
-                </button>
-              </Carousel.Item>
-            )) || ""}
-          </Carousel>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
         )}
-        {/* )} */}
       </div>
     </div>
   );

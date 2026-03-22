@@ -1,18 +1,26 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const retailerReportSlice = createSlice({
-
   name: "retailerReport",
   initialState: {
     retailerReport: {},
+    loading: false,
+    error: null
   },
   reducers: {
+    setLoading: (state, action) => {
+      state.loading = action.payload;
+    },
     getRetailerReport: (state, action) => {
-      //console.log("Hello in slice", action.payload);
       state.retailerReport = action.payload;
-  },
-}
+      state.loading = false;
+    },
+    setError: (state, action) => {
+      state.error = action.payload;
+      state.loading = false;
+    }
+  }
 })
 
-export const { getRetailerReport } = retailerReportSlice.actions
+export const { getRetailerReport, setLoading, setError } = retailerReportSlice.actions
 export default retailerReportSlice.reducer;

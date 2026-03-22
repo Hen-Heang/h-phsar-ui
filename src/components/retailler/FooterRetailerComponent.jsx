@@ -1,53 +1,79 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import {
   Facebook,
   Instagram,
+  Twitter,
+  Linkedin,
   Send,
   Phone,
   Mail,
-  Calendar,
+  MapPin,
   ChevronRight,
   ShieldCheck,
   ShoppingBag,
+  ArrowRight,
+  Package,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function FooterRetailerComponent() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative mt-24 border-t border-slate-200 bg-white pt-16 dark:border-slate-800 dark:bg-slate-950">
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-orange-500/20 to-transparent" />
-      
-      <div className="mx-auto max-w-[105rem] px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-4 lg:gap-8">
-          {/* Brand Section */}
-          <div className="col-span-1 lg:col-span-1">
-            <Link to="/retailer/home" className="flex items-center gap-3">
-              <div className="relative h-12 w-12 overflow-hidden rounded-xl bg-orange-100 p-0.5 dark:bg-orange-950/30">
-                <img
-                  src={require("../../assets/images/retailer/whitelogo.png")?.default || require("../../assets/images/retailer/whitelogo.png")}
-                  alt="H-Phsar Logo"
-                  className="h-full w-full object-contain brightness-0 filter dark:invert"
-                />
+    <footer className="relative mt-24 bg-slate-950 text-slate-300">
+      {/* Newsletter Section */}
+      <div className="border-b border-slate-800/60">
+        <div className="mx-auto max-w-[105rem] px-4 py-12 sm:px-6 lg:px-8">
+          <div className="flex flex-col items-center justify-between gap-8 lg:flex-row">
+            <div className="max-w-xl text-center lg:text-left">
+              <h3 className="text-2xl font-black tracking-tight text-white sm:text-3xl">
+                Stay updated with StockFlow
+              </h3>
+              <p className="mt-2 text-slate-400">
+                Join our newsletter to receive the latest updates on new distributors and stock arrivals.
+              </p>
+            </div>
+            <div className="flex w-full max-w-md flex-col gap-3 sm:flex-row">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="h-12 w-full rounded-xl border border-slate-800 bg-slate-900 px-4 text-sm text-white placeholder:text-slate-500 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 transition-all"
+              />
+              <Button className="h-12 rounded-xl bg-orange-500 px-8 font-bold text-white hover:bg-orange-600 transition-all active:scale-[0.98]">
+                Subscribe
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-[105rem] px-4 py-16 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
+          {/* Brand Column */}
+          <div className="lg:col-span-4">
+            <Link href="/retailer/home" className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-500 text-white shadow-lg shadow-orange-500/20">
+                <Package className="h-7 w-7" />
               </div>
-              <span className="text-xl font-black tracking-tight text-slate-900 dark:text-slate-100">
-                H-Phsar
+              <span className="text-2xl font-black tracking-tighter text-white">
+                StockFlow
               </span>
             </Link>
-            <p className="mt-6 max-w-xs text-sm leading-relaxed text-slate-500 dark:text-slate-400">
-              Connecting local retailers with the best distributors. Quality stock, managed efficiently in one modern platform.
+            <p className="mt-6 max-w-sm text-sm leading-relaxed text-slate-400">
+              The premier B2B marketplace connecting regional retailers with high-quality distributors. Streamline your procurement process with our modern warehouse management tools.
             </p>
-            <div className="mt-8 flex gap-4">
+            <div className="mt-8 flex gap-3">
               {[
                 { icon: Facebook, href: "#", label: "Facebook" },
+                { icon: Twitter, href: "#", label: "Twitter" },
                 { icon: Instagram, href: "#", label: "Instagram" },
-                { icon: Send, href: "#", label: "Telegram" },
+                { icon: Linkedin, href: "#", label: "LinkedIn" },
               ].map((social) => (
                 <a
                   key={social.label}
                   href={social.href}
-                  className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-400 transition-all hover:border-orange-500 hover:text-orange-500 dark:border-slate-800 dark:text-slate-600 dark:hover:border-orange-500"
+                  className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 border border-slate-800 text-slate-400 transition-all hover:bg-orange-500 hover:text-white hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/20"
                   aria-label={social.label}
                 >
                   <social.icon className="h-5 w-5" />
@@ -56,96 +82,105 @@ export default function FooterRetailerComponent() {
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-slate-100">Platform</h3>
-            <ul className="mt-6 space-y-4">
-              {[
-                { to: "/retailer/home", label: "Marketplace" },
-                { to: "/retailer/order", label: "Track Orders" },
-                { to: "/retailer/report", label: "Analytics" },
-                { to: "/retailer/favorite", label: "Favorites" },
-              ].map((link) => (
-                <li key={link.label}>
-                  <Link
-                    to={link.to}
-                    className="group flex items-center text-sm text-slate-500 transition hover:text-orange-500 dark:text-slate-400 dark:hover:text-orange-400"
-                  >
-                    <ChevronRight className="mr-2 h-3 w-3 transition-transform group-hover:translate-x-1" />
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* Quick Links Group */}
+          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:col-span-8 lg:ml-auto">
+            {/* Navigation */}
+            <div>
+              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-white">Platform</h4>
+              <ul className="mt-6 space-y-4">
+                {[
+                  { href: "/retailer/home", label: "Marketplace" },
+                  { href: "/retailer/order", label: "Order Tracking" },
+                  { href: "/retailer/favorite", label: "Saved Shops" },
+                  { href: "/retailer/report", label: "Business Intelligence" },
+                  { href: "/retailer/draft", label: "Saved Drafts" },
+                ].map((link) => (
+                  <li key={link.label}>
+                    <Link
+                      href={link.href}
+                      className="group flex items-center text-sm font-medium text-slate-400 transition hover:text-orange-500"
+                    >
+                      <ArrowRight className="mr-2 h-3 w-3 -translate-x-2 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          {/* Support */}
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-slate-100">Support</h3>
-            <ul className="mt-6 space-y-4">
-              {[
-                { label: "Help Center", href: "#" },
-                { label: "Safety Center", href: "#" },
-                { label: "Community Guidelines", href: "#" },
-                { label: "Privacy Policy", href: "#" },
-              ].map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="group flex items-center text-sm text-slate-500 transition hover:text-orange-500 dark:text-slate-400 dark:hover:text-orange-400"
-                  >
-                    <ChevronRight className="mr-2 h-3 w-3 transition-transform group-hover:translate-x-1" />
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+            {/* Support */}
+            <div>
+              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-white">Resources</h4>
+              <ul className="mt-6 space-y-4">
+                {[
+                  { label: "Help Center", href: "#" },
+                  { label: "Partner Program", href: "#" },
+                  { label: "Privacy Policy", href: "#" },
+                  { label: "Terms of Service", href: "#" },
+                  { label: "Safety Guide", href: "#" },
+                ].map((link) => (
+                  <li key={link.label}>
+                    <a
+                      href={link.href}
+                      className="group flex items-center text-sm font-medium text-slate-400 transition hover:text-orange-500"
+                    >
+                      <ArrowRight className="mr-2 h-3 w-3 -translate-x-2 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          {/* Contact Section */}
-          <div className="rounded-2xl bg-slate-50 p-6 dark:bg-slate-900/50">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-slate-100">Contact Us</h3>
-            <ul className="mt-6 space-y-4">
-              <li className="flex items-start gap-3">
-                <Phone className="mt-0.5 h-4 w-4 text-orange-500" />
-                <div>
-                  <p className="text-sm font-bold text-slate-900 dark:text-slate-100">+855 12 850 001</p>
-                  <p className="text-[10px] text-slate-500">Available 8am - 9pm</p>
-                </div>
-              </li>
-              <li className="flex items-start gap-3">
-                <Mail className="mt-0.5 h-4 w-4 text-orange-500" />
-                <div>
-                  <p className="text-sm font-bold text-slate-900 dark:text-slate-100 text-break">warehousems@gmail.com</p>
-                  <p className="text-[10px] text-slate-500">Business Inquiries</p>
-                </div>
-              </li>
-              <li className="flex items-start gap-3">
-                <Calendar className="mt-0.5 h-4 w-4 text-orange-500" />
-                <div>
-                  <p className="text-sm font-bold text-slate-900 dark:text-slate-100">Mon - Sun</p>
-                  <p className="text-[10px] text-slate-500">Full Week Coverage</p>
-                </div>
-              </li>
-            </ul>
+            {/* Contact */}
+            <div>
+              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-white">Global Contact</h4>
+              <ul className="mt-6 space-y-5">
+                <li className="flex items-start gap-3">
+                  <Phone className="mt-0.5 h-4 w-4 text-orange-500" />
+                  <div className="text-sm font-medium">
+                    <p className="text-slate-200">+855 12 850 001</p>
+                    <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">HQ Hotline</p>
+                  </div>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Mail className="mt-0.5 h-4 w-4 text-orange-500" />
+                  <div className="text-sm font-medium">
+                    <p className="text-slate-200">support@stockflow.com</p>
+                    <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">Inquiries</p>
+                  </div>
+                </li>
+                <li className="flex items-start gap-3">
+                  <MapPin className="mt-0.5 h-4 w-4 text-orange-500" />
+                  <div className="text-sm font-medium">
+                    <p className="text-slate-200">Phnom Penh, Cambodia</p>
+                    <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">Regional Hub</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="mt-16 border-t border-slate-100 py-8 dark:border-slate-900">
-          <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-            <p className="text-xs text-slate-500 dark:text-slate-600">
-              © {currentYear} H-Phsar. Built by 11th Gen Students of Korea Software HRD Center.
+        {/* Bottom Section */}
+        <div className="mt-16 pt-8 border-t border-slate-900 flex flex-col items-center justify-between gap-6 sm:flex-row">
+          <div className="flex flex-col items-center sm:items-start gap-2">
+            <p className="text-xs font-medium text-slate-500">
+              © {currentYear} StockFlow Commerce. Proudly developed by 11th Gen Students.
             </p>
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-700">
-                <ShieldCheck className="h-3 w-3" />
-                Secure Payments
-              </div>
-              <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-700">
-                <ShoppingBag className="h-3 w-3" />
-                Reliable Delivery
-              </div>
+            <p className="text-[10px] text-slate-600 uppercase tracking-widest">
+              Korea Software HRD Center • Enterprise Edition
+            </p>
+          </div>
+          
+          <div className="flex items-center gap-8">
+            <div className="flex items-center gap-2 text-slate-500">
+              <ShieldCheck className="h-4 w-4 text-emerald-500/60" />
+              <span className="text-[10px] font-black uppercase tracking-[0.2em]">Secure Cloud</span>
+            </div>
+            <div className="flex items-center gap-2 text-slate-500">
+              <ShoppingBag className="h-4 w-4 text-blue-500/60" />
+              <span className="text-[10px] font-black uppercase tracking-[0.2em]">Certified Logistics</span>
             </div>
           </div>
         </div>

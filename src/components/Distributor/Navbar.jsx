@@ -38,8 +38,6 @@ import { over } from "stompjs";
 import SockJS from "sockjs-client";
 import { toast } from "react-toastify";
 
-// Static image imports
-import noImage from "../../assets/images/distributor/account.png";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -81,7 +79,7 @@ const Navbar = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    const socket = new SockJS("http://localhost:8888/ws");
+    const socket = new SockJS(`${process.env.NEXT_PUBLIC_WS_URL || "http://localhost:8888"}/ws`);
     const stompClient = over(socket);
     stompClient.connect({}, () => {
       const userId = localStorage.getItem("userId");
@@ -120,18 +118,18 @@ const Navbar = () => {
   };
 
   const Badge = ({ count }) => count > 0 ? (
-    <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white ring-2 ring-white dark:ring-slate-950">
+    <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white ring-2 ring-white ">
       {count > 9 ? "9+" : count}
     </span>
   ) : null;
 
   return (
-    <header className="h-20 flex items-center justify-between px-4 md:px-8 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md sticky top-0 z-30 border-b border-slate-100 dark:border-slate-800 transition-colors">
+    <header className="h-20 flex items-center justify-between px-4 md:px-8 bg-white/80  backdrop-blur-md sticky top-0 z-30 border-b border-slate-100  transition-colors">
       <div className="flex flex-col">
-        <h2 className="text-xl font-black text-slate-900 dark:text-white">
+        <h2 className="text-xl font-black text-slate-900 ">
           {storeList?.name || "Distributor Dashboard"}
         </h2>
-        <p className="text-[10px] font-bold text-teal-600 uppercase tracking-widest">
+        <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">
           {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
         </p>
       </div>
@@ -140,19 +138,19 @@ const Navbar = () => {
         {/* Notifications Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="relative p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-              <Bell className="w-5 h-5 text-slate-600 dark:text-slate-400" />
+            <button className="relative p-2.5 rounded-xl hover:bg-slate-100  transition-colors">
+              <Bell className="w-5 h-5 text-slate-600 " />
               <Badge count={stats.total} />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-80 p-0 overflow-hidden rounded-2xl border-slate-100 shadow-2xl">
-            <div className="p-4 bg-slate-50 dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-              <h3 className="font-bold text-slate-900 dark:text-white">Notifications</h3>
-              <button onClick={() => setShowReadAll(true)} className="text-[10px] font-bold text-teal-600 uppercase hover:underline">
+            <div className="p-4 bg-slate-50  border-b border-slate-100  flex items-center justify-between">
+              <h3 className="font-bold text-slate-900 ">Notifications</h3>
+              <button onClick={() => setShowReadAll(true)} className="text-[10px] font-bold text-blue-600 uppercase hover:underline">
                 Mark all read
               </button>
             </div>
-            <div className="p-2 grid grid-cols-4 gap-1 bg-white dark:bg-slate-950 border-b border-slate-50 dark:border-slate-900">
+            <div className="p-2 grid grid-cols-4 gap-1 bg-white  border-b border-slate-50 ">
               {[
                 { id: 1, label: "All", count: stats.total },
                 { id: 2, label: "Order", count: stats.orders },
@@ -164,7 +162,7 @@ const Navbar = () => {
                   onClick={() => setToggleState(t.id)}
                   className={`py-2 rounded-lg text-[10px] font-black uppercase transition-all ${
                     toggleState === t.id 
-                      ? "bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400" 
+                      ? "bg-blue-50 text-blue-700  " 
                       : "text-slate-400 hover:text-slate-600"
                   }`}
                 >
@@ -184,14 +182,20 @@ const Navbar = () => {
         {/* Profile Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-3 p-1 pr-3 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group">
-              <img
-                src={account?.profileImage || noImage.src || noImage}
-                className="w-9 h-9 rounded-full object-cover ring-2 ring-white dark:ring-slate-900 shadow-sm"
-                alt=""
-              />
+            <button className="flex items-center gap-3 p-1 pr-3 rounded-full hover:bg-slate-100  transition-colors group">
+              {account?.profileImage ? (
+                <img
+                  src={account.profileImage}
+                  className="w-9 h-9 rounded-full object-cover ring-2 ring-white shadow-sm"
+                  alt=""
+                />
+              ) : (
+                <div className="w-9 h-9 rounded-full bg-slate-100 ring-2 ring-white shadow-sm flex items-center justify-center">
+                  <User className="w-5 h-5 text-slate-400" />
+                </div>
+              )}
               <div className="hidden md:block text-left">
-                <p className="text-sm font-bold text-slate-900 dark:text-white line-clamp-1">
+                <p className="text-sm font-bold text-slate-900  line-clamp-1">
                   {account?.firstName ? `${account.firstName} ${account.lastName}` : "User Profile"}
                 </p>
                 <p className="text-[10px] text-slate-500 font-medium line-clamp-1">{email}</p>
@@ -230,14 +234,14 @@ const Navbar = () => {
 
       <Dialog open={showReadAll} onOpenChange={setShowReadAll}>
         <DialogContent className="max-w-md text-center p-8">
-          <div className="w-16 h-16 bg-teal-50 text-teal-600 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
             <CheckCheck className="w-8 h-8" />
           </div>
           <DialogTitle className="text-xl font-bold mb-2">Mark all as read?</DialogTitle>
           <p className="text-slate-500 text-sm mb-8">This will clear all unread notification badges.</p>
           <div className="flex gap-3">
             <Button variant="outline" className="flex-1" onClick={() => setShowReadAll(false)}>Cancel</Button>
-            <Button disabled={loadingReadAll} className="flex-1 bg-teal-600" onClick={markAllRead}>
+            <Button disabled={loadingReadAll} className="flex-1 bg-blue-600" onClick={markAllRead}>
               {loadingReadAll ? "Processing..." : "Confirm"}
             </Button>
           </div>

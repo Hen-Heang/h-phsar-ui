@@ -7,7 +7,6 @@ export default function Invoice(props) {
   const invoiceList = useSelector((state) => state.invoiceDis.data);
   const invoiceOrder = useSelector((state) => state.invoiceDis.dataOrder);
   const dispatch = useDispatch()
-  console.log("invoicelist", invoiceList);
   const safeInvoiceList = Array.isArray(invoiceList) ? invoiceList : [];
   const formatMoney = (value) => {
     const n = Number(value);
@@ -89,7 +88,7 @@ export default function Invoice(props) {
                       <tbody>
                         {safeInvoiceList.map((item, index) => (
                           <tr className=" border-b text-black " key={index}>
-                            <td scope="row" className="px-3 py-4 text-black whitespace-nowrap dark:text-blue-100">
+                            <td scope="row" className="px-3 py-4 text-black whitespace-nowrap ">
                               {index + 1}
                             </td>
                             <td className="px-6 py-4">

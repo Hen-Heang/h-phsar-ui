@@ -106,7 +106,6 @@ const allShopSlice = createSlice({
 
     AddProductToCart: (state, action) => {
       const newProduct = action.payload[0];
-      console.log("New Product", newProduct);
       const existingProduct = state.productInCartData.find(
         (product) => product.productId === newProduct.productId
       );
@@ -126,7 +125,6 @@ const allShopSlice = createSlice({
       state.productInCartData = action.payload;
     },
     getOrderInCart: (state, action) => {
-      console.log("getOrderInCart : ", action.payload);
       state.orderInCartData = action.payload;
     },
     getProductByPrice: (state, action) => {
@@ -139,7 +137,6 @@ const allShopSlice = createSlice({
     },
     // deleteProductInCart reducer
     deleteProductInCart: (state, action) => {
-      console.log("Action : ", action.payload);
       const itemId = action.payload;
       // state.productInCartData = state.productInCartData.map((proxyObject) =>
       //   Object.assign({}, proxyObject)

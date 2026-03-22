@@ -10,14 +10,12 @@ const draftHistorySlice = createSlice({
             state.loading=action.payload;
         },
         getDraftHistory: (state, action) => {
-            console.log("Get all : ", state.data)
             state.data = action.payload;
         },
         getProduct:(state,action)=>{
             state.data1=action.payload;
         },
         deleteDraftHistory: (state, action) => {
-            console.log("action",action.payload)
             state.data = state.data
             .map((item)=>{
                 if(item.order.id === action.payload){

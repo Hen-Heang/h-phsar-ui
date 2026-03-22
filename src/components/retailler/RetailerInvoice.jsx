@@ -21,7 +21,6 @@ export default function RetailerInvoice(props) {
     // onAfterPrint: () => alert("Get invoice successfully"),
   })
   const productList = useSelector((state) => state.invoice.data);
-  console.log("productList", productList);
   const orderInvoiceList = useSelector((state) => state.invoice.value);
 
   return (
@@ -112,7 +111,7 @@ export default function RetailerInvoice(props) {
                         <tr key={item.id} className=" border-b text-black ">
                           <td
                             scope="row"
-                            className="px-3 py-4 text-black whitespace-nowrap dark:text-blue-100"
+                            className="px-3 py-4 text-black whitespace-nowrap "
                           >
                             {index + 1}
                           </td>

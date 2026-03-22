@@ -23,16 +23,16 @@ import {
   getAllProductByStoreId,
 } from "../../redux/slices/retailer/homepageSlice/allShopSlice";
 import { ToastContainer, toast } from "react-toastify";
-import { useLocation } from "react-router-dom";
+import { ShoppingCart } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 import ProductCard from "../../components/retailler/ProductCard";
 
 export default function AllProducts() {
-  const location = useLocation();
-
+  const searchParams = useSearchParams();
   const dispatch = useDispatch();
-  const id = new URLSearchParams(location.search).get("storeId");
-  const storeName = new URLSearchParams(location.search).get("storeName");
+  const id = searchParams.get("storeId");
+  const storeName = searchParams.get("storeName");
 
   const timeoutRef = useRef();
 
@@ -154,7 +154,6 @@ export default function AllProducts() {
       localStorage.setItem("counter", JSON.stringify(updatedCounters));
       window.dispatchEvent(new CustomEvent("localStorageUpdated", { detail: updatedCounters }));
     } catch (error) {
-      console.error(error);
     } finally {
       setLoadingProducts2((prev) => {
         const next = new Set(prev);
@@ -232,11 +231,11 @@ export default function AllProducts() {
           ))}
         </div>
       ) : (
-        <div className="flex min-h-[400px] w-full flex-col items-center justify-center rounded-[2rem] border-2 border-dashed border-slate-200 bg-white/50 dark:border-slate-800 dark:bg-slate-900/50">
-          <div className="rounded-full bg-slate-100 p-6 dark:bg-slate-800">
-            <ShoppingCart className="h-12 w-12 text-slate-300 dark:text-slate-600" />
+        <div className="flex min-h-[400px] w-full flex-col items-center justify-center rounded-[2rem] border-2 border-dashed border-slate-200 bg-white/50  ">
+          <div className="rounded-full bg-slate-100 p-6 ">
+            <ShoppingCart className="h-12 w-12 text-slate-300 " />
           </div>
-          <h3 className="mt-6 text-xl font-bold text-slate-900 dark:text-slate-100">No Products Found</h3>
+          <h3 className="mt-6 text-xl font-bold text-slate-900 ">No Products Found</h3>
           <p className="mt-2 text-slate-500">This distributor hasn't listed any products yet.</p>
         </div>
       )}

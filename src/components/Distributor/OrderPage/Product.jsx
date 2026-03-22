@@ -19,10 +19,8 @@ export default function Product(props) {
     const pageCount = Math.ceil(productList.length / 6);
     const dispatch = useDispatch();
     const detailProduct = (id) => {
-        console.log(id);
         get_detail_product(id).then((r) => dispatch(getProductDetail(r.data.data.products)))
     }
-    console.log("props",props.loadingPro)
     return (
         <div>
             <React.Fragment>
@@ -64,10 +62,10 @@ export default function Product(props) {
                                 <tbody className="text-black w-full bg-slate-50">
                                     {! props.loadingPro ?
                                     productList.map((item,index) => (
-                                        <tr key={index} className="bg-white border-b text-black dark:bg-gray-800 text-sm">
+                                        <tr key={index} className="bg-white border-b text-black  text-sm">
                                             <td
                                                 scope="row"
-                                                className="px-6 py-2 0 whitespace-nowrap dark:text-white"
+                                                className="px-6 py-2 0 whitespace-nowrap "
                                             >
                                                 {index+1}
                                             </td>

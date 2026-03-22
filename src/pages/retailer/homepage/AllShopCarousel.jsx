@@ -10,7 +10,7 @@ import {
   ChevronLeft,
   Tag
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import ReactPaginate from "react-paginate";
 import { useQuery } from "@tanstack/react-query";
 
@@ -30,7 +30,7 @@ import AllShopSkeleton from "../../../components/retailler/skeletons/AllShop";
 import { Button } from "@/components/ui/button";
 
 const AllShopCarousel = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const dispatch = useDispatch();
   const dataShop = useSelector((state) => state.getDataAllShop.dataShop);
   const [itemOffset, setItemOffset] = useState(0);
@@ -38,9 +38,9 @@ const AllShopCarousel = () => {
 
   const onClickGetDataShop = useCallback((id, storeName) => {
     dispatch(setStoreId(id));
-    navigate(`/retailer/distributor-shop?storeId=${id}&storeName=${encodeURIComponent(storeName)}`);
+    router.push(`/retailer/distributor-shop?storeId=${id}&storeName=${encodeURIComponent(storeName)}`);
     window.scrollTo(0, 0);
-  }, [dispatch, navigate]);
+  }, [dispatch, router]);
 
   const bookmarkStoreQuery = useQuery({
     queryKey: ["retailer", "bookmark-store"],
@@ -90,10 +90,10 @@ const AllShopCarousel = () => {
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.2, delay: (idx % 3) * 0.05 }}
               onClick={() => onClickGetDataShop(item.id, item.name)}
-              className="group relative cursor-pointer overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-4 transition-all hover:border-orange-200 hover:shadow-xl hover:shadow-orange-500/5 dark:border-slate-800 dark:bg-slate-900"
+              className="group relative cursor-pointer overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-4 transition-all hover:border-orange-200 hover:shadow-xl hover:shadow-orange-500/5  "
             >
               {/* Card Image Wrapper */}
-              <div className="relative aspect-[16/10] overflow-hidden rounded-2xl bg-slate-50 dark:bg-slate-950">
+              <div className="relative aspect-[16/10] overflow-hidden rounded-2xl bg-slate-50 ">
                 <img
                   src={getSafeImageSrc(item.bannerImage, noImage)}
                   onError={(e) => applyImageFallback(e, noImage)}
@@ -118,7 +118,7 @@ const AllShopCarousel = () => {
               {/* Card Content */}
               <div className="mt-5 px-2 pb-2">
                 <div className="flex items-start justify-between gap-4">
-                  <h3 className="line-clamp-1 text-lg font-black text-slate-900 dark:text-slate-100">
+                  <h3 className="line-clamp-1 text-lg font-black text-slate-900 ">
                     {item.name}
                   </h3>
                   <div className="flex items-center gap-1 text-orange-500">
@@ -127,21 +127,21 @@ const AllShopCarousel = () => {
                   </div>
                 </div>
 
-                <div className="mt-2 flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+                <div className="mt-2 flex items-center gap-1.5 text-slate-500 ">
                   <MapPin className="h-3.5 w-3.5 text-orange-500" />
                   <span className="line-clamp-1 text-xs font-medium">{item.address}</span>
                 </div>
 
                 <div className="mt-4 flex flex-wrap gap-1.5">
                   {item.categories?.slice(0, 2).map((cat) => (
-                    <span key={cat.id} className="inline-flex items-center gap-1 rounded-lg bg-slate-50 px-2 py-0.5 text-[9px] font-bold text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+                    <span key={cat.id} className="inline-flex items-center gap-1 rounded-lg bg-slate-50 px-2 py-0.5 text-[9px] font-bold text-slate-500  ">
                       <Tag className="h-2 w-2" />
                       {cat.name}
                     </span>
                   ))}
                 </div>
 
-                <div className="mt-6 flex items-center justify-between border-t border-slate-50 pt-4 dark:border-slate-800">
+                <div className="mt-6 flex items-center justify-between border-t border-slate-50 pt-4 ">
                   <span className="text-[10px] font-black uppercase tracking-widest text-slate-300">Verified Seller</span>
                   <Button variant="ghost" size="sm" className="h-8 rounded-lg text-[11px] font-black uppercase tracking-wider text-orange-500 hover:bg-orange-50">
                     View Detail
@@ -163,10 +163,10 @@ const AllShopCarousel = () => {
             previousLabel={<ChevronLeft className="h-5 w-5" />}
             nextLabel={<ChevronRight className="h-5 w-5" />}
             className="flex items-center gap-2"
-            pageClassName="h-10 w-10 flex items-center justify-center rounded-xl text-sm font-bold transition hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500"
+            pageClassName="h-10 w-10 flex items-center justify-center rounded-xl text-sm font-bold transition hover:bg-slate-100  text-slate-500"
             activeClassName="!bg-orange-500 !text-white shadow-lg shadow-orange-500/20"
-            previousClassName="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-200 text-slate-400 hover:bg-white dark:border-slate-800 dark:hover:bg-slate-800"
-            nextClassName="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-200 text-slate-400 hover:bg-white dark:border-slate-800 dark:hover:bg-slate-800"
+            previousClassName="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-200 text-slate-400 hover:bg-white  "
+            nextClassName="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-200 text-slate-400 hover:bg-white  "
             breakLabel="..."
           />
         </div>

@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
 
 export default function SkeletonSearchCard() {
   // const [fixCard, setFixCard] = useState([
@@ -40,11 +39,11 @@ export default function SkeletonSearchCard() {
 
         <div
           role="status"
-          className="w-full animate-pulse dark:border-gray-700"
+          className="w-full animate-pulse "
         >
-          <div className="flex items-center justify-center w-full lg:h-[400px] h-[180px] bg-gray-300 rounded dark:bg-gray-700">
+          <div className="flex items-center justify-center w-full lg:h-[400px] h-[180px] bg-gray-300 rounded ">
             <svg
-              className="w-1/2 h-14 text-gray-200 dark:text-gray-600"
+              className="w-1/2 h-14 text-gray-200 "
               xmlns="http://www.w3.org/2000/svg"
               aria-hidden="true"
               fill="currentColor"
@@ -54,10 +53,10 @@ export default function SkeletonSearchCard() {
             </svg>
           </div>
           <div className="border border-gray-200 h-52 p-7 shadow-sm">
-            <div className="h-4 bg-gray-200 rounded-full dark:bg-gray-700 lg:w-2/5"></div>
-            <div className="h-4 bg-gray-200 rounded-full dark:bg-gray-700  lg:w-96 mt-8 mb-5"></div>
-            <div className="h-4 bg-gray-200 rounded-full dark:bg-gray-700  lg:w-96 mb-5"></div>
-            <div className="h-4 bg-gray-200 rounded-full dark:bg-gray-700  lg:w-96 "></div>
+            <div className="h-4 bg-gray-200 rounded-full  lg:w-2/5"></div>
+            <div className="h-4 bg-gray-200 rounded-full   lg:w-96 mt-8 mb-5"></div>
+            <div className="h-4 bg-gray-200 rounded-full   lg:w-96 mb-5"></div>
+            <div className="h-4 bg-gray-200 rounded-full   lg:w-96 "></div>
           </div>
         </div>
       </div>

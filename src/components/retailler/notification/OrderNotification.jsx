@@ -1,8 +1,9 @@
+"use client";
+
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import imageTest from "../../../assets/images/retailer/profileone.jpg";
 import {
   get_all_notification_retailer,
   seen_notification_retailer,
@@ -14,12 +15,13 @@ import {
 import LoadingOverlay from "react-loading-overlay";
 import { styled } from "@mui/material";
 import { applyImageFallback, getSafeImageSrc } from "@/lib/images";
+import { X, BellOff } from "lucide-react";
+
 const OrderNotification = () => {
   const dispatch = useDispatch();
   const [noDataNotifications, setDataNotifications] = useState(false);
   useEffect(() => {
     get_all_notification_retailer().then((res) => {
-      console.log("Notifications : ", res);
       if (res.status === 200) {
         dispatch(getAllNotificationRetailers(res.data.data));
         setDataNotifications(false);
@@ -111,13 +113,8 @@ const OrderNotification = () => {
                           ? "Order Complete"
                           : "Out of stock"}
                       </h3>
-                      <button onClick={() => setShowModal(false)}>
-                        <span className="h-6 w-6 z-20">
-                          <img
-                            src={(require("../../../assets/images/distributor/close_white.png")?.default || require("../../../assets/images/distributor/close_white.png"))}
-                            alt=""
-                          />
-                        </span>
+                      <button onClick={() => setShowModal(false)} className="text-white hover:text-gray-200 transition-colors">
+                        <X className="h-6 w-6" />
                       </button>
                     </div>
                     {/*body*/}
@@ -172,10 +169,7 @@ const OrderNotification = () => {
       )}
       {noDataNotifications ||  countAllNotificationUnseenOrderAccepted < 0 ? (
        <div className="h-96 w-full flex flex-col gap-2 justify-center items-center text-xl text-gray-500">
-       <img
-         src={(require("../../../assets/images/retailer/no_notification.png")?.default || require("../../../assets/images/retailer/no_notification.png"))}
-         alt=""
-       />
+       <BellOff className="w-12 h-12 text-slate-300 mb-2" />
        No data notifications
      </div>
       ) : (

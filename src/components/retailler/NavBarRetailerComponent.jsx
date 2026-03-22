@@ -1,20 +1,16 @@
+"use client";
+
 import React, { useEffect, useRef, useState } from "react";
-import {
-  Link,
-  NavLink,
-  useLocation,
-  useNavigate,
-  useParams,
-} from "react-router-dom";
+import Link from "next/link";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import AllNotification from "./notification/AllNotification";
 import OrderNotification from "./notification/OrderNotification";
 import RestockNotification from "./notification/RestockNotification";
 import noImage from "../../assets/images/distributor/account.png";
+import retailerLogo from "../../assets/images/retailer/retailerLogo01.png";
 import { applyImageFallback, getSafeImageSrc } from "@/lib/images";
 import { useDispatch, useSelector } from "react-redux";
-import { ToastContainer, toast } from "react-toastify";
-import trolley from "../../assets/images/empty_trolley.png";
-import draft from "../../assets/images/draft-button.png";
+import { toast } from "react-toastify";
 import {
   decrement,
   increment,
@@ -113,26 +109,21 @@ export default function NavBarRetailerComponent() {
   const dispatch = useDispatch();
   //2. then we create state too store what user input
   const [onChangeSearch, setOnChangeSearch] = useState("");
-  console.log(onChangeSearch);
 
   const searchProductByStore = () => {
     setLoadingSearch(true);
-    console.log("onChangeSearch", onChangeSearch);
     if (onChangeSearch === "" || onChangeSearch === null) {
       toast.warn("Please input something in search bar");
     } else {
-      console.log(111);
       get_search(onChangeSearch, dispatch)
         .then((e) => {
           // console.log("data : ",e.data)
           // console.log(e.response.status)
           if (e.status === 401) {
-            console.log("error 401");
             dispatch(setError(true));
             dispatch(setLoading(false));
           }
           if (e.status === 200) {
-            console.log("data : ", e.data.data);
             dispatch(getSearchStore(e.data.data));
             dispatch(setLoading(false));
             dispatch(setError(false));
@@ -146,7 +137,7 @@ export default function NavBarRetailerComponent() {
         .catch((err) => {
           dispatch(setLoading(false));
         });
-      navigate("/retailer/searching-shop");
+      router.push("/retailer/searching-shop");
       // navigate("/retailer/skeleton-search")
     }
   };
@@ -162,7 +153,8 @@ export default function NavBarRetailerComponent() {
     setOnChangeSearch("");
   };
 
-  const navigate = useNavigate();
+  const router = useRouter();
+  const pathname = usePathname();
   const [toggleState, setToggleState] = useState(1);
   const toggleTab = (index) => {
     setToggleState(index);
@@ -184,12 +176,12 @@ export default function NavBarRetailerComponent() {
   };
 
   const onSignOut = () => {
-    navigate("/");
     localStorage.clear();
+    router.push("/");
   };
   const itemsCounter = useSelector((state) => state.itemsCounter);
-  const location = useLocation();
-  const id = new URLSearchParams(location.search).get("storeId");
+  const searchParams = useSearchParams();
+  const id = searchParams.get("storeId");
   // console.log("id ahahahahahahah ", id)
 
   const { storeId } = useSelector((state) => state.getDataAllShop);
@@ -310,7 +302,6 @@ export default function NavBarRetailerComponent() {
             //   // toast.error("You can only have one cart at a time.");
             // }
             if (error.response) {
-              console.log(" error.response : ", error.response); // Log the error response object
               const { status, data } = error.response;
 
               //         if (status === 500) {
@@ -318,7 +309,6 @@ export default function NavBarRetailerComponent() {
             } else {
               // console.error("error ",error); // Log the error object
               // Handle other types of errors
-              console.log("first");
             }
           }
         }
@@ -575,17 +565,13 @@ export default function NavBarRetailerComponent() {
             contents: { en: message },
             include_external_user_ids: [response.data.data.userId.toString()],
           };
-          console.log("Await notification");
           try {
             const notificationResponse = await sendOneSignalNotification(notification);
-            console.log("Push notification sent successfully:", notificationResponse);
           } catch (error) {
-            console.error("Error sending push notification:", error);
           }
           dispatch(checkoutProduct(response.data));
         })
         .catch((error) => {
-          console.log(error);
           // Handle the error if needed
         });
       // remove data from local storage
@@ -669,8 +655,7 @@ export default function NavBarRetailerComponent() {
   // ================== account =================
   useEffect(() => {
     get_retailer_profile().then((res) => {
-      if (res.status === 404) {
-        console.log("error", res.status);
+      if (!res || res.status === 404) {
         dispatch(
           getRetailerInfo({
             id: null,
@@ -688,7 +673,7 @@ export default function NavBarRetailerComponent() {
           })
         );
       }
-      if (res.status === 200) {
+      if (res?.status === 200) {
         dispatch(getRetailerInfo(res.data.data));
       }
     });
@@ -710,10 +695,9 @@ export default function NavBarRetailerComponent() {
   var stompClient = null;
   const Sock = null;
   const connect = () => {
-    const Sock = new SockJS("http://localhost:8888/ws");
+    const Sock = new SockJS(`${process.env.NEXT_PUBLIC_WS_URL || "http://localhost:8888"}/ws`);
     stompClient = over(Sock);
     stompClient.connect({}, onConnected, onError);
-    console.log("WS connected");
   };
   const disconnectFromSocket = () => {
     if (Sock) {
@@ -721,7 +705,6 @@ export default function NavBarRetailerComponent() {
     }
   };
   const onConnected = () => {
-    console.log("/user/" + localStorage.getItem("userId") + "/private");
     stompClient.subscribe(
       "/user/" + localStorage.getItem("userId") + "/private",
       onPrivateMessage
@@ -736,12 +719,10 @@ export default function NavBarRetailerComponent() {
   };
   const onPrivateMessage = (payload) => {
     var payloadData = JSON.parse(payload.body);
-    console.log(payloadData);
     switch (payloadData.status) {
       case "ORDER":
         get_all_notification_retailer().then((res) => {
           if (res.status === 200) {
-            console.log("Notifications : ", res);
             dispatch(getAllNotificationRetailers(res.data.data));
             setDataNotifications(false);
           } else {
@@ -752,7 +733,6 @@ export default function NavBarRetailerComponent() {
     }
   };
   const onError = (err) => {
-    console.log(err);
   };
   useEffect(() => {
     connect();
@@ -760,8 +740,7 @@ export default function NavBarRetailerComponent() {
 
   useEffect(() => {
     get_all_notification_retailer().then((res) => {
-      if (res.status === 200) {
-        console.log("Notifications : ", res);
+      if (res?.status === 200) {
         dispatch(getAllNotificationRetailers(res.data.data));
         setDataNotifications(false);
       } else {
@@ -821,18 +800,15 @@ export default function NavBarRetailerComponent() {
     useState(false);
   const handleReadAllNotifications = () => {
     mark_read_all_notification_retailer().then((res) => {
-      console.log("result received", res);
       if (res.status === 200) {
         dispatch(setReadAllNotificationsRetailer());
       }
       if (res.status === 401) {
-        console.log("Something went wrong");
       }
     });
   };
 
   const onClickGetDataShop = (id, storeName) => {
-    console.log("first", id, storeName);
     // get_store_by_id(id).then((e) => dispatch(getShopById(e.data.data)));
 
     // get_all_product_by_storeId(id).then((e) =>
@@ -843,11 +819,7 @@ export default function NavBarRetailerComponent() {
     dispatch(setStoreId(id));
 
     dispatch(setStoreId(id)); // Dispatch the setStoreId action
-    navigate(
-      `/retailer/distributor-shop?storeId=${id}&storeName=${encodeURIComponent(
-        storeName
-      )}`
-    );
+    router.push(`/retailer/distributor-shop?storeId=${id}&storeName=${encodeURIComponent(storeName)}`);
 
     // navigate(`/retailer/distributor-shop/${id}`);
     window.scrollTo(0, 0);
@@ -856,24 +828,23 @@ export default function NavBarRetailerComponent() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-slate-200/60 bg-white/80 backdrop-blur-md transition-all dark:border-slate-800/60 dark:bg-slate-950/80">
-      <ToastContainer />
+    <header className="sticky top-0 z-50 w-full border-b border-slate-200/60 bg-white/80 backdrop-blur-md transition-all  ">
       <div className="mx-auto flex h-20 max-w-[105rem] items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Brand/Logo */}
         <Link
-          to="/retailer/home"
+          href="/retailer/home"
           onClick={handleClearSearch}
           className="flex items-center gap-3 transition-opacity hover:opacity-90"
         >
-          <div className="relative h-10 w-10 overflow-hidden rounded-xl bg-orange-100 p-0.5 dark:bg-orange-950/30 sm:h-12 sm:w-12">
+          <div className="relative h-10 w-10 overflow-hidden rounded-xl bg-orange-100 p-0.5  sm:h-12 sm:w-12">
             <img
-              src={require("../../assets/images/retailer/retailerLogo01.png")?.default || require("../../assets/images/retailer/retailerLogo01.png")}
-              alt="H-Phsar Logo"
+              src={retailerLogo.src || retailerLogo}
+              alt="StockFlow Logo"
               className="h-full w-full object-contain"
             />
           </div>
-          <span className="hidden text-xl font-black tracking-tight text-slate-900 dark:text-slate-100 sm:block">
-            H-Phsar
+          <span className="hidden text-xl font-black tracking-tight text-slate-900  sm:block">
+            StockFlow
           </span>
         </Link>
 
@@ -886,7 +857,7 @@ export default function NavBarRetailerComponent() {
               onChange={handleFormChange}
               onKeyDown={(event) => event.key === "Enter" && searchProductByStore()}
               value={onChangeSearch}
-              className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 py-2.5 pl-11 pr-24 text-sm transition-all focus:border-orange-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-orange-500/10 dark:border-slate-800 dark:bg-slate-900/50 dark:text-slate-100 dark:focus:border-orange-500 dark:focus:bg-slate-900"
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 py-2.5 pl-11 pr-24 text-sm transition-all focus:border-orange-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-orange-500/10     "
               placeholder="Search products, stores..."
             />
             <button
@@ -905,18 +876,18 @@ export default function NavBarRetailerComponent() {
           {/* Notifications */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 transition-all hover:bg-slate-50 hover:text-orange-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800">
+              <button className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 transition-all hover:bg-slate-50 hover:text-orange-500    ">
                 <Bell className="h-5 w-5" />
                 {countAllNotificationUnseen > 0 && (
-                  <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-[10px] font-bold text-white ring-2 ring-white dark:ring-slate-950">
+                  <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-[10px] font-bold text-white ring-2 ring-white ">
                     {countAllNotificationUnseen > 99 ? "99+" : countAllNotificationUnseen}
                   </span>
                 )}
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[min(28rem,95vw)] overflow-hidden rounded-2xl p-0 shadow-2xl">
-              <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 px-5 py-4 dark:border-slate-800 dark:bg-slate-900/50">
-                <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">Notifications</h3>
+              <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 px-5 py-4  ">
+                <h3 className="text-sm font-bold text-slate-900 ">Notifications</h3>
                 <button
                   onClick={handleReadAllNotifications}
                   className="text-xs font-semibold text-orange-500 transition hover:text-orange-600"
@@ -925,7 +896,7 @@ export default function NavBarRetailerComponent() {
                 </button>
               </div>
 
-              <div className="border-b border-slate-100 bg-white px-2 dark:border-slate-800 dark:bg-slate-950">
+              <div className="border-b border-slate-100 bg-white px-2  ">
                 <div className="flex gap-1 overflow-x-auto p-2 scrollbar-hide">
                   {[
                     { id: 1, label: "All", count: countAllNotificationUnseen },
@@ -939,13 +910,13 @@ export default function NavBarRetailerComponent() {
                       onClick={() => toggleTab(tab.id)}
                       className={`relative flex items-center gap-2 whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
                         toggleState === tab.id
-                          ? "bg-orange-50 text-orange-600 dark:bg-orange-950/30 dark:text-orange-400"
-                          : "text-slate-500 hover:bg-slate-50 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-900 dark:hover:text-slate-200"
+                          ? "bg-orange-50 text-orange-600  "
+                          : "text-slate-500 hover:bg-slate-50 hover:text-slate-700   "
                       }`}
                     >
                       {tab.label}
                       {tab.count > 0 && (
-                        <span className={`h-1.5 w-1.5 rounded-full ${toggleState === tab.id ? "bg-orange-500" : "bg-slate-300 dark:bg-slate-700"}`} />
+                        <span className={`h-1.5 w-1.5 rounded-full ${toggleState === tab.id ? "bg-orange-500" : "bg-slate-300 "}`} />
                       )}
                     </button>
                   ))}
@@ -975,19 +946,19 @@ export default function NavBarRetailerComponent() {
           {/* Shopping Cart */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 transition-all hover:bg-slate-50 hover:text-orange-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800">
+              <button className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 transition-all hover:bg-slate-50 hover:text-orange-500    ">
                 <ShoppingBag className="h-5 w-5" />
                 {productInCartData.length > 0 && (
-                  <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-[10px] font-bold text-white ring-2 ring-white dark:ring-slate-950">
+                  <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-[10px] font-bold text-white ring-2 ring-white ">
                     {productInCartData.reduce((sum, item) => sum + item.qty, 0)}
                   </span>
                 )}
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[min(32rem,95vw)] overflow-hidden rounded-2xl p-0 shadow-2xl">
-              <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 px-5 py-4 dark:border-slate-800 dark:bg-slate-900/50">
+              <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 px-5 py-4  ">
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">Your Cart</h3>
+                  <h3 className="text-sm font-bold text-slate-900 ">Your Cart</h3>
                   {productInCartData.length > 0 && (
                     <p className="text-[10px] font-medium text-slate-500">
                       Order from <span className="text-orange-500">{localStoreName}</span>
@@ -997,7 +968,7 @@ export default function NavBarRetailerComponent() {
                 {productInCartData.length > 0 && (
                   <button
                     onClick={() => setSuccess2(!success2)}
-                    className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[10px] font-bold text-slate-600 transition hover:border-orange-200 hover:text-orange-500 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400"
+                    className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[10px] font-bold text-slate-600 transition hover:border-orange-200 hover:text-orange-500   "
                   >
                     <Package className="h-3 w-3" />
                     Save Draft
@@ -1007,10 +978,10 @@ export default function NavBarRetailerComponent() {
 
               <div className="max-h-[28rem] overflow-y-auto scrollbar-thin">
                 {productInCartData.length > 0 ? (
-                  <div className="divide-y divide-slate-50 dark:divide-slate-900">
+                  <div className="divide-y divide-slate-50 ">
                     {productInCartData.map((item) => (
-                      <div key={item.productId} className="group flex items-center gap-4 p-4 transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-900/30">
-                        <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl border border-slate-100 bg-white dark:border-slate-800 dark:bg-slate-900">
+                      <div key={item.productId} className="group flex items-center gap-4 p-4 transition-colors hover:bg-slate-50/50 ">
+                        <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl border border-slate-100 bg-white  ">
                           <img
                             src={getSafeImageSrc(item.image, noImage)}
                             onError={(e) => applyImageFallback(e, noImage)}
@@ -1019,17 +990,17 @@ export default function NavBarRetailerComponent() {
                           />
                         </div>
                         <div className="flex flex-1 flex-col gap-1">
-                          <h4 className="line-clamp-1 text-xs font-bold text-slate-900 dark:text-slate-100">{item.productName}</h4>
+                          <h4 className="line-clamp-1 text-xs font-bold text-slate-900 ">{item.productName}</h4>
                           <div className="flex items-center gap-2">
                             <span className="text-xs font-medium text-slate-500">${item.unitPrice}</span>
                             <span className="text-[10px] text-slate-300">/ pack</span>
                           </div>
                           
                           <div className="mt-2 flex items-center gap-3">
-                            <div className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white p-1 dark:border-slate-800 dark:bg-slate-950">
+                            <div className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white p-1  ">
                               <button
                                 onClick={() => handleDecrement(item.productId)}
-                                className="flex h-6 w-6 items-center justify-center rounded-md text-slate-400 transition hover:bg-slate-50 hover:text-orange-500 dark:hover:bg-slate-900"
+                                className="flex h-6 w-6 items-center justify-center rounded-md text-slate-400 transition hover:bg-slate-50 hover:text-orange-500 "
                               >
                                 {loadingProducts2.has(item.productId) ? (
                                   <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} className="h-3 w-3 border-2 border-orange-500 border-t-transparent rounded-full" />
@@ -1041,11 +1012,11 @@ export default function NavBarRetailerComponent() {
                                 type="text"
                                 value={counterLocalStorage[item.productId] || 0}
                                 onChange={(e) => handleInputChange(item.productId, e)}
-                                className="w-8 bg-transparent text-center text-xs font-bold text-slate-900 focus:outline-none dark:text-slate-100"
+                                className="w-8 bg-transparent text-center text-xs font-bold text-slate-900 focus:outline-none "
                               />
                               <button
                                 onClick={() => handleIncrement(item.productId)}
-                                className="flex h-6 w-6 items-center justify-center rounded-md text-slate-400 transition hover:bg-slate-50 hover:text-orange-500 dark:hover:bg-slate-900"
+                                className="flex h-6 w-6 items-center justify-center rounded-md text-slate-400 transition hover:bg-slate-50 hover:text-orange-500 "
                               >
                                 {loadingProducts.has(item.productId) ? (
                                   <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} className="h-3 w-3 border-2 border-orange-500 border-t-transparent rounded-full" />
@@ -1057,10 +1028,10 @@ export default function NavBarRetailerComponent() {
                           </div>
                         </div>
                         <div className="flex flex-col items-end gap-3">
-                          <span className="text-sm font-black text-slate-900 dark:text-slate-100">${item.subTotal.toFixed(2)}</span>
+                          <span className="text-sm font-black text-slate-900 ">${item.subTotal.toFixed(2)}</span>
                           <button
                             onClick={() => onClickDeleteProductInCart(item.productId)}
-                            className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-300 transition hover:bg-red-50 hover:text-red-500 dark:text-slate-600 dark:hover:bg-red-950/20"
+                            className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-300 transition hover:bg-red-50 hover:text-red-500  "
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>
@@ -1070,11 +1041,11 @@ export default function NavBarRetailerComponent() {
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-                    <div className="rounded-full bg-slate-50 p-6 dark:bg-slate-900">
-                      <ShoppingBag className="h-10 w-10 text-slate-200 dark:text-slate-800" />
+                    <div className="rounded-full bg-slate-50 p-6 ">
+                      <ShoppingBag className="h-10 w-10 text-slate-200 " />
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100">Empty Cart</h4>
+                      <h4 className="text-sm font-bold text-slate-900 ">Empty Cart</h4>
                       <p className="text-xs text-slate-500">Your shopping cart is waiting to be filled.</p>
                     </div>
                   </div>
@@ -1082,26 +1053,27 @@ export default function NavBarRetailerComponent() {
               </div>
 
               {productInCartData.length > 0 && (
-                <div className="border-t border-slate-100 bg-slate-50/50 p-5 dark:border-slate-800 dark:bg-slate-900/50">
+                <div className="border-t border-slate-100 bg-slate-50/50 p-5  ">
                   <div className="mb-4 flex items-center justify-between">
                     <span className="text-xs font-medium text-slate-500">Subtotal</span>
-                    <span className="text-lg font-black text-slate-900 dark:text-slate-100">
+                    <span className="text-lg font-black text-slate-900 ">
                       ${productInCartData.reduce((sum, item) => sum + item.subTotal, 0).toFixed(2)}
                     </span>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
-                    <button
+                    <Button
                       onClick={() => setSuccess(!success)}
-                      className="flex h-11 items-center justify-center rounded-xl bg-orange-500 text-sm font-bold text-white shadow-lg shadow-orange-500/20 transition hover:bg-orange-600 active:scale-[0.98]"
+                      className="flex-1 h-11 rounded-xl bg-orange-500 font-bold text-white shadow-lg shadow-orange-500/20 hover:bg-orange-600 active:scale-[0.98]"
                     >
                       Checkout
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={() => setDraft(!draf)}
-                      className="flex h-11 items-center justify-center rounded-xl bg-slate-200 text-sm font-bold text-slate-700 transition hover:bg-slate-300 active:scale-[0.98] dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                      variant="secondary"
+                      className="flex-1 h-11 rounded-xl font-bold text-slate-700 active:scale-[0.98]"
                     >
                       Cancel Order
-                    </button>
+                    </Button>
                   </div>
                 </div>
               )}
@@ -1111,36 +1083,39 @@ export default function NavBarRetailerComponent() {
           {/* User Profile */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border-2 border-white bg-slate-100 shadow-sm transition-transform active:scale-95 dark:border-slate-800 dark:bg-slate-900">
-                <img
-                  src={getSafeImageSrc(profile.profileImage, noImage)}
-                  onError={(e) => applyImageFallback(e, noImage)}
-                  className="h-full w-full object-cover"
-                />
-              </button>
+              <Button variant="ghost" className="relative h-10 w-10 p-0 overflow-hidden rounded-xl border-2 border-white bg-slate-100 shadow-sm transition-transform active:scale-95">
+                {profile?.profileImage ? (
+                  <img
+                    src={profile.profileImage}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <User className="w-5 h-5 text-slate-400" />
+                )}
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56 overflow-hidden rounded-2xl p-0 shadow-2xl">
-              <div className="bg-slate-50/50 p-4 dark:bg-slate-900/50">
+              <div className="bg-slate-50/50 p-4 ">
                 <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Account</p>
-                <p className="line-clamp-1 text-sm font-bold text-slate-900 dark:text-slate-100">
+                <p className="line-clamp-1 text-sm font-bold text-slate-900 ">
                   {profile.firstName} {profile.lastName}
                 </p>
               </div>
               <div className="p-1.5">
                 <DropdownMenuItem asChild>
-                  <NavLink
-                    to="/retailer/profile"
+                  <Link
+                    href="/retailer/profile"
                     onClick={handleClearSearch}
-                    className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-orange-500 focus:bg-slate-50 focus:text-orange-500 dark:text-slate-400 dark:hover:bg-slate-900 dark:hover:text-slate-100"
+                    className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-orange-500 focus:bg-slate-50 focus:text-orange-500   "
                   >
                     <User className="h-4 w-4" />
                     My Profile
-                  </NavLink>
+                  </Link>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-900" />
+                <DropdownMenuSeparator className="bg-slate-100 " />
                 <DropdownMenuItem
                   onClick={onSignOut}
-                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-red-500 transition-colors hover:bg-red-50 hover:text-red-600 focus:bg-red-50 focus:text-red-600 dark:hover:bg-red-950/20"
+                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-red-500 transition-colors hover:bg-red-50 hover:text-red-600 focus:bg-red-50 focus:text-red-600 "
                 >
                   <LogOut className="h-4 w-4" />
                   Sign Out
@@ -1152,7 +1127,7 @@ export default function NavBarRetailerComponent() {
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 lg:hidden dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300"
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 lg:hidden   "
           >
             {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -1160,39 +1135,36 @@ export default function NavBarRetailerComponent() {
       </div>
 
       {/* Mini Navbar - Desktop Navigation */}
-      <nav className="hidden border-t border-slate-100 bg-white dark:border-slate-800/50 dark:bg-slate-950 lg:block">
+      <nav className="hidden border-t border-slate-100 bg-white   lg:block">
         <div className="mx-auto flex h-12 max-w-[105rem] items-center justify-center gap-8 px-8">
           {[
-            { to: "/retailer/home", label: "Home" },
-            { to: "/retailer/order", label: "Order" },
-            { to: "/retailer/favorite", label: "Favorite" },
-            { to: "/retailer/report", label: "Report" },
-            { to: "/retailer/draft", label: "Draft" },
-            { to: "/retailer/order-history", label: "Order History" },
-          ].map((link) => (
-            <NavLink
-              key={link.to}
-              to={link.to}
-              onClick={handleClearSearch}
-              className={({ isActive }) =>
-                `group relative text-sm font-bold transition-colors ${
-                  isActive ? "text-orange-500" : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
-                }`
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  {link.label}
-                  {isActive && (
-                    <motion.div
-                      layoutId="nav-active-retailer"
-                      className="absolute -bottom-[17px] left-0 h-0.5 w-full bg-orange-500"
-                    />
-                  )}
-                </>
-              )}
-            </NavLink>
-          ))}
+            { href: "/retailer/home", label: "Home" },
+            { href: "/retailer/order", label: "Order" },
+            { href: "/retailer/favorite", label: "Favorite" },
+            { href: "/retailer/report", label: "Report" },
+            { href: "/retailer/draft", label: "Draft" },
+            { href: "/retailer/order-history", label: "Order History" },
+          ].map((link) => {
+            const isActive = pathname === link.href;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={handleClearSearch}
+                className={`group relative text-sm font-bold transition-colors ${
+                  isActive ? "text-orange-500" : "text-slate-500 hover:text-slate-900  "
+                }`}
+              >
+                {link.label}
+                {isActive && (
+                  <motion.div
+                    layoutId="nav-active-retailer"
+                    className="absolute -bottom-[17px] left-0 h-0.5 w-full bg-orange-500"
+                  />
+                )}
+              </Link>
+            );
+          })}
         </div>
       </nav>
 
@@ -1212,14 +1184,14 @@ export default function NavBarRetailerComponent() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed inset-y-0 right-0 z-50 w-full max-w-xs border-l border-slate-200 bg-white shadow-2xl dark:border-slate-800 dark:bg-slate-950 lg:hidden"
+              className="fixed inset-y-0 right-0 z-50 w-full max-w-xs border-l border-slate-200 bg-white shadow-2xl   lg:hidden"
             >
               <div className="flex flex-col h-full">
                 <div className="flex items-center justify-between p-6">
-                  <span className="text-lg font-black text-slate-900 dark:text-slate-100">Menu</span>
+                  <span className="text-lg font-black text-slate-900 ">Menu</span>
                   <button
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-50 text-slate-500 dark:bg-slate-900"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-50 text-slate-500 "
                   >
                     <X className="h-5 w-5" />
                   </button>
@@ -1234,7 +1206,7 @@ export default function NavBarRetailerComponent() {
                       onChange={handleFormChange}
                       onKeyDown={(event) => event.key === "Enter" && searchProductByStore()}
                       value={onChangeSearch}
-                      className="w-full rounded-xl border border-slate-100 bg-slate-50 py-2 pl-10 pr-4 text-xs dark:border-slate-800 dark:bg-slate-900"
+                      className="w-full rounded-xl border border-slate-100 bg-slate-50 py-2 pl-10 pr-4 text-xs  "
                       placeholder="Search..."
                     />
                   </div>
@@ -1242,37 +1214,35 @@ export default function NavBarRetailerComponent() {
 
                 <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
                   {[
-                    { to: "/retailer/home", label: "Home" },
-                    { to: "/retailer/order", label: "Order" },
-                    { to: "/retailer/favorite", label: "Favorite" },
-                    { to: "/retailer/report", label: "Report" },
-                    { to: "/retailer/draft", label: "Draft" },
-                    { to: "/retailer/order-history", label: "Order History" },
+                    { href: "/retailer/home", label: "Home" },
+                    { href: "/retailer/order", label: "Order" },
+                    { href: "/retailer/favorite", label: "Favorite" },
+                    { href: "/retailer/report", label: "Report" },
+                    { href: "/retailer/draft", label: "Draft" },
+                    { href: "/retailer/order-history", label: "Order History" },
                   ].map((link) => (
-                    <NavLink
-                      key={link.to}
-                      to={link.to}
+                    <Link
+                      key={link.href}
+                      href={link.href}
                       onClick={() => {
                         handleClearSearch();
                         setIsMobileMenuOpen(false);
                       }}
-                      className={({ isActive }) =>
-                        `flex items-center rounded-xl px-4 py-3 text-sm font-bold transition-all ${
-                          isActive
-                            ? "bg-orange-50 text-orange-600 dark:bg-orange-950/30 dark:text-orange-400"
-                            : "text-slate-600 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-900"
-                        }`
-                      }
+                      className={`flex items-center rounded-xl px-4 py-3 text-sm font-bold transition-all ${
+                        pathname === link.href
+                          ? "bg-orange-50 text-orange-600  "
+                          : "text-slate-600 hover:bg-slate-50  "
+                      }`}
                     >
                       {link.label}
-                    </NavLink>
+                    </Link>
                   ))}
                 </nav>
 
-                <div className="p-6 border-t border-slate-100 dark:border-slate-900">
+                <div className="p-6 border-t border-slate-100 ">
                   <button
                     onClick={onSignOut}
-                    className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-bold text-red-600 transition hover:bg-red-100 dark:border-red-950/20 dark:bg-red-950/10"
+                    className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-bold text-red-600 transition hover:bg-red-100  "
                   >
                     <LogOut className="h-4 w-4" />
                     Sign Out
@@ -1288,10 +1258,10 @@ export default function NavBarRetailerComponent() {
       <Dialog open={draf} onOpenChange={(open) => !open && setDraft(!draf)}>
         <DialogContent className="max-w-md rounded-2xl p-0 overflow-hidden">
           <div className="p-8 text-center">
-            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-red-50 text-red-500 dark:bg-red-950/20">
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-red-50 text-red-500 ">
               <XCircle className="h-10 w-10" />
             </div>
-            <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">Cancel Order?</h3>
+            <h3 className="text-xl font-bold text-slate-900 ">Cancel Order?</h3>
             <p className="mt-2 text-sm text-slate-500">
               Are you sure you want to cancel this order? This action cannot be undone.
             </p>
@@ -1304,7 +1274,7 @@ export default function NavBarRetailerComponent() {
               </button>
               <button
                 onClick={() => handleClickCancel("no")}
-                className="flex-1 rounded-xl bg-slate-100 py-3 text-sm font-bold text-slate-600 transition hover:bg-slate-200 active:scale-[0.98] dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                className="flex-1 rounded-xl bg-slate-100 py-3 text-sm font-bold text-slate-600 transition hover:bg-slate-200 active:scale-[0.98]   "
               >
                 No, Go Back
               </button>
@@ -1316,10 +1286,10 @@ export default function NavBarRetailerComponent() {
       <Dialog open={success} onOpenChange={(open) => !open && setSuccess(!success)}>
         <DialogContent className="max-w-md rounded-2xl p-0 overflow-hidden">
           <div className="p-8 text-center">
-            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-50 text-green-500 dark:bg-green-950/20">
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-50 text-green-500 ">
               <CheckCircle2 className="h-10 w-10" />
             </div>
-            <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">Confirm Order</h3>
+            <h3 className="text-xl font-bold text-slate-900 ">Confirm Order</h3>
             <p className="mt-2 text-sm text-slate-500">
               Ready to place your order with <span className="text-orange-500 font-bold">{localStoreName}</span>?
             </p>
@@ -1332,7 +1302,7 @@ export default function NavBarRetailerComponent() {
               </button>
               <button
                 onClick={() => handleClickCheckOut("no")}
-                className="flex-1 rounded-xl bg-slate-100 py-3 text-sm font-bold text-slate-600 transition hover:bg-slate-200 active:scale-[0.98] dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                className="flex-1 rounded-xl bg-slate-100 py-3 text-sm font-bold text-slate-600 transition hover:bg-slate-200 active:scale-[0.98]   "
               >
                 Not Now
               </button>
@@ -1344,10 +1314,10 @@ export default function NavBarRetailerComponent() {
       <Dialog open={success2} onOpenChange={(open) => !open && setSuccess2(!success2)}>
         <DialogContent className="max-w-md rounded-2xl p-0 overflow-hidden">
           <div className="p-8 text-center">
-            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-orange-50 text-orange-500 dark:bg-orange-950/20">
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-orange-50 text-orange-500 ">
               <Package className="h-10 w-10" />
             </div>
-            <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">Save as Draft</h3>
+            <h3 className="text-xl font-bold text-slate-900 ">Save as Draft</h3>
             <p className="mt-2 text-sm text-slate-500">
               Save your current cart to finish it later?
             </p>
@@ -1360,7 +1330,7 @@ export default function NavBarRetailerComponent() {
               </button>
               <button
                 onClick={() => draftStore("no")}
-                className="flex-1 rounded-xl bg-slate-100 py-3 text-sm font-bold text-slate-600 transition hover:bg-slate-200 active:scale-[0.98] dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                className="flex-1 rounded-xl bg-slate-100 py-3 text-sm font-bold text-slate-600 transition hover:bg-slate-200 active:scale-[0.98]   "
               >
                 Cancel
               </button>
@@ -1372,17 +1342,17 @@ export default function NavBarRetailerComponent() {
       <Dialog open={confOrder} onOpenChange={(open) => !open && setConfOrder(!confOrder)}>
         <DialogContent className="max-w-md rounded-2xl p-0 overflow-hidden">
           <div className="p-8 text-center">
-            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-blue-50 text-blue-500 dark:bg-blue-950/20">
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-blue-50 text-blue-500 ">
               <Clock className="h-10 w-10" />
             </div>
-            <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">Ongoing Order</h3>
+            <h3 className="text-xl font-bold text-slate-900 ">Ongoing Order</h3>
             <p className="mt-2 text-sm text-slate-500">
               Please checkout your previous order before starting a new one.
             </p>
             <div className="mt-8">
               <button
                 onClick={() => setConfOrder(!confOrder)}
-                className="w-full rounded-xl bg-slate-900 py-3 text-sm font-bold text-white transition hover:bg-slate-800 active:scale-[0.98] dark:bg-slate-800 dark:hover:bg-slate-700"
+                className="w-full rounded-xl bg-slate-900 py-3 text-sm font-bold text-white transition hover:bg-slate-800 active:scale-[0.98]  "
               >
                 Got it
               </button>

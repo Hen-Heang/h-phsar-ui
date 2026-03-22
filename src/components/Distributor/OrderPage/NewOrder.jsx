@@ -51,7 +51,7 @@ export default function NewOrder({ toggleTab2 }) {
 
   // WebSocket Connection
   useEffect(() => {
-    const Sock = new SockJS("http://localhost:8888/ws");
+    const Sock = new SockJS(`${process.env.NEXT_PUBLIC_WS_URL || "http://localhost:8888"}/ws`);
     const stompClient = over(Sock);
     stompClient.connect({}, () => {
       stompClient.subscribe(`/user/${localStorage.getItem("userId")}/private`, (payload) => {
@@ -131,9 +131,9 @@ export default function NewOrder({ toggleTab2 }) {
           <PropagateLoader color="#0f766e" />
         </div>
       ) : newOrderList.length === 0 ? (
-        <div className="flex h-96 flex-col items-center justify-center rounded-[3rem] border-2 border-dashed border-slate-200 bg-white/50 dark:border-slate-800 dark:bg-slate-900/50">
-          <ShoppingBag className="h-16 w-16 text-slate-200 dark:text-slate-800" />
-          <h3 className="mt-6 text-xl font-bold text-slate-900 dark:text-white">No New Orders</h3>
+        <div className="flex h-96 flex-col items-center justify-center rounded-[3rem] border-2 border-dashed border-slate-200 bg-white/50  ">
+          <ShoppingBag className="h-16 w-16 text-slate-200 " />
+          <h3 className="mt-6 text-xl font-bold text-slate-900 ">No New Orders</h3>
           <p className="mt-2 text-slate-500">Wait for retailers to place new stock requests.</p>
         </div>
       ) : (
@@ -168,10 +168,10 @@ export default function NewOrder({ toggleTab2 }) {
                 previousLabel={<Plus className="h-4 w-4 rotate-90" />}
                 nextLabel={<Plus className="h-4 w-4 -rotate-90" />}
                 className="flex items-center gap-2"
-                pageClassName="h-10 w-10 flex items-center justify-center rounded-xl text-sm font-bold transition hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500"
-                activeClassName="!bg-teal-600 !text-white shadow-lg shadow-teal-600/20"
-                previousClassName="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-200 text-slate-400 hover:bg-white dark:border-slate-800"
-                nextClassName="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-200 text-slate-400 hover:bg-white dark:border-slate-800"
+                pageClassName="h-10 w-10 flex items-center justify-center rounded-xl text-sm font-bold transition hover:bg-slate-100  text-slate-500"
+                activeClassName="!bg-blue-600 !text-white shadow-lg shadow-blue-600/20"
+                previousClassName="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-200 text-slate-400 hover:bg-white "
+                nextClassName="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-200 text-slate-400 hover:bg-white "
                 breakLabel="..."
               />
             </div>

@@ -51,10 +51,10 @@ export default function ProdunctNewOrder(props) {
                                     <tbody className="text-black w-full bg-slate-50">
                                         {!props.loadingPro ?
                                             productList.map((item, index) => (
-                                                <tr key={index} className="bg-white border-b text-black dark:bg-gray-800 text-sm">
+                                                <tr key={index} className="bg-white border-b text-black  text-sm">
                                                     <td
                                                         scope="row"
-                                                        className="px-6 py-2 0 whitespace-nowrap dark:text-white"
+                                                        className="px-6 py-2 0 whitespace-nowrap "
                                                     >
                                                         {index + 1}
                                                     </td>

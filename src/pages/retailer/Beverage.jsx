@@ -24,7 +24,7 @@ import {
   setLoadingCategoryByShop,
 } from "../../redux/slices/retailer/homepageSlice/allShopSlice";
 import { ToastContainer, toast } from "react-toastify";
-import { useLocation, useParams } from "react-router-dom";
+import { useSearchParams } from "next/navigation";
 import SkeletonCard from "../../components/retailler/skeletons/SkeletonCard";
 import { useRef } from "react";
 
@@ -40,9 +40,9 @@ export default function Beverage() {
     (state) => state.getDataAllShop.loadingCategory
   );
 
-  const location = useLocation();
-  const storeName = new URLSearchParams(location.search).get("storeName");
-  const id = new URLSearchParams(location.search).get("storeId");
+  const searchParams = useSearchParams();
+  const storeName = searchParams.get("storeName");
+  const id = searchParams.get("storeId");
 
   const [disabledButtons, setDisabledButtons] = useState(new Set());
   const [loadingProducts, setLoadingProducts] = useState(new Set());
@@ -144,7 +144,6 @@ export default function Beverage() {
       localStorage.setItem("counter", JSON.stringify(updatedCounters));
       window.dispatchEvent(new CustomEvent("localStorageUpdated", { detail: updatedCounters }));
     } catch (error) {
-      console.error(error);
     } finally {
       setLoadingProducts2((prev) => {
         const next = new Set(prev);
@@ -224,11 +223,11 @@ export default function Beverage() {
           ))}
         </div>
       ) : (
-        <div className="flex min-h-[400px] w-full flex-col items-center justify-center rounded-[2rem] border-2 border-dashed border-slate-200 bg-white/50 dark:border-slate-800 dark:bg-slate-900/50">
-          <div className="rounded-full bg-slate-100 p-6 dark:bg-slate-800">
-            <ShoppingCart className="h-12 w-12 text-slate-300 dark:text-slate-600" />
+        <div className="flex min-h-[400px] w-full flex-col items-center justify-center rounded-[2rem] border-2 border-dashed border-slate-200 bg-white/50  ">
+          <div className="rounded-full bg-slate-100 p-6 ">
+            <ShoppingCart className="h-12 w-12 text-slate-300 " />
           </div>
-          <h3 className="mt-6 text-xl font-bold text-slate-900 dark:text-slate-100">No Category Products</h3>
+          <h3 className="mt-6 text-xl font-bold text-slate-900 ">No Category Products</h3>
           <p className="mt-2 text-slate-500">No products found in this category.</p>
         </div>
       )}

@@ -13,9 +13,8 @@ import {
   getAllNotificationsDistributor,
   setUpdateDateNotification,
 } from "../../../redux/slices/distributor/notification/notificationSlice";
-import closeWhite from "../../../assets/images/distributor/close_white.png";
-import noNotification from "../../../assets/images/distributor/no_notification.png";
-import fallbackAvatar from "../../../assets/images/profile_acc.png";
+import { X, BellOff, User } from "lucide-react";
+
 export const CancelNotification = () => {
   const dispatch = useDispatch();
 
@@ -109,13 +108,8 @@ export const CancelNotification = () => {
                           ? "Order Complete"
                           : "Out of stock"}
                       </h3>
-                      <button onClick={() => setShowModal(false)}>
-                        <span className="h-6 w-6 z-20">
-                          <img
-                            src={closeWhite}
-                            alt=""
-                          />
-                        </span>
+                      <button onClick={() => setShowModal(false)} className="text-white hover:text-gray-200 transition-colors">
+                        <X className="h-6 w-6" />
                       </button>
                     </div>
                     {/*body*/}
@@ -126,20 +120,17 @@ export const CancelNotification = () => {
                             <div className="relative flex flex-col min-w-0 break-words bg-white w-full ">
                               <div className="">
                                 <div className="flex flex-wrap justify-center">
-                                  <img
-                                    alt="..."
-                                    src={
-                                      dataNotification.image === null ||
-                                      dataNotification.image === ""
-                                        ? fallbackAvatar
-                                        : dataNotification.image
-                                    }
-                                    className="shadow-xl rounded-full align-middle border-none w-[100px] h-[100px]"
-                                    onError={(e) => {
-                                      e.currentTarget.onerror = null;
-                                      e.currentTarget.src = fallbackAvatar;
-                                    }}
-                                  />
+                                  {dataNotification.image ? (
+                                    <img
+                                      alt="..."
+                                      src={dataNotification.image}
+                                      className="shadow-xl rounded-full align-middle border-none w-[100px] h-[100px] object-cover"
+                                    />
+                                  ) : (
+                                    <div className="w-[100px] h-[100px] rounded-full bg-slate-100 flex items-center justify-center shadow-xl">
+                                      <User className="w-12 h-12 text-slate-400" />
+                                    </div>
+                                  )}
                                 </div>
                                 <div className="text-center mt-6">
                                   <h3 className="text-2xl font-semibold leading-normal mb-2 text-gray-800 mb-2 text-primaryColor">
@@ -181,11 +172,7 @@ export const CancelNotification = () => {
       {noDataNotifications ? (
           <div className="w-full h-full">
             <div className="flex mx-auto justify-center items-center flex-col h-full gap-2">
-              <img
-                src={noNotification}
-                className=""
-                alt="loading.."
-              />
+              <BellOff className="w-12 h-12 text-slate-300 mb-2" />
               No notifications
             </div>
           </div>
@@ -200,15 +187,13 @@ export const CancelNotification = () => {
               onClick={() => handleGetDataNotification(item)}
             >
               <div className="flex mx-auto justify-evenly items-center w-[95%] py-2">
-                <img
-                  src={item.image || fallbackAvatar}
-                  alt=""
-                  className=" w-12 h-12 rounded-full"
-                  onError={(e) => {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = fallbackAvatar;
-                  }}
-                />
+                {item.image ? (
+                  <img src={item.image} alt="" className="w-12 h-12 rounded-full object-cover" />
+                ) : (
+                  <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center">
+                    <User className="w-6 h-6 text-slate-400" />
+                  </div>
+                )}
                 <div className="w-72 ml-5">
                   <h2
                     className={`text-lg font-medium ${
@@ -245,26 +230,6 @@ export const CancelNotification = () => {
           ) : null
         ))}
       </div>
-      {/* <div className="flex flex-col gap-1 mt-3 overflow-auto h-96 ">
-      <List
-        sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
-      >
-        {allNotifications.map((item) => (
-          <ListItem  className={`${
-            item.seen === false ? "bg-blue-100" : null
-          } w-full rounded-xl cursor-pointer`}>
-            <ListItemAvatar>
-            <img src={item.image} alt="" className=" w-10 h-10 rounded-full" />
-            </ListItemAvatar>
-            <ListItemText primary={item.store} secondary={item.title}  className={`text-xs ${
-                  item.title === "Out of stock."
-                    ? "text-red-600"
-                    : null
-                }`}/>
-          </ListItem>
-        ))}
-      </List>
-    </div> */}
     </div>
   );
 };

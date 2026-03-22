@@ -18,7 +18,8 @@ export function getSafeImageSrc(value, fallback) {
 }
 
 export function applyImageFallback(event, fallback) {
-  if (event?.currentTarget && event.currentTarget.src !== fallback) {
+  if (event?.currentTarget && typeof fallback === "string") {
+    event.currentTarget.onerror = null; // prevent infinite loop
     event.currentTarget.src = fallback;
   }
 }

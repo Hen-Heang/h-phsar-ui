@@ -8,7 +8,6 @@ export const get_all_preparing = async(dispatch)=>{
         return response;
     }
     catch(e){
-        console.log("Error : ",e);
     }
 }
 export const get_finish = async(id)=>{
@@ -21,6 +20,5 @@ export const get_finish = async(id)=>{
         return response;
     }
     catch(e){
-        console.log("Error : ",e);
     }
 }

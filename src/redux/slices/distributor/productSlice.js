@@ -26,7 +26,6 @@ const productSlice = createSlice({
       //   state.task.push(action.payload);
     },
     deleteProductDistributor: (state, action) => {
-      console.log("action ", action.payload);
       state.product = state.product.filter(
         (product) => product.id !== action.payload
       );

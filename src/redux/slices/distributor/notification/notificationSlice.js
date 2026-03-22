@@ -11,7 +11,6 @@ const notificationSlice = createSlice({
       state.loadingNewOrder = action.payload;
     },
     getAllNotificationsDistributor: (state, action) => {
-      console.log("first notification received",action.payload);
       state.dataNotification = action.payload;
     },
     setUpdateDateNotification: (state, action) => {

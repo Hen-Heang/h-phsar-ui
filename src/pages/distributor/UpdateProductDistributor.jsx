@@ -5,6 +5,8 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import Link from "next/link";
 import Switch from "react-switch";
+import { CircleDollarSign, ChevronDown, Save, X } from "lucide-react";
+
 const UpdateProductDistributor = () => {
 
   const [storeDataUpdate, setStoreDataUpdate] = useState([]);
@@ -69,11 +71,7 @@ const UpdateProductDistributor = () => {
                     </div>
                     {/* Price */}
                     <div className="w-full md:w-1/2 px-3 relative">
-                      <img
-                        src={(require("../../assets/images/distributor/dollar.png")?.default || require("../../assets/images/distributor/dollar.png"))}
-                        className="absolute top-10 left-6 "
-                        alt=""
-                      />
+                      <CircleDollarSign className="absolute top-10 left-6 text-gray-400 w-5 h-5" />
                       <label
                         className="block uppercase tracking-wide text-gray-700 text-sm  font-bold mb-2"
                         htmlFor="grid-last-name"
@@ -112,10 +110,7 @@ const UpdateProductDistributor = () => {
                           <option value="Water">Water</option>
                         </select>
                         <div className="pointer-events-none absolute inset-y-0 right-1 flex items-center px-2 text-gray-700">
-                          <img
-                            src={(require("../../assets/images/distributor/down_arrow.png")?.default || require("../../assets/images/distributor/down_arrow.png"))}
-                            alt=""
-                          />
+                          <ChevronDown className="w-4 h-4" />
                         </div>
                       </div>
                     </div>
@@ -125,7 +120,7 @@ const UpdateProductDistributor = () => {
                         type="button"
                         data-te-ripple-init
                         data-te-ripple-color="light"
-                        className="inline-block rounded bg-primary mt-6 px-9 py-[8px]  font-medium  leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                        className="inline-block rounded bg-primary mt-6 px-9 py-[8px]  font-medium  leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] 0_4px_9px_-4px_rgba(59,113,202,0.5)] 0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] 0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] 0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
                       >
                         Add new
                       </button>
@@ -153,11 +148,11 @@ const UpdateProductDistributor = () => {
                   <div className="flex items-center justify-center w-full">
                     <img
                       src={(require("../../assets/images/distributor/test_product.png")?.default || require("../../assets/images/distributor/test_product.png"))}
-                      className="flex flex-col items-center justify-center w-full h-64  rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                      className="flex flex-col items-center justify-center w-full h-64  rounded-lg cursor-pointer bg-gray-50   hover:bg-gray-100   "
                     />
                   </div>
                   <input
-                    className="mt-10 block w-full text-sm text-[#777] border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                    className="mt-10 block w-full text-sm text-[#777] border border-gray-300 rounded-lg cursor-pointer bg-gray-50  focus:outline-none   "
                     id="file_input"
                     type="file"
                   />
@@ -180,7 +175,7 @@ const UpdateProductDistributor = () => {
 
                       <label
                         htmlFor="hs-tooltip-example"
-                        className="text-sm text-gray-500 ml-3 dark:text-gray-400"
+                        className="text-sm text-gray-500 ml-3 "
                       >
                         {/* Allow push notifications {checked ? "on" : "off"} */}
                       </label>
@@ -194,22 +189,16 @@ const UpdateProductDistributor = () => {
                   type="submit"
                   data-te-ripple-init
                   data-te-ripple-color="light"
-                  className="col-span-2 flex text-lg items-center gap-3 rounded-lg bg-primary px-3 py-2 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                  className="col-span-2 flex text-lg items-center gap-3 rounded-lg bg-primary px-3 py-2 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] 0_4px_9px_-4px_rgba(59,113,202,0.5)] 0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] 0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] 0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
                 >
-                  <img
-                    src={(require("../../assets/images/distributor/save.png")?.default || require("../../assets/images/distributor/save.png"))}
-                    alt=""
-                  />{" "}
+                  <Save className="w-5 h-5" />
                   Save
                 </button>
                 <Link
                   href="/distributor/product"
-                  className="col-span-2 flex text-lg items-center gap-3 rounded-lg bg-[#FF7272] px-3 py-2 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                  className="col-span-2 flex text-lg items-center gap-3 rounded-lg bg-[#FF7272] px-3 py-2 font-medium leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] 0_4px_9px_-4px_rgba(59,113,202,0.5)] 0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] 0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] 0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
                 >
-                  <img
-                    src={(require("../../assets/images/distributor/close_white.png")?.default || require("../../assets/images/distributor/close_white.png"))}
-                    alt=""
-                  />{" "}
+                  <X className="w-5 h-5" />
                   Cancel
                 </Link>
               </div>

@@ -47,10 +47,10 @@ export default function ProductDetail(props) {
                                 <tbody className="text-black">
                                     {! props.loadingPro ?
                                     orderList.map((item, index) => (
-                                        <tr className="bg-white border-b text-black dark:bg-gray-800 text-sm">
+                                        <tr className="bg-white border-b text-black  text-sm">
                                         <td
                                             scope="row"
-                                            className="px-6 py-3 0 whitespace-nowrap dark:text-white"
+                                            className="px-6 py-3 0 whitespace-nowrap "
                                         > { (index+1)}  
                                         </td>
                                         <td

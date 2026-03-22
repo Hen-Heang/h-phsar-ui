@@ -89,8 +89,8 @@ export const AllNotification = () => {
       <div className="flex flex-col gap-1.5 max-h-[400px] overflow-y-auto custom-scrollbar pr-1">
         {noDataNotifications || allNotifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="w-12 h-12 rounded-full bg-slate-50 dark:bg-slate-900 flex items-center justify-center mb-3">
-              <Bell className="w-6 h-6 text-slate-300 dark:text-slate-700" />
+            <div className="w-12 h-12 rounded-full bg-slate-50  flex items-center justify-center mb-3">
+              <Bell className="w-6 h-6 text-slate-300 " />
             </div>
             <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">No notifications</p>
           </div>
@@ -104,31 +104,31 @@ export const AllNotification = () => {
               onClick={() => handleReadNotification(item)}
               className={`group relative flex items-start gap-3 p-3 rounded-xl cursor-pointer transition-all ${
                 item.seen 
-                  ? "hover:bg-slate-50 dark:hover:bg-slate-900" 
-                  : "bg-teal-50/50 dark:bg-teal-900/10 border-l-4 border-teal-500"
+                  ? "hover:bg-slate-50 " 
+                  : "bg-blue-50/50  border-l-4 border-blue-600"
               }`}
             >
               <div className="relative flex-shrink-0">
                 <img
                   src={item.image}
                   alt=""
-                  className="w-10 h-10 rounded-full object-cover border border-slate-100 dark:border-slate-800"
+                  className="w-10 h-10 rounded-full object-cover border border-slate-100 "
                 />
                 {!item.seen && (
-                  <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-teal-500 rounded-full border-2 border-white dark:border-slate-950" />
+                  <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-blue-600 rounded-full border-2 border-white " />
                 )}
               </div>
               
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-2 mb-0.5">
-                  <h4 className="text-sm font-black text-slate-900 dark:text-white truncate">
+                  <h4 className="text-sm font-black text-slate-900  truncate">
                     {item.store}
                   </h4>
                   <span className="text-[10px] font-medium text-slate-400 whitespace-nowrap">
                     {new Date(item.createdDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
-                <p className={`text-xs line-clamp-1 ${!item.seen ? 'text-slate-700 dark:text-slate-300 font-bold' : 'text-slate-500'}`}>
+                <p className={`text-xs line-clamp-1 ${!item.seen ? 'text-slate-700  font-bold' : 'text-slate-500'}`}>
                   {item.title}
                 </p>
               </div>
@@ -145,12 +145,12 @@ export const AllNotification = () => {
         <DialogContent className="max-w-md rounded-[2.5rem] p-0 overflow-hidden border-none shadow-2xl">
           {selectedNotification && (
             <>
-              <div className="bg-teal-600 px-8 py-10 text-white relative">
+              <div className="bg-blue-600 px-8 py-10 text-white relative">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="p-2 bg-white/20 backdrop-blur-md rounded-xl">
                     {getNotificationIcon(selectedNotification.notificationType)}
                   </div>
-                  <span className="text-xs font-black uppercase tracking-widest text-teal-100">
+                  <span className="text-xs font-black uppercase tracking-widest text-blue-100">
                     {getNotificationTitle(selectedNotification.notificationType)}
                   </span>
                 </div>
@@ -171,27 +171,27 @@ export const AllNotification = () => {
                     alt=""
                   />
                   <div>
-                    <h4 className="text-lg font-black text-slate-900 dark:text-white">{selectedNotification.retailerName}</h4>
+                    <h4 className="text-lg font-black text-slate-900 ">{selectedNotification.retailerName}</h4>
                     <div className="flex items-center gap-3 mt-1">
                       <div className="flex items-center gap-1 text-xs text-slate-500 font-medium">
-                        <Phone className="w-3 h-3 text-teal-500" /> {selectedNotification.phone}
+                        <Phone className="w-3 h-3 text-blue-600" /> {selectedNotification.phone}
                       </div>
                       <div className="flex items-center gap-1 text-xs text-slate-500 font-medium">
-                        <MapPin className="w-3 h-3 text-teal-500" /> {selectedNotification.address}
+                        <MapPin className="w-3 h-3 text-blue-600" /> {selectedNotification.address}
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="p-6 rounded-[2rem] bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800">
-                  <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                <div className="p-6 rounded-[2rem] bg-slate-50  border border-slate-100 ">
+                  <p className="text-sm leading-relaxed text-slate-600 ">
                     {selectedNotification.description}
                   </p>
                 </div>
 
                 <div className="mt-10">
                   <Button 
-                    className="w-full h-14 rounded-2xl bg-teal-600 hover:bg-teal-700 font-bold text-white shadow-lg shadow-teal-600/20"
+                    className="w-full h-14 rounded-2xl bg-blue-600 hover:bg-blue-700 font-bold text-white shadow-lg shadow-blue-600/20"
                     onClick={() => setShowModal(false)}
                   >
                     Dismiss Notification

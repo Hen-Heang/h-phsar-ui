@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   ChevronLeft, 
@@ -60,8 +60,8 @@ import { Button } from "@/components/ui/button";
 
 export default function DistributorStoreRetailer() {
   const dispatch = useDispatch();
-  const location = useLocation();
-  const id = new URLSearchParams(location.search).get("storeId");
+  const searchParams = useSearchParams();
+  const id = searchParams.get("storeId");
   
   const { oneShopData, categoryData, loadingStore, loadingCard, loadingPrice, loadingAdded } = useSelector((state) => state.getDataAllShop);
   
@@ -69,7 +69,7 @@ export default function DistributorStoreRetailer() {
   const [selectedOption, setSelectedOption] = useState("all");
 
   useEffect(() => {
-    document.title = `H-Phsar | ${oneShopData.name || 'Shop'}`;
+    document.title = `StockFlow | ${oneShopData.name || 'Shop'}`;
   }, [oneShopData.name]);
 
   useEffect(() => {
@@ -97,7 +97,6 @@ export default function DistributorStoreRetailer() {
         dispatch(getAllCategoryByStoreId(catRes?.data?.data ?? []));
         dispatch(setLoadingCategory(false));
       } catch (err) {
-        console.error("Failed to load store data", err);
       }
     };
 
@@ -137,7 +136,7 @@ export default function DistributorStoreRetailer() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50/50 pb-20 dark:bg-slate-950">
+    <div className="min-h-screen bg-slate-50/50 pb-20 ">
       {/* Header / Banner */}
       <div className="relative h-[250px] w-full overflow-hidden sm:h-[350px] lg:h-[400px]">
         <img
@@ -159,15 +158,15 @@ export default function DistributorStoreRetailer() {
 
       <div className="mx-auto -mt-20 w-[90%] max-w-7xl">
         {/* Store Profile Card */}
-        <div className="relative overflow-hidden rounded-[2.5rem] border border-slate-200 bg-white p-8 shadow-2xl shadow-slate-200/50 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none">
+        <div className="relative overflow-hidden rounded-[2.5rem] border border-slate-200 bg-white p-8 shadow-2xl shadow-slate-200/50   ">
           <div className="flex flex-col items-start justify-between gap-8 lg:flex-row lg:items-center">
             <div className="flex flex-1 flex-col gap-4">
               <div className="flex items-center gap-3">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-100 text-orange-600 dark:bg-orange-950/30">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-100 text-orange-600 ">
                   <Store className="h-8 w-8" />
                 </div>
                 <div>
-                  <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl">
+                  <h1 className="text-3xl font-black tracking-tight text-slate-900  sm:text-4xl">
                     {oneShopData.name}
                   </h1>
                   <p className="text-sm font-medium text-slate-500">Official Distributor Store</p>
@@ -181,7 +180,7 @@ export default function DistributorStoreRetailer() {
                       <Star key={i} className={`h-4 w-4 ${i < Math.floor(oneShopData.rating || 0) ? 'fill-current' : 'text-slate-200'}`} />
                     ))}
                   </div>
-                  <span className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                  <span className="text-sm font-bold text-slate-700 ">
                     {parseFloat(oneShopData.rating || 0).toFixed(1)} Rating
                   </span>
                 </div>
@@ -211,7 +210,7 @@ export default function DistributorStoreRetailer() {
                 <Heart className={`mr-2 h-5 w-5 ${oneShopData.isBookmarked ? "fill-current" : ""}`} />
                 {oneShopData.isBookmarked ? "Bookmarked" : "Bookmark"}
               </Button>
-              <Button className="h-14 rounded-2xl bg-slate-900 px-8 font-bold text-white hover:bg-slate-800 dark:bg-orange-500 dark:hover:bg-orange-600">
+              <Button className="h-14 rounded-2xl bg-slate-900 px-8 font-bold text-white hover:bg-slate-800  ">
                 Contact Store
               </Button>
             </div>
@@ -221,13 +220,13 @@ export default function DistributorStoreRetailer() {
         {/* Toolbar: Sorting & Navigation */}
         <div className="mt-12 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           {/* Navigation Tabs */}
-          <nav className="flex gap-1 overflow-x-auto rounded-2xl bg-white p-1.5 shadow-sm dark:bg-slate-900 scrollbar-hide">
+          <nav className="flex gap-1 overflow-x-auto rounded-2xl bg-white p-1.5 shadow-sm  scrollbar-hide">
             <button
               onClick={() => toggleTab(0)}
               className={`whitespace-nowrap rounded-xl px-6 py-2.5 text-sm font-bold transition-all ${
                 toggleState === 0
                   ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
-                  : "text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+                  : "text-slate-500 hover:bg-slate-50 hover:text-slate-900   "
               }`}
             >
               All Products
@@ -239,7 +238,7 @@ export default function DistributorStoreRetailer() {
                 className={`whitespace-nowrap rounded-xl px-6 py-2.5 text-sm font-bold transition-all ${
                   toggleState === cat.id
                     ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
-                    : "text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+                    : "text-slate-500 hover:bg-slate-50 hover:text-slate-900   "
                 }`}
               >
                 {cat.name}
@@ -251,10 +250,10 @@ export default function DistributorStoreRetailer() {
           {toggleState === 0 && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="h-12 min-w-[200px] justify-between rounded-2xl border-slate-200 dark:border-slate-800">
+                <Button variant="outline" className="h-12 min-w-[200px] justify-between rounded-2xl border-slate-200 ">
                   <div className="flex items-center gap-2">
                     <TrendingUp className="h-4 w-4 text-orange-500" />
-                    <span className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                    <span className="text-sm font-bold text-slate-700 ">
                       Sort: {selectedOption === 'all' ? 'Default' : selectedOption === 'price' ? 'By Price' : 'By Date'}
                     </span>
                   </div>
@@ -266,12 +265,12 @@ export default function DistributorStoreRetailer() {
                   <LayoutGrid className="h-4 w-4 text-slate-400" />
                   <span className="font-bold">Default View</span>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-800" />
+                <DropdownMenuSeparator className="bg-slate-100 " />
                 <DropdownMenuItem onClick={() => handleDropdownChange("price")} className="gap-3 rounded-xl py-3">
                   <DollarSign className="h-4 w-4 text-slate-400" />
                   <span className="font-bold">Sort by Price</span>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-800" />
+                <DropdownMenuSeparator className="bg-slate-100 " />
                 <DropdownMenuItem onClick={() => handleDropdownChange("recent")} className="gap-3 rounded-xl py-3">
                   <Calendar className="h-4 w-4 text-slate-400" />
                   <span className="font-bold">Recently Added</span>

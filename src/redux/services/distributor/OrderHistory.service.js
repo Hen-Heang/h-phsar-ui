@@ -9,6 +9,6 @@ export const get_order_history=async(dispatch)=>{
         return response;
     }
     catch(e){
-        console.log("Error",e);
+        return e.response || e;
     }
 }

@@ -8,7 +8,6 @@ export const get_all_complete=async(dispatch)=>{
         return response;
     }
     catch(e){
-        console.log("Error",e)
         dispatch(setLoadingCompleted(false))
         return e.response
     }
@@ -19,7 +18,6 @@ export const get_all_complete_withoutLoading =async()=>{
         return response;
     }
     catch(e){
-        console.log("Error",e)
         return e.response
     }
 }

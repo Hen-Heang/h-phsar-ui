@@ -8,7 +8,6 @@ export const get_all_dispatch= async(dispatch)=>{
         return response;
     }
     catch(e){
-        console.log("Error: "+e);
         return e.response
     }
 }
@@ -20,7 +19,6 @@ export const get_delivered = async(id)=>{
         return response;
     }
     catch(e){
-        console.log("Error:"+e);
         return e.response
     }
 }

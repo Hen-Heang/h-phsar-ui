@@ -11,7 +11,6 @@ const searchSlice = createSlice({
     },
     reducers:{
         getSearchStore : (state,action) =>{
-            console.log("slice :",action.payload)
             state.item = action.payload;
         },
         // getSearchCategory : (state,action)=>{
@@ -22,7 +21,6 @@ const searchSlice = createSlice({
             state.loading = action.payload;
         },
         setError : (state,action)=>{
-            console.log("action : ",action.payload)
             state.error = action.payload;
         }
     }

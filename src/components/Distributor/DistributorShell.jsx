@@ -1,11 +1,23 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 
 export default function DistributorShell({ children }) {
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+    if (!token || role !== "1") {
+      router.replace("/sign-in");
+    }
+  }, [router]);
+
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors flex">
+    <div className="min-h-screen bg-slate-50  transition-colors flex">
       {/* Sidebar - Fixed width on desktop */}
       <div className="hidden lg:block w-72 flex-shrink-0">
         <Sidebar />

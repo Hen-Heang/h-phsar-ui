@@ -22,7 +22,7 @@ chartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 function ReportDistributor() {
   useEffect(() => {
-    document.title = "H-Phsar | Reports";
+    document.title = "StockFlow | Reports";
   }, []);
 
   const [startDate, setStartDate] = useState(dayjs().subtract(6, 'month').format("YYYY-MM"));
@@ -50,7 +50,7 @@ function ReportDistributor() {
     const fetchData = async () => {
       const formattedStartDate = dayjs(startDate).startOf('month').format("YYYY-MM-DD");
       const formattedEndDate = dayjs(endDate).endOf('month').format("YYYY-MM-DD");
-      const url = `http://localhost:8888/api/v1/distributor/reports?startDate=${formattedStartDate}&endDate=${formattedEndDate}`;
+      const url = `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8888"}/api/v1/distributor/reports?startDate=${formattedStartDate}&endDate=${formattedEndDate}`;
       try {
         const response = await api.get(url);
         if (response.data?.data) {
@@ -59,7 +59,6 @@ function ReportDistributor() {
           setGraphLabel(response.data.data.periodName || []);
         }
       } catch (error) {
-        console.error("Error fetching report data:", error);
       }
     };
     fetchData();
@@ -100,24 +99,24 @@ function ReportDistributor() {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-6 p-4 md:p-6 dark:bg-slate-950 min-h-screen"
+      className="space-y-6 p-4 md:p-6  min-h-screen"
     >
       <ToastContainer />
       
-      <Card className="border-none shadow-sm bg-white dark:bg-slate-900">
+      <Card className="border-none shadow-sm bg-white ">
         <CardHeader className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-teal-100 dark:bg-teal-900/30 rounded-lg">
-              <FileText className="w-6 h-6 text-teal-600" />
+            <div className="p-2 bg-blue-100  rounded-lg">
+              <FileText className="w-6 h-6 text-blue-600" />
             </div>
             <div>
-              <CardTitle className="text-2xl font-bold text-slate-900 dark:text-white">Business Reports</CardTitle>
+              <CardTitle className="text-2xl font-bold text-slate-900 ">Business Reports</CardTitle>
               <p className="text-slate-500 text-sm">Detailed overview of your sales and performance.</p>
             </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-lg">
+            <div className="flex bg-slate-100  p-1 rounded-lg">
               {[
                 { label: "3M", val: 3 },
                 { label: "6M", val: 6 },
@@ -127,7 +126,7 @@ function ReportDistributor() {
                   key={q.label}
                   type="button"
                   onClick={() => handleQuickFilter(q.val)}
-                  className="px-3 py-1.5 text-xs font-bold rounded-md hover:bg-white dark:hover:bg-slate-700 transition-all text-slate-600 dark:text-slate-400 shadow-sm"
+                  className="px-3 py-1.5 text-xs font-bold rounded-md hover:bg-white  transition-all text-slate-600  shadow-sm"
                 >
                   {q.label}
                 </button>
@@ -139,14 +138,14 @@ function ReportDistributor() {
                 type="month"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="px-3 py-1.5 text-sm border border-slate-200  rounded-lg bg-white  text-slate-700  focus:outline-none focus:ring-2 focus:ring-blue-600"
               />
               <span className="text-slate-400 text-xs font-bold">TO</span>
               <input
                 type="month"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="px-3 py-1.5 text-sm border border-slate-200  rounded-lg bg-white  text-slate-700  focus:outline-none focus:ring-2 focus:ring-blue-600"
               />
             </div>
 
@@ -162,15 +161,15 @@ function ReportDistributor() {
             {[
               { label: "Total Expense", value: statsTime.totalExpense, icon: <DollarSign className="w-5 h-5" />, color: "text-rose-600", bg: "bg-rose-50" },
               { label: "Total Profit", value: statsTime.totalProfit, icon: <TrendingUp className="w-5 h-5" />, color: "text-emerald-600", bg: "bg-emerald-50" },
-              { label: "Total Orders", value: statsTime.totalOrder, icon: <ShoppingBag className="w-5 h-5" />, color: "text-teal-600", bg: "bg-teal-50" },
+              { label: "Total Orders", value: statsTime.totalOrder, icon: <ShoppingBag className="w-5 h-5" />, color: "text-blue-600", bg: "bg-blue-50" },
             ].map((stat, idx) => (
-              <div key={idx} className="p-6 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex items-center gap-4">
-                <div className={`p-4 ${stat.bg} dark:bg-slate-800 rounded-2xl ${stat.color}`}>
+              <div key={idx} className="p-6 rounded-2xl border border-slate-100  bg-white  shadow-sm flex items-center gap-4">
+                <div className={`p-4 ${stat.bg}  rounded-2xl ${stat.color}`}>
                   {stat.icon}
                 </div>
                 <div>
                   <p className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">{stat.label}</p>
-                  <h3 className="text-2xl font-black text-slate-900 dark:text-white">
+                  <h3 className="text-2xl font-black text-slate-900 ">
                     {typeof stat.value === 'number' ? (stat.label.includes('Order') ? stat.value : `$${stat.value.toFixed(2)}`) : (stat.value || 0)}
                   </h3>
                 </div>
@@ -178,7 +177,7 @@ function ReportDistributor() {
             ))}
           </div>
 
-          <div className="h-[450px] w-full mt-10 p-6 rounded-2xl bg-slate-50/50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+          <div className="h-[450px] w-full mt-10 p-6 rounded-2xl bg-slate-50/50  border border-slate-100 ">
             <Bar data={data} options={options} />
           </div>
         </CardContent>

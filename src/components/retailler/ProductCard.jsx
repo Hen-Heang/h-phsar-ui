@@ -24,7 +24,7 @@ export default function ProductCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -5 }}
-      className={`group relative flex flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white transition-all hover:border-orange-200 hover:shadow-xl hover:shadow-orange-500/10 dark:border-slate-800 dark:bg-slate-900 ${
+      className={`group relative flex flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white transition-all hover:border-orange-200 hover:shadow-xl hover:shadow-orange-500/10   ${
         isUnavailable ? "opacity-75 grayscale-[0.5]" : ""
       }`}
     >
@@ -36,14 +36,14 @@ export default function ProductCard({
       )}
 
       {/* Image Container */}
-      <div className="relative aspect-square overflow-hidden bg-slate-50 p-6 dark:bg-slate-950/50">
+      <div className="relative aspect-square overflow-hidden bg-slate-50 p-6 ">
         <motion.img
           whileHover={{ scale: 1.1 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           src={getSafeImageSrc(product.image, noImage)}
           onError={(e) => applyImageFallback(e, noImage)}
           alt={product.name}
-          className="h-full w-full object-contain mix-blend-multiply transition-transform dark:mix-blend-normal"
+          className="h-full w-full object-contain mix-blend-multiply transition-transform "
         />
         
         {/* Quick Add Overlay (Mobile/Hover) */}
@@ -62,7 +62,7 @@ export default function ProductCard({
       {/* Content */}
       <div className="flex flex-1 flex-col p-5">
         <div className="flex-1">
-          <h3 className="line-clamp-1 text-base font-bold text-slate-900 dark:text-slate-100">
+          <h3 className="line-clamp-1 text-base font-bold text-slate-900 ">
             {product.name}
           </h3>
           <div className="mt-1 flex items-center gap-2">
@@ -89,11 +89,11 @@ export default function ProductCard({
         {/* Actions */}
         <div className="mt-5">
           {quantity > 0 ? (
-            <div className="flex items-center gap-2 rounded-2xl border border-slate-100 bg-slate-50/50 p-1 dark:border-slate-800 dark:bg-slate-950/50">
+            <div className="flex items-center gap-2 rounded-2xl border border-slate-100 bg-slate-50/50 p-1  ">
               <button
                 disabled={disabled || isLoadingDecrement}
                 onClick={() => onDecrement(product.id)}
-                className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-slate-400 shadow-sm transition hover:text-orange-500 disabled:opacity-50 dark:bg-slate-900"
+                className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-slate-400 shadow-sm transition hover:text-orange-500 disabled:opacity-50 "
               >
                 {isLoadingDecrement ? (
                   <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} className="h-4 w-4 border-2 border-orange-500 border-t-transparent rounded-full" />
@@ -107,10 +107,10 @@ export default function ProductCard({
                   type="text"
                   value={quantity}
                   onChange={(e) => !isUnavailable && onInputChange(product.id, e)}
-                  className="w-full bg-transparent text-center text-sm font-black text-slate-900 outline-none dark:text-slate-100"
+                  className="w-full bg-transparent text-center text-sm font-black text-slate-900 outline-none "
                 />
                 {isLoadingInput && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-white/50 backdrop-blur-[1px] dark:bg-slate-950/50">
+                  <div className="absolute inset-0 flex items-center justify-center bg-white/50 backdrop-blur-[1px] ">
                     <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} className="h-3 w-3 border-2 border-orange-500 border-t-transparent rounded-full" />
                   </div>
                 )}
@@ -119,7 +119,7 @@ export default function ProductCard({
               <button
                 disabled={disabled || isLoadingIncrement}
                 onClick={() => onIncrement(product.id)}
-                className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-slate-400 shadow-sm transition hover:text-orange-500 disabled:opacity-50 dark:bg-slate-900"
+                className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-slate-400 shadow-sm transition hover:text-orange-500 disabled:opacity-50 "
               >
                 {isLoadingIncrement ? (
                   <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} className="h-4 w-4 border-2 border-orange-500 border-t-transparent rounded-full" />
@@ -134,8 +134,8 @@ export default function ProductCard({
               onClick={() => onIncrement(product.id)}
               className={`h-12 w-full rounded-2xl font-bold transition-all active:scale-[0.98] ${
                 isUnavailable 
-                ? "bg-slate-200 text-slate-400 dark:bg-slate-800 dark:text-slate-600" 
-                : "bg-slate-900 text-white hover:bg-orange-500 dark:bg-slate-800 dark:hover:bg-orange-500"
+                ? "bg-slate-200 text-slate-400  " 
+                : "bg-slate-900 text-white hover:bg-orange-500  "
               }`}
             >
               {isLoadingIncrement ? (

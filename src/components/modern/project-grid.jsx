@@ -33,8 +33,8 @@ export function ProjectGrid() {
   return (
     <section className="mx-auto max-w-6xl px-4 pb-20 md:px-6">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 md:text-3xl">Project Highlights</h2>
-        <p className="mt-2 text-slate-600 dark:text-slate-300">Reusable card UI with motion and dark mode support.</p>
+        <h2 className="text-2xl font-bold text-slate-900  md:text-3xl">Project Highlights</h2>
+        <p className="mt-2 text-slate-600 ">Reusable card UI with motion and dark mode support.</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

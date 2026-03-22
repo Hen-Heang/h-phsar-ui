@@ -51,12 +51,12 @@ const OrderCard = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
-      className="group relative flex flex-col overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-6 transition-all hover:border-teal-200 hover:shadow-xl hover:shadow-teal-500/5 dark:border-slate-800 dark:bg-slate-900"
+      className="group relative flex flex-col overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-6 transition-all hover:border-blue-200 hover:shadow-xl hover:shadow-blue-600/5  "
     >
       {/* Header: Retailer Info */}
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-2xl border border-slate-100 bg-slate-50 dark:border-slate-800 dark:bg-slate-950">
+          <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-2xl border border-slate-100 bg-slate-50  ">
             <img
               src={item.retailerImage && item.retailerImage !== "String" ? item.retailerImage : photoDefault.src || photoDefault}
               className="h-full w-full object-cover"
@@ -64,11 +64,11 @@ const OrderCard = ({
             />
           </div>
           <div>
-            <h3 className="line-clamp-1 text-base font-black text-slate-900 dark:text-white">
+            <h3 className="line-clamp-1 text-base font-black text-slate-900 ">
               {item.name}
             </h3>
             <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-              <span className="text-teal-600 dark:text-teal-400">Order ID:</span>
+              <span className="text-blue-600 ">Order ID:</span>
               <span className="truncate max-w-[80px]">#{item.id.slice(-8).toUpperCase()}</span>
             </div>
           </div>
@@ -81,24 +81,24 @@ const OrderCard = ({
       {/* Body: Order Details */}
       <div className="mt-6 space-y-3">
         <div className="flex items-start gap-3 text-slate-500">
-          <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-teal-500" />
-          <p className="line-clamp-1 text-sm font-medium leading-relaxed dark:text-slate-400">
+          <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />
+          <p className="line-clamp-1 text-sm font-medium leading-relaxed ">
             {item.address}
           </p>
         </div>
         <div className="flex items-center gap-3 text-slate-500">
-          <Calendar className="h-4 w-4 shrink-0 text-teal-500" />
-          <p className="text-sm font-medium dark:text-slate-400">
+          <Calendar className="h-4 w-4 shrink-0 text-blue-600" />
+          <p className="text-sm font-medium ">
             {new Date(item.date).toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric' })}
           </p>
         </div>
       </div>
 
       {/* Footer: Stats & Actions */}
-      <div className="mt-8 flex items-center justify-between border-t border-slate-50 pt-6 dark:border-slate-800">
+      <div className="mt-8 flex items-center justify-between border-t border-slate-50 pt-6 ">
         <div className="flex flex-col">
           <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Total Amount</span>
-          <span className="text-lg font-black text-slate-900 dark:text-white">
+          <span className="text-lg font-black text-slate-900 ">
             ${formatMoney(item.total)}
           </span>
         </div>
@@ -106,7 +106,7 @@ const OrderCard = ({
         <div className="flex items-center gap-2">
           <button
             onClick={() => onViewDetails(item.id, item)}
-            className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 text-slate-400 transition-all hover:border-teal-200 hover:bg-teal-50 hover:text-teal-600 dark:border-slate-800 dark:hover:bg-slate-800"
+            className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 text-slate-400 transition-all hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600  "
             title="View Details"
           >
             <Eye className="h-5 w-5" />
@@ -119,7 +119,7 @@ const OrderCard = ({
               onClick={() => onAction(item.id, item)}
               disabled={isLoading}
               className={`h-11 rounded-xl px-5 font-bold shadow-lg transition-all active:scale-[0.98] ${
-                actionVariant === "default" ? "bg-teal-600 hover:bg-teal-700 shadow-teal-600/20" : ""
+                actionVariant === "default" ? "bg-blue-600 hover:bg-blue-700 shadow-blue-600/20" : ""
               }`}
             >
               {isLoading ? (

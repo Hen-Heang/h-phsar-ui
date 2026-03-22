@@ -7,7 +7,6 @@ export const get_order_detail=async(dispatch)=>{
         const response = await api.get(`/retailer/orders?sort=desc&pageNumber=1&pageSize=1000`);
         return response;
     } catch (e) {
-        console.log(e   );
         return e.response;
     }
 }
@@ -16,7 +15,6 @@ export const get_orderById=async(id)=>{
         const response=await api.get(`/retailer/orders/${id}`);
         return response;
     } catch (e) {
-        console.log(e)
         return e.response;
     }
 }
@@ -27,7 +25,6 @@ export const confirm_transaction=async(id)=>{
         })
         return response;
     }catch (e) {
-       console.log(e) ;
        return e.response;
     }
 }
@@ -38,7 +35,6 @@ export const confirm_order=async(id)=>{
         })
         return response;
     } catch (e) {
-        console.log(e);
         return e.response;
     }
 }
@@ -47,7 +43,6 @@ export const delete_request=async(id)=>{
         const response= await api.put(`/retailer/orders/pending/cancel/${id}`);
         return response;
     } catch (e) {
-        console.log(e);
         return e.response;
     }
 }

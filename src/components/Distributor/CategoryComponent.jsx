@@ -109,9 +109,9 @@ export const CategoryComponent = (prop) => {
     <>
       <Dialog open={prop.isOpenCategory} onOpenChange={(open) => !open && prop.handleShowCategory()}>
         <DialogContent className="max-w-3xl p-0 overflow-hidden">
-          <DialogHeader className="bg-teal-700 text-white p-6 relative">
+          <DialogHeader className="bg-blue-700 text-white p-6 relative">
             <DialogTitle className="text-2xl font-bold text-white">Categories</DialogTitle>
-            <p className="text-teal-100 text-sm">Organize your products by category.</p>
+            <p className="text-blue-100 text-sm">Organize your products by category.</p>
           </DialogHeader>
           
           <div className="p-6 space-y-6">
@@ -122,10 +122,10 @@ export const CategoryComponent = (prop) => {
                   type="text"
                   placeholder="Search categories..."
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-500 outline-none transition-all"
+                  className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-600 outline-none transition-all"
                 />
               </div>
-              <Button onClick={() => setShowAddCategory(true)} className="gap-2 bg-teal-600 hover:bg-teal-700">
+              <Button onClick={() => setShowAddCategory(true)} className="gap-2 bg-blue-600 hover:bg-blue-700">
                 <Plus className="w-4 h-4" /> Add New
               </Button>
             </div>
@@ -149,7 +149,7 @@ export const CategoryComponent = (prop) => {
                         <td className="px-6 py-4 font-medium text-slate-900 capitalize">{cat.name}</td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex justify-end gap-2">
-                            <button onClick={() => { setGetDataUpdate(cat); setShowUpdateCategory(true); }} className="p-2 text-slate-400 hover:text-teal-600 transition-colors"><Edit2 className="w-4 h-4" /></button>
+                            <button onClick={() => { setGetDataUpdate(cat); setShowUpdateCategory(true); }} className="p-2 text-slate-400 hover:text-blue-600 transition-colors"><Edit2 className="w-4 h-4" /></button>
                             <button onClick={() => { setGetDataUpdate(cat); setShowDeleteCategory(true); }} className="p-2 text-slate-400 hover:text-rose-600 transition-colors"><Trash2 className="w-4 h-4" /></button>
                           </div>
                         </td>
@@ -167,8 +167,8 @@ export const CategoryComponent = (prop) => {
                 previousLabel="←"
                 nextLabel="→"
                 containerClassName="flex justify-end gap-2 mt-4"
-                pageClassName="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 text-xs hover:bg-teal-50 transition-colors"
-                activeClassName="bg-teal-600 text-white border-teal-600"
+                pageClassName="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 text-xs hover:bg-blue-50 transition-colors"
+                activeClassName="bg-blue-600 text-white border-blue-600"
               />
             )}
           </div>
@@ -180,11 +180,11 @@ export const CategoryComponent = (prop) => {
         <DialogContent className="max-w-md">
           <DialogHeader><DialogTitle>Add New Category</DialogTitle></DialogHeader>
           <form onSubmit={handleSubmit(onAddCategory)} className="space-y-4 pt-4">
-            <input {...register("name")} placeholder="Category name" className="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-teal-500" />
+            <input {...register("name")} placeholder="Category name" className="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-blue-600" />
             {errors.name && <p className="text-xs text-rose-500">{errors.name.message}</p>}
             <div className="flex gap-3 justify-end pt-4">
               <Button type="button" variant="outline" onClick={() => setShowAddCategory(false)}>Cancel</Button>
-              <Button type="submit" className="bg-teal-600 hover:bg-teal-700">Save Category</Button>
+              <Button type="submit" className="bg-blue-600 hover:bg-blue-700">Save Category</Button>
             </div>
           </form>
         </DialogContent>
@@ -195,10 +195,10 @@ export const CategoryComponent = (prop) => {
         <DialogContent className="max-w-md">
           <DialogHeader><DialogTitle>Edit Category</DialogTitle></DialogHeader>
           <div className="space-y-4 pt-4">
-            <input defaultValue={getDataUpdate.name} onChange={(e) => setOnChangeDataUpdate(e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-teal-500" />
+            <input defaultValue={getDataUpdate.name} onChange={(e) => setOnChangeDataUpdate(e.target.value)} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-blue-600" />
             <div className="flex gap-3 justify-end pt-4">
               <Button variant="outline" onClick={() => setShowUpdateCategory(false)}>Cancel</Button>
-              <Button onClick={onUpdateCategory} className="bg-teal-600 hover:bg-teal-700 text-white">Update</Button>
+              <Button onClick={onUpdateCategory} className="bg-blue-600 hover:bg-blue-700 text-white">Update</Button>
             </div>
           </div>
         </DialogContent>

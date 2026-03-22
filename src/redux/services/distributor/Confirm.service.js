@@ -7,7 +7,6 @@ export const get_all_confirm=async(dispatch)=>{
         return response;
     }
     catch(e){
-        console.log("Error",e);
         return e.response
     }
 }
@@ -18,7 +17,6 @@ export const get_all_confirm_withoutLoading=async()=>{
         return response;
     }
     catch(e){
-        console.log("Error",e);
         return e.response
     }
 }

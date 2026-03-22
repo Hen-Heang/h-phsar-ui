@@ -3,7 +3,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { useSelector } from 'react-redux';
 export default function DraftProduct(props) {
-    console.log(props.item)
     return (
         <div>
             <React.Fragment>

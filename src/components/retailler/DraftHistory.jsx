@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import RetailerInvoice from "./RetailerInvoice";
 import {
   delete_draft,
   draft_to_request,
@@ -7,11 +6,6 @@ import {
 } from "../../redux/services/retailer/draftHistory.service";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  deleteDraft,
-  deleteDraftHistory,
-  draftToRequest,
-  getDraftHistory,
-  getProduct,
   setLoadingDraft,
 } from "../../redux/slices/retailer/draftHistorySlice";
 import ReactPaginate from "react-paginate";
@@ -26,434 +20,377 @@ import {
   draftToRequest1,
   getDraftHis,
   pushToOrder,
-  setLoadingOrder,
 } from "../../redux/slices/retailer/orderSlice";
 import { PropagateLoader } from "react-spinners";
-import ProductDetail from "./ProductDetail";
-import DraftProduct from "./DraftProduct";
-import { get_orderById } from "../../redux/services/retailer/orderDetail.service";
-import {
-  getOrderById,
-  getOrderProduct,
-} from "../../redux/slices/retailer/orderDetailSlice";
 import { toast } from "react-toastify";
-import LoadingOverlay from "react-loading-overlay";
-import { styled } from "@mui/material";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  FileEdit, 
+  Trash2, 
+  ChevronRight, 
+  Store, 
+  Calendar, 
+  DollarSign, 
+  ShoppingCart, 
+  X,
+  ChevronLeft,
+  Package,
+  ArrowRight,
+  Info,
+  Loader2,
+  Clock
+} from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import noImage from "../../assets/images/retailer/No_image_available.png";
 import { applyImageFallback, getSafeImageSrc } from "@/lib/images";
 import { sendOneSignalNotification } from "@/lib/notifications/send-onesignal-client";
-
-const getErrorMessage = (error, fallback = "Something went wrong") => {
-  if (typeof error === "string" && error.trim() !== "") {
-    return error;
-  }
-
-  if (typeof error?.detail === "string" && error.detail.trim() !== "") {
-    return error.detail;
-  }
-
-  if (typeof error?.message === "string" && error.message.trim() !== "") {
-    return error.message;
-  }
-
-  return fallback;
-};
+import { cn } from "@/lib/cn";
 
 export default function DraftHistory() {
   useEffect(() => {
-    document.title = "H-Phsar | Draft";
+    document.title = "StockFlow | Draft History";
+    getAllDraftHistory();
   }, []);
+
   const draftHistoryList = useSelector((state) => state.order.dataDraft);
-  const [page, setPage] = useState(1);
-  const [totalPage, setTotalPage] = useState(null);
-  const [error, setError] = useState("");
-  const [noData, setNoData] = useState(false);
+  const loading = useSelector((state) => state.draft.loading);
   const dispatch = useDispatch();
+  
   const [itemOffset, setItemOffset] = useState(0);
-  const [item1, setItem1] = useState();
+  const [isOpen, setOpen] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [selectedDraft, setSelectedDraft] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const getAllDraftHistory = () => {
+    dispatch(setLoadingDraft(true));
     get_draft_history(dispatch)
       .then((r) => {
-        if (r.status === 401) {
-          toast.error("Something went wrong...!");
-        }
         if (r && r.data && r.data.status === 200) {
-          setNoData(false);
           dispatch(getDraftHis(r.data.data));
-          setTotalPage(r.data.totalPage);
-          setItem1(r.data.data);
-        } else {
-          const errorMessage = getErrorMessage(
-            r?.response?.data ?? r?.data ?? r,
-            "Failed to load draft history"
-          );
-
-          if (errorMessage) {
-            setError(errorMessage);
-          }
-          dispatch(setLoadingDraft(false));
+        } else if (r.status === 401) {
+          toast.error("Session expired. Please log in again.");
         }
       })
-      .catch((e) => {
-        dispatch(setLoadingDraft(false));
-        setNoData(true);
-        setError(getErrorMessage(e?.response?.data ?? e, "Failed to load draft history"));
-      })
-      .finally(() => {
-        dispatch(setLoadingDraft(false));
-      });
+      .catch(() => toast.error("Failed to sync draft data"))
+      .finally(() => dispatch(setLoadingDraft(false)));
   };
-  useEffect(() => {
-    getAllDraftHistory();
-  }, [dispatch]);
-  const endOffset = itemOffset + 6;
-  const currentDrafHistory = draftHistoryList.slice(itemOffset, endOffset);
-  const pageCount = Math.ceil(draftHistoryList.length / 6);
-  const loading = useSelector((state) => state.draft.loading);
+
+  const itemsPerPage = 6;
+  const endOffset = itemOffset + itemsPerPage;
+  const currentDrafts = draftHistoryList.slice(itemOffset, endOffset);
+  const pageCount = Math.ceil(draftHistoryList.length / itemsPerPage);
+
   const onPageChange = (event) => {
-    const newOffset = (event.selected * 6) % draftHistoryList.length;
-    setItemOffset(newOffset);
+    setItemOffset(event.selected * itemsPerPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-  const [deleteDraft, setDeleteDraft] = useState(false);
-  const [product, setProduct] = useState([]);
-  const [draftId, setDraftId] = useState();
-  function getItem(item) {
-    console.log("getFrom", item);
-    setProduct(item);
-  }
-  function getDraft(itemD) {
-    // console.log("id of delete", id);
-    setDraftId(itemD);
-  }
 
-  // =========================== handle draft changes =========================
-  const [loadingTheDraft, setLoadingTheDraft] = useState(false);
-  const handleDraft = () => {
-    const message = "You have new order";
-    // setLoadingAccept(true)
-    setLoadingTheDraft(true);
-    draft_to_request(draftId)
-      .then(async (res) => {
-        if (res.status === 409) {
-          // setLoadingAccept(false);
-          setLoadingTheDraft(false);
-          toast.error(res.data.detail);
+  const handleCheckout = async () => {
+    if (!selectedDraft) return;
+    setIsProcessing(true);
+    const message = "You have a new procurement request";
+    
+    try {
+      const res = await draft_to_request(selectedDraft);
+      if (res.status === 200 || res.status === 201) {
+        // Push notification logic
+        if (res.data?.totalPage) {
+          await sendOneSignalNotification({
+            contents: { en: message },
+            include_external_user_ids: [res.data.totalPage.toString()],
+          });
         }
-        console.log("Response from server : ", res.data.totalPage);
-        const notification = {
-          contents: { en: message },
-          include_external_user_ids: [res.data.totalPage.toString()],
-        };
-        try {
-          const response = await sendOneSignalNotification(notification);
-          console.log("Push notification sent successfully:", response);
-        } catch (error) {
-          console.error("Error sending push notification:", error);
-        }
-        dispatch(draftToRequest1(draftId?.id));
-        dispatch(pushToOrder(draftId));
-      })
-      .then(() => {
-        setLoadingTheDraft(false);
-      });
-    setOpen(!isOpen);
-    // const [loadingTheDraft,setLoadingTheDraft]=useState(false);
-    // const handleDraft = (id) => {
-    //   setLoadingTheDraft(true);
-    //   draft_to_request(draftId?.id)
-    //   .then((r) => {dispatch(draftToRequest1(draftId?.id)); dispatch(pushToOrder(draftId))})
-    //   .then(()=>setLoadingTheDraft(false))
-    //   setOpen(!isOpen);
+        dispatch(draftToRequest1(selectedDraft.id));
+        dispatch(pushToOrder(selectedDraft));
+        toast.success("Order request sent successfully!");
+        setOpen(false);
+      } else if (res.status === 409) {
+        toast.error(res.data.detail);
+      }
+    } catch (error) {
+      toast.error("Failed to process checkout");
+    } finally {
+      setIsProcessing(false);
+    }
   };
-  const [loadingDelete, setLoadingDelete] = useState(false);
-  const handleDelete = (id) => {
-    setLoadingDelete(true);
-    delete_draft(id)
-      .then((r) => dispatch(deleteTheDraft(id)))
-      .then(() => setLoadingDelete(false));
+
+  const handleDelete = async (id) => {
+    setIsDeleting(true);
+    try {
+      await delete_draft(id);
+      dispatch(deleteTheDraft(id));
+      toast.info("Draft discarded");
+    } catch (error) {
+      toast.error("Failed to delete draft");
+    } finally {
+      setIsDeleting(false);
+    }
   };
-  const [isOpen, setOpen] = useState(false);
-  const StyledLoader = styled(LoadingOverlay)`
-    position: fixed;
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-  `;
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1 },
+    exit: { scale: 0.9, opacity: 0 }
+  };
+
   return (
-    <div>
-      {loadingDelete ? (
-        <StyledLoader
-          active={loadingDelete}
-          spinner={true}
-          text="Deleting..."
-        ></StyledLoader>
-      ) : null}
-      {loadingTheDraft ? (
-        <StyledLoader
-          active={loadingTheDraft}
-          spinner={true}
-          text="Loading..."
-        ></StyledLoader>
-      ) : null}
-      <div className="dark:text-white">
-        {/* <div className="bg-white min-h-screen rounded-lg w-[80%] shadow-md mx-auto"> */}
-        <div className="lg:w-[80%] w-100% min-h-screen m-auto p-8 bg-white">
-          {/* <div className="flex flex-wrap flex-col gap-3 justify-between m-auto"> */}
-          <div className="flex flex-wrap flex-col gap-2 justify-center">
-            <h1 className="text-3xl font-semibold text-retailerPrimary">
-              Draft history
+    <div className="min-h-screen bg-slate-50/50 pb-20 font-family-retailer">
+      {/* Global Processing Overlays */}
+      <AnimatePresence>
+        {(isProcessing || isDeleting) && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/20 backdrop-blur-sm"
+          >
+            <div className="bg-white p-8 rounded-[2rem] shadow-2xl flex flex-col items-center gap-4">
+              <Loader2 className="h-10 w-10 animate-spin text-orange-500" />
+              <p className="text-sm font-black uppercase tracking-widest text-slate-900">
+                {isProcessing ? "Processing Request..." : "Discarding Draft..."}
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="mx-auto w-[90%] max-w-7xl pt-12">
+        {/* Header */}
+        <header className="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <div className="mb-2 flex items-center gap-2 text-orange-500">
+              <Clock className="h-5 w-5" />
+              <span className="text-xs font-black uppercase tracking-[0.2em]">Pending Operations</span>
+            </div>
+            <h1 className="text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
+              Draft History
             </h1>
-            <p className="text-newGray mt-1 text-md">
-              This is the product you have drafted.
+            <p className="mt-2 text-slate-500 max-w-xl">
+              Manage and finalize your saved shopping carts. Ready to stock up? Just hit checkout.
             </p>
-            <p className="text-md text-newGray">
-              Click on check out button to order your drafted cart!
+          </div>
+          <div className="bg-white px-6 py-3 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
+            <Info className="h-4 w-4 text-orange-500" />
+            <span className="text-xs font-bold text-slate-600">You have {draftHistoryList.length} items in waiting</span>
+          </div>
+        </header>
+
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-40 gap-4">
+            <PropagateLoader color="#f97316" size={12} />
+            <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mt-4">Syncing Drafts...</p>
+          </div>
+        ) : currentDrafts.length === 0 ? (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col items-center justify-center py-32 bg-white rounded-[3rem] border border-slate-100 shadow-sm text-center"
+          >
+            <div className="rounded-full bg-slate-50 p-8 mb-6">
+              <FileEdit className="h-16 w-16 text-slate-200" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-900">Your draft folder is clear</h3>
+            <p className="text-slate-500 mt-2 max-w-xs mx-auto">
+              Any carts you save for later will appear here for finalized processing.
             </p>
-            <div className="sm:rounded-lg h-[625px] bg-gray-50 w-[100%] ">
-              <div className="lg:h-[560px] h-[640px] bg-gray-50 relative  overflow-x-auto w-[100%] ">
-                <table className="w-full lg:text-[16px] text-[14px] text-left text-gray-500 border-spacing-y-2 border-tools-table-outline  border-separate">
-                  <thead className="text-[16px] lg:text-[14px] text-newGray bg-newWhite uppercase">
-                    <tr className="lg:text-[16px] text-[14px]">
-                      <th scope="col" className="px-6 py-3">
-                        No
-                      </th>
-                      <th scope="col" className="px-6 py-3">
-                        ShopName
-                      </th>
-                      <th scope="col" className="px-6 py-3">
-                        Date
-                      </th>
-                      <th scope="col" className="px-6 py-3">
-                        Price
-                      </th>
-                      <th scope="col" className="px-6 py-3">
-                        <p className="ml-12"> Action</p>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="text-newGray">
-                    {loading ? (
-                      <tr>
-                        <td colSpan={5} className="py-20">
-                          <div className="w-full mx-auto flex justify-center">
-                            <PropagateLoader color="#F15B22" />
-                          </div>
-                        </td>
-                      </tr>
-                    ) : currentDrafHistory.length === 0 ? (
-                      // noData ? (
-                      //   <div className="w-full mx-auto absolute ">
-                      //     <p className="text-center text-2xl font-semibold mt-2">
-                      //       {error}
-                      //     </p>
-                      //   </div>
-                      // ) : 
-                      (
-                        <tr>
-                          <td colSpan={5} className="py-20">
-                            <p className="text-center text-2xl font-semibold">
-                              No data available
-                            </p>
-                          </td>
-                        </tr>
-                      )
-                    ) : (
-                      currentDrafHistory.map((item, index) => (
-                        <tr
-                          key={item?.order?.id ?? `draft-${index}`}
-                          className="rounded-lg mt-4 shadow-sm bg-gray-50 lg:text-[16px] text-14px"
-                        >
-                          <td className="px-6 py-4 ">{index + 1 + itemOffset}</td>
-                          <td className="px-6 py-4 flex items-center whitespace-nowrap">
-                            <img
-                              className="w-10 h-10 rounded-full"
-                              src={getSafeImageSrc(item.order.image, noImage)}
-                              alt="image"
+          </motion.div>
+        ) : (
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+          >
+            <AnimatePresence mode="popLayout">
+              {currentDrafts.map((item, idx) => (
+                <motion.div
+                  key={item?.order?.id || `draft-${idx}`}
+                  layout
+                  variants={itemVariants}
+                  exit="exit"
+                >
+                  <Card className="group relative overflow-hidden border-none rounded-[2.5rem] shadow-sm hover:shadow-xl transition-all duration-300 bg-white">
+                    <CardContent className="p-0">
+                      {/* Header */}
+                      <div className="flex items-center justify-between px-8 py-5 border-b border-slate-50 bg-slate-50/30">
+                        <div className="flex items-center gap-2 font-black text-[10px] uppercase tracking-widest text-slate-400">
+                          <Clock className="h-3.5 w-3.5" />
+                          Saved Draft
+                        </div>
+                        <span className="text-[10px] font-black text-slate-300 uppercase tracking-wider">#{item.order.id.slice(-6).toUpperCase()}</span>
+                      </div>
+
+                      <div className="p-8">
+                        {/* Shop Info */}
+                        <div className="flex items-start gap-4 mb-8">
+                          <div className="h-14 w-14 overflow-hidden rounded-2xl bg-slate-50 border border-slate-100 p-1 shadow-inner">
+                            <img 
+                              src={getSafeImageSrc(item.order.image, noImage)} 
+                              className="h-full w-full object-cover rounded-xl"
                               onError={(e) => applyImageFallback(e, noImage)}
                             />
-                            <div className="pl-3">
-                              <div className="font-normal text-gray-500">
-                                {item.order.name}
-                              </div>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-black text-lg text-slate-900 line-clamp-1 group-hover:text-orange-500 transition-colors">
+                              {item.order.name}
+                            </h3>
+                            <div className="flex items-center gap-1 text-slate-400 mt-0.5">
+                              <Calendar className="h-3 w-3" />
+                              <span className="text-[10px] font-bold uppercase tracking-wider">
+                                {new Date(item.order.date).toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric' })}
+                              </span>
                             </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap ">
-                            {new Date(item.order.date).toLocaleDateString(
-                              "en-GB",
-                              {
-                                day: "numeric",
-                                month: "long",
-                                year: "numeric",
-                              }
-                            )}
-                          </td>
-                          <td className="px-6 py-4 ">
-                            ${item.order.total.toFixed(2)}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <button
-                              onClick={() => {
-                                handleDelete(item.order.id);
-                              }}
-                              className="bg-red-500 text-md text-white rounded-md w-24 ml-2  py-[6px]"
-                            >
-                              Delete
-                            </button>
-                            <button
-                              onClick={() => {
-                                getItem(item.products);
-                                setOpen(!isOpen);
-                                getDraft(item.order);
-                              }}
-                              className="bg-retailerPrimary text-md text-white rounded-md w-24 ml-2  py-[6px]"
-                            >
-                              Check Out
-                            </button>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-              {/* pagination */}
-              {error || noData || loading || pageCount < 2 ? null : (
-                <div className="flex  items-center justify-end">
-                  <ReactPaginate
-                    pageCount={pageCount}
-                    onPageChange={onPageChange}
-                    previousLabel="< Pre"
-                    className="flex"
-                    breakLabel="..."
-                    nextLabel="Next >"
-                    pageRangeDisplayed={5}
-                    containerClassName="pagination"
-                    activeClassName="text-retailerPrimary active"
-                    pageClassName="px-2 page-item"
-                    nextLinkClassName="page-item"
-                  />
-                </div>
-              )}
+                          </div>
+                        </div>
+
+                        {/* Summary Stats */}
+                        <div className="grid grid-cols-2 gap-4 mb-8">
+                          <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Total Items</span>
+                            <span className="text-lg font-black text-slate-900">{item.products?.length || 0}</span>
+                          </div>
+                          <div className="bg-orange-50 p-4 rounded-2xl border border-orange-100">
+                            <span className="text-[10px] font-black text-orange-400 uppercase tracking-widest block mb-1">Total Value</span>
+                            <span className="text-lg font-black text-orange-600">${item.order.total.toFixed(2)}</span>
+                          </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex items-center gap-3">
+                          <Button 
+                            className="flex-1 h-12 rounded-2xl bg-orange-500 font-black text-xs uppercase tracking-widest text-white shadow-lg shadow-orange-500/20 hover:bg-orange-600 active:scale-[0.98] transition-all"
+                            onClick={() => {
+                              setProducts(item.products);
+                              setSelectedDraft(item.order);
+                              setOpen(true);
+                            }}
+                          >
+                            Review & Send
+                          </Button>
+                          <button 
+                            onClick={() => handleDelete(item.order.id)}
+                            className="h-12 w-12 flex items-center justify-center rounded-2xl bg-rose-50 text-rose-500 hover:bg-rose-100 active:scale-[0.95] transition-all"
+                          >
+                            <Trash2 className="h-5 w-5" />
+                          </button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        )}
+
+        {/* Pagination */}
+        {!loading && pageCount > 1 && (
+          <div className="mt-12 flex justify-center">
+            <div className="bg-white p-3 rounded-[2rem] border border-slate-100 shadow-sm">
+              <ReactPaginate
+                pageCount={pageCount}
+                onPageChange={onPageChange}
+                previousLabel={<ChevronLeft className="h-5 w-5" />}
+                nextLabel={<ChevronRight className="h-5 w-5" />}
+                className="flex items-center gap-2"
+                pageLinkClassName="h-10 w-10 flex items-center justify-center rounded-xl text-sm font-black transition-all hover:bg-slate-50 text-slate-400"
+                activeLinkClassName="!bg-orange-500 !text-white shadow-lg shadow-orange-500/20"
+                previousLinkClassName="h-10 w-10 flex items-center justify-center rounded-xl text-slate-400 hover:text-orange-500 transition-all"
+                nextLinkClassName="h-10 w-10 flex items-center justify-center rounded-xl text-slate-400 hover:text-orange-500 transition-all"
+                disabledClassName="opacity-30 cursor-not-allowed"
+                breakLabel="..."
+              />
             </div>
           </div>
-          {/* </div> */}
-        </div>
-        {/* </div> */}
+        )}
       </div>
+
+      {/* Review Modal */}
       <Dialog open={isOpen} onOpenChange={setOpen}>
-        <DialogContent
-          showClose={false}
-          className="mt-60 lg:mt-0 max-w-5xl overflow-hidden p-0"
-        >
-          <DialogHeader className="relative bg-retailerPrimary px-6 py-4 text-center">
-            <DialogTitle className="text-center text-lg text-white">
-              Products
-            </DialogTitle>
-            <button
-              type="button"
-              className="absolute right-2 top-2 h-8 w-8 text-white"
-              onClick={() => setOpen(false)}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                className="w-6 h-6 font-bold text-white"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-          </DialogHeader>
-          <div className="p-6">
-              <div className="sm:rounded-lg mt-4 relative overflow-x-auto w-full">
-                <div className="h-[400px] overflow-y-auto w-full">
-                  <table className="w-full text-sm text-left text-newGray">
-                    <thead className="text-xs text-black bg-newWhite  border-spacint">
-                      <tr>
-                        <th scope="col" className="px-6 py-3">
-                          No
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                          Products
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                          Qty
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                          Stock
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                          Unitprice
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                          Total
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="text-black">
-                      {product.map((item, index) => (
-                        <tr
-                          key={item?.id ?? item?.productId ?? `${item?.productName ?? "product"}-${index}`}
-                          className="bg-white border-b text-black dark:bg-gray-800 text-sm"
-                        >
-                          <td
-                            scope="row"
-                            className="px-6 py-3 0 whitespace-nowrap dark:text-white"
-                          >
-                            {" "}
-                            {index + 1}
-                          </td>
-                          <td
-                            scope="row"
-                            className="flex items-center px-6 py-3 whitespace-nowrap"
-                          >
-                            <img
-                              src={getSafeImageSrc(item.image, noImage)}
-                              alt="upload image"
-                              className="w-10 h-10 rounded-full p-1"
-                              onError={(e) => applyImageFallback(e, noImage)}
-                            />
-                            <div className="pl-3">
-                              <div className="text-sm">{item.productName}</div>
-                              <div className="font-normal text-xs text-newGray">
-                                {/* {item.category.name} */}
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-3">{item.qty}</td>
-                          <td className="px-6 py-3">{item.inStock}</td>
-                          <td className="px-6 py-3">
-                            ${item.unitPrice.toFixed(2)}
-                          </td>
-                          <td className="px-6 py-3">${item.subTotal.toFixed(2)}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                <div>
-                  <button
-                    onClick={handleDraft}
-                    className="bg-retailerPrimary text-sm text-white font-semibold rounded-md w-20 py-[6px] float-right mt-6 ml-2"
-                  >
-                    Confirm
-                  </button>
-                  <button
-                    onClick={() => setOpen(false)}
-                    className="border-retailerPrimary border text-sm text-retailerPrimary font-semibold rounded-md w-20 py-[6px] float-right mt-6"
-                  >
-                    Cancel
-                  </button>
-                </div>
+        <DialogContent className="max-w-4xl overflow-hidden rounded-[3rem] p-0 border-none shadow-2xl">
+          <div className="bg-orange-500 px-10 py-12 text-white relative">
+            <div className="absolute right-10 top-12 opacity-20">
+              <ShoppingCart className="h-24 w-24" />
+            </div>
+            <h3 className="text-3xl font-black tracking-tight">Review Procurement</h3>
+            <p className="mt-2 text-orange-100 font-medium">Verify your items before sending the request to <span className="font-bold border-b-2 border-white/30">{selectedDraft?.name}</span>.</p>
+          </div>
+          
+          <div className="p-10">
+            <div className="mb-8 overflow-hidden rounded-[2rem] border border-slate-100">
+              <table className="w-full text-left">
+                <thead className="bg-slate-50/50 border-b border-slate-100 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  <tr>
+                    <th className="px-8 py-4">Consignment Item</th>
+                    <th className="px-6 py-4 text-center">Quantity</th>
+                    <th className="px-6 py-4 text-center">In Stock</th>
+                    <th className="px-6 py-4 text-right">Unit Price</th>
+                    <th className="px-8 py-4 text-right">Subtotal</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-50">
+                  {products.map((p, i) => (
+                    <tr key={i} className="group hover:bg-slate-50/30 transition-colors">
+                      <td className="px-8 py-4">
+                        <div className="flex items-center gap-3">
+                          <img 
+                            src={getSafeImageSrc(p.image, noImage)} 
+                            className="h-10 w-10 rounded-lg object-contain bg-slate-50 p-1"
+                            onError={(e) => applyImageFallback(e, noImage)}
+                          />
+                          <span className="text-sm font-bold text-slate-700">{p.productName}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-center text-sm font-black text-slate-900">{p.qty}</td>
+                      <td className="px-6 py-4 text-center">
+                        <span className={cn(
+                          "px-2 py-1 rounded-md text-[10px] font-bold",
+                          p.inStock < p.qty ? "bg-rose-50 text-rose-600" : "bg-emerald-50 text-emerald-600"
+                        )}>
+                          {p.inStock} Units
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-right text-xs font-medium text-slate-500">${p.unitPrice.toFixed(2)}</td>
+                      <td className="px-8 py-4 text-right text-sm font-black text-slate-900">${p.subTotal.toFixed(2)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="flex items-center justify-between p-8 bg-slate-900 rounded-[2rem] text-white shadow-xl shadow-slate-900/20">
+              <div>
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 block mb-1">Estimated Total</span>
+                <span className="text-3xl font-black">${selectedDraft?.total.toFixed(2)}</span>
               </div>
+              <div className="flex gap-4">
+                <Button 
+                  variant="outline" 
+                  className="h-14 px-8 rounded-2xl border-slate-700 bg-transparent text-white font-bold hover:bg-slate-800"
+                  onClick={() => setOpen(false)}
+                >
+                  Edit Further
+                </Button>
+                <Button 
+                  className="h-14 px-10 rounded-2xl bg-orange-500 font-black text-sm uppercase tracking-widest text-white shadow-lg shadow-orange-500/20 hover:bg-orange-600 active:scale-[0.98] transition-all"
+                  onClick={handleCheckout}
+                  disabled={isProcessing}
+                >
+                  Send Request
+                </Button>
+              </div>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

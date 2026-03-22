@@ -56,7 +56,6 @@ const orderPageSlice=createSlice({
             state.loading=action.payload
         },
         getAllComplete:(state,action)=>{
-            console.log("data payload complete",action.payload)
             state.dataComplete=action.payload;
         },
         setConfirmOrderFromRetailers:(state,action)=>{

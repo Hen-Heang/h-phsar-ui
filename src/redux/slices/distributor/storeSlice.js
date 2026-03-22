@@ -9,7 +9,6 @@ const shopSlice = createSlice({
     },
     reducers:{
         addNewShop:(state, action)=>{
-           console.log("data : ", action.payload)   
             state.store =action.payload;
         },
         getDataStore : (state, action) =>{

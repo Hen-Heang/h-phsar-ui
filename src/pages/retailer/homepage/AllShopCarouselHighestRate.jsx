@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { Star } from "lucide-react";
 
 import {
   getBookmarkStore,
@@ -14,13 +15,12 @@ import {
   get_all_bookmark_store,
   remove_bookmark_store,
 } from "../../../redux/services/retailer/retailerHomepage.service";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import ReactPaginate from "react-paginate";
 import { useQuery } from "@tanstack/react-query";
 
 const AllShopCarouselHighestRate = () => {
-  const navigate = useNavigate();
-
+  const router = useRouter();
   const dispatch = useDispatch();
 
   const highestRateData = useSelector(
@@ -42,13 +42,9 @@ const AllShopCarouselHighestRate = () => {
 
     dispatch(setStoreId(id)); // Dispatch the setStoreId action
 
-    navigate(
-      `/retailer/distributor-shop?storeId=${id}&storeName=${encodeURIComponent(
-        storeName
-      )}`
-    );
+    router.push(`/retailer/distributor-shop?storeId=${id}&storeName=${encodeURIComponent(storeName)}`);
     window.scrollTo(0, 0);
-  }, [dispatch, navigate]);
+  }, [dispatch, router]);
 
   const bookmarkStoreQuery = useQuery({
     queryKey: ["retailer", "bookmark-store"],
@@ -139,10 +135,7 @@ const AllShopCarouselHighestRate = () => {
               <p className=" flex sm:mt-2 lg:mt-0 text-[14px] sm:text-[16px] items-center gap-2">
                 Rating :
                 <span>
-                  <img
-                    src={(require("../../../assets/images/retailer/star.png")?.default || require("../../../assets/images/retailer/star.png"))}
-                    alt=""
-                  />
+                  <Star className="w-4 h-4 fill-orange-500 text-orange-500" />
                 </span>
                 {parseFloat(item.rating).toFixed(2)}
               </p>
@@ -193,7 +186,6 @@ const AllShopCarouselHighestRate = () => {
           </div>
         </div>
       )}
-      {/* ... */}
     </div>
   );
 };

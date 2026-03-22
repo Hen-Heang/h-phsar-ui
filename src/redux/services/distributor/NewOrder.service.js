@@ -11,7 +11,6 @@ export const get_newOrder = async (dispatch) => {
     );
     return response;
   } catch (e) {
-    console.log("Error:", e);
     return e;
   }
 };
@@ -22,7 +21,6 @@ export const get_newOrder_withoutLoading = async () => {
     );
     return response;
   } catch (e) {
-    console.log("Error:", e);
     return e;
   }
 };
@@ -31,10 +29,8 @@ export const get_accept_newOrder = async (id) => {
     const response = await api.put(`distributor/orders/pending/accept/${id}`, {
       headers: localStorage.getItem("token"),
     });
-    console.log("response:", response);
     return response;
   } catch (e) {
-    console.log("Error", e);
     return e.response;
   }
 };
@@ -46,10 +42,8 @@ export const decline_order = async (id) => {
         headers: localStorage.getItem("token"),
       }
     );
-    console.log(response);
     return response;
   } catch (e) {
-    console.log("Error:", e);
     return e.response;
   }
 };

@@ -4,7 +4,6 @@ export const get_invoice_by_id = async(id)=>{
         const response = await api.get(`/distributor/orders/invoice/${id}`);
         return response;
     } catch (e) {
-        console.log("ErrorID",e)
         return e;
     }
 }

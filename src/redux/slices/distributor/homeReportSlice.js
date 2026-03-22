@@ -14,7 +14,6 @@ const homeReportSlice = createSlice({
   },
   reducers: {
     getDistributorReport: (state, action) => {
-      console.log("Hello in slice", action.payload);
       state.distributorReport = action.payload;
   },
 }

@@ -29,7 +29,6 @@ const orderSlice=createSlice({
             state.dataDraft = action.payload;
         },
         deleteTheDraft: (state, action) => {
-            console.log("action",action.payload)
             state.dataDraft = state.dataDraft.filter((item) => item.order.id !== action.payload)    
         },
         draftToRequest1: (state, action) => {
@@ -67,7 +66,6 @@ const orderSlice=createSlice({
 
         },
         setChangeOrderStatus : (state, action) =>{
-            console.log("Id order status changed",action.payload)
             state.data.forEach((item)=>{
                 if(item.id === parseInt(action.payload, 10)){
                     // console.log("item id", item.id)
@@ -82,12 +80,10 @@ const orderSlice=createSlice({
                     }else{
                         item.status = "Complete"
                     }
-                    console.log("item state 2: " + item.status)
                 }
             })
         },
         setChangeOrderStatusDeclind : (state, action) =>{
-            console.log("Id order status changed",action.payload)
             state.data.forEach((item)=>{
                 if(item.id === parseInt(action.payload, 10)){
                     // console.log("item id", item.id)

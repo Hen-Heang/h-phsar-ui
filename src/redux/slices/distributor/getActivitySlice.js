@@ -4,7 +4,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const ActivityInfo = createSlice({
     name: 'getActivityInfo',
     initialState:{
-        data: [],
+        data: {},
     },
     reducers:{
         getActivityInfo: (state, action) => {

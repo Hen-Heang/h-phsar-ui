@@ -13,16 +13,16 @@ export function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55 }}
         >
-          <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-teal-200 bg-teal-50 px-4 py-1 text-sm font-medium text-teal-700 dark:border-teal-900 dark:bg-teal-950/40 dark:text-teal-300">
+          <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-1 text-sm font-medium text-blue-700   ">
             <Sparkles className="h-4 w-4" />
             Built for modern commerce teams
           </p>
 
-          <h1 className="text-4xl font-black tracking-tight text-slate-900 dark:text-slate-100 md:text-6xl">
+          <h1 className="text-4xl font-black tracking-tight text-slate-900  md:text-6xl">
             Manage stock, orders, and growth in one polished dashboard.
           </h1>
 
-          <p className="mx-auto mt-5 max-w-2xl text-base text-slate-600 dark:text-slate-300 md:text-lg">
+          <p className="mx-auto mt-5 max-w-2xl text-base text-slate-600  md:text-lg">
             Ship faster with a refined UI, meaningful motion, and a clean design system that scales.
           </p>
 

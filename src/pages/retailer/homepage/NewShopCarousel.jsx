@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { 
   Store, 
@@ -32,14 +32,14 @@ const NewShopCarousel = () => {
   const dataNewShop = useSelector((state) => state.getDataAllShop.dataNewShop);
   const topShops = useMemo(() => dataNewShop.slice(0, 3), [dataNewShop]);
 
-  const navigate = useNavigate();
+  const router = useRouter();
   const dispatch = useDispatch();
 
   const onClickGetDataShop = useCallback((id, storeName) => {
     dispatch(setStoreId(id));
-    navigate(`/retailer/distributor-shop?storeId=${id}&storeName=${encodeURIComponent(storeName)}`);
+    router.push(`/retailer/distributor-shop?storeId=${id}&storeName=${encodeURIComponent(storeName)}`);
     window.scrollTo(0, 0);
-  }, [dispatch, navigate]);
+  }, [dispatch, router]);
 
   const bookmarkStoreQuery = useQuery({
     queryKey: ["retailer", "bookmark-store"],
@@ -80,7 +80,7 @@ const NewShopCarousel = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.1 }}
             onClick={() => onClickGetDataShop(item.id, item.name)}
-            className="group relative cursor-pointer overflow-hidden rounded-[2.5rem] border border-slate-200 bg-white shadow-xl shadow-slate-200/50 transition-all hover:-translate-y-1 hover:border-orange-200 hover:shadow-2xl hover:shadow-orange-500/10 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none"
+            className="group relative cursor-pointer overflow-hidden rounded-[2.5rem] border border-slate-200 bg-white shadow-xl shadow-slate-200/50 transition-all hover:-translate-y-1 hover:border-orange-200 hover:shadow-2xl hover:shadow-orange-500/10   "
           >
             {/* Store Banner */}
             <div className="relative h-56 w-full overflow-hidden">
@@ -127,23 +127,23 @@ const NewShopCarousel = () => {
               <div className="space-y-4">
                 <div className="flex items-start gap-3 text-slate-500">
                   <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-orange-500" />
-                  <p className="line-clamp-1 text-sm font-medium leading-relaxed dark:text-slate-400">
+                  <p className="line-clamp-1 text-sm font-medium leading-relaxed ">
                     {item.address}
                   </p>
                 </div>
                 <div className="flex items-center gap-3 text-slate-500">
                   <Phone className="h-4 w-4 shrink-0 text-orange-500" />
-                  <p className="text-sm font-medium dark:text-slate-400">
+                  <p className="text-sm font-medium ">
                     {item.primaryPhone}
                   </p>
                 </div>
               </div>
 
-              <div className="mt-8 flex items-center justify-between border-t border-slate-50 pt-6 dark:border-slate-800">
+              <div className="mt-8 flex items-center justify-between border-t border-slate-50 pt-6 ">
                 <div className="flex -space-x-2">
-                  <div className="h-8 w-8 rounded-lg border-2 border-white bg-orange-100 dark:border-slate-900" />
-                  <div className="h-8 w-8 rounded-lg border-2 border-white bg-blue-100 dark:border-slate-900" />
-                  <div className="h-8 w-8 rounded-lg border-2 border-white bg-slate-100 dark:border-slate-900" />
+                  <div className="h-8 w-8 rounded-lg border-2 border-white bg-orange-100 " />
+                  <div className="h-8 w-8 rounded-lg border-2 border-white bg-blue-100 " />
+                  <div className="h-8 w-8 rounded-lg border-2 border-white bg-slate-100 " />
                 </div>
                 <Button variant="ghost" size="sm" className="h-10 rounded-xl font-bold text-orange-500 hover:bg-orange-50 group-hover:bg-orange-50">
                   Visit Store

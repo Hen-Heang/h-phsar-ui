@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import React from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,9 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 import noImage from "../../assets/images/no_image.jpg";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { storageFirebase } from "../../firebaseUploadImage";
-import { v4 } from "uuid";
+import { uploadImage } from "@/lib/uploadImage";
 import {
   add_new_account,
   get_account_distributor,
@@ -28,14 +27,12 @@ import { getDataStore } from "../../redux/slices/distributor/storeSlice";
 import { get_store_distributor_profile } from "../../redux/services/distributor/store.service";
 import { PulseLoader, RingLoader } from "react-spinners";
 import AccountProfileSkeleton from "../../components/retailler/skeletons/AccountProfileSkeleton";
-
-// Static image imports
-import addImageIcon from "../../assets/images/add-image 2.png";
+import { ImagePlus } from "lucide-react";
 
 export default function Account() {
   const [email, setEmail] = useState("");
   useEffect(() => {
-    document.title = "H-Phsar | Account";
+    document.title = "StockFlow | Account";
     if (typeof window !== "undefined") {
       setEmail(window.localStorage.getItem("email") || "");
     }
@@ -137,9 +134,10 @@ export default function Account() {
       return;
     }
 
-    if (noDataAccount) {
-      if (targetImage === null || targetImage === "") {
-        add_new_account(newAccount).then((res) => {
+    try {
+      if (noDataAccount) {
+        if (targetImage === null || targetImage === "") {
+          const res = await add_new_account(newAccount);
           dispatch(addNewAccount(res.data.data));
           setSetLoadingConfirm(false);
           setEdit(true);
@@ -147,29 +145,10 @@ export default function Account() {
           setSave(false);
           setCancel(false);
           setShowsave(false);
-        });
-      } else {
-        const imageRef = ref(storageFirebase, `account_image/${targetImage.name + v4()}`);
-        await uploadBytes(imageRef, targetImage)
-          .then(() => getDownloadURL(imageRef))
-          .then((downloadURL) => {
-            const updatedFields = { ...newAccount, profileImage: downloadURL };
-            add_new_account(updatedFields)
-              .then((res) => {
-                dispatch(addNewAccount(res.data.data));
-                setEdit(true);
-                setIsDisabled(true);
-                setSave(false);
-                setCancel(false);
-                setShowsave(false);
-                setSetLoadingConfirm(false);
-              })
-              .catch((error) => console.log(error));
-          });
-      }
-    } else {
-      if (targetImage === null || targetImage === "") {
-        update_account(newAccount).then((res) => {
+        } else {
+          const downloadURL = await uploadImage(targetImage);
+          const updatedFields = { ...newAccount, profileImage: downloadURL };
+          const res = await add_new_account(updatedFields);
           dispatch(addNewAccount(res.data.data));
           setEdit(true);
           setIsDisabled(true);
@@ -177,26 +156,32 @@ export default function Account() {
           setCancel(false);
           setShowsave(false);
           setSetLoadingConfirm(false);
-        });
+        }
       } else {
-        const imageRef = ref(storageFirebase, `account_image/${targetImage.name + v4()}`);
-        await uploadBytes(imageRef, targetImage)
-          .then(() => getDownloadURL(imageRef))
-          .then((downloadURL) => {
-            const updatedFields = { ...newAccount, profileImage: downloadURL };
-            update_account(updatedFields)
-              .then((res) => {
-                dispatch(addNewAccount(res.data.data));
-                setEdit(true);
-                setIsDisabled(true);
-                setSave(false);
-                setCancel(false);
-                setShowsave(false);
-                setSetLoadingConfirm(false);
-              })
-              .catch((error) => console.log(error));
-          });
+        if (targetImage === null || targetImage === "") {
+          const res = await update_account(newAccount);
+          dispatch(addNewAccount(res.data.data));
+          setEdit(true);
+          setIsDisabled(true);
+          setSave(false);
+          setCancel(false);
+          setShowsave(false);
+          setSetLoadingConfirm(false);
+        } else {
+          const downloadURL = await uploadImage(targetImage);
+          const updatedFields = { ...newAccount, profileImage: downloadURL };
+          const res = await update_account(updatedFields);
+          dispatch(addNewAccount(res.data.data));
+          setEdit(true);
+          setIsDisabled(true);
+          setSave(false);
+          setCancel(false);
+          setShowsave(false);
+          setSetLoadingConfirm(false);
+        }
       }
+    } catch (error) {
+      setSetLoadingConfirm(false);
     }
   };
 
@@ -225,7 +210,7 @@ export default function Account() {
 
   return (
     <div
-      className={`dark:text-white transition ${
+      className={` transition ${
         isOpen
           ? " transition-all ease-in-out delay-300 duration-1000 "
           : "opacity-0 scale-95 translate-y-1/2 "
@@ -239,16 +224,21 @@ export default function Account() {
             <div className="w-full p-6 space-y-1 md:space-y-2 sm:px-12 sm:py-12">
               {/* Account image and Name*/}
               <div className="flex m-auto flex-row justify-start gap-3 lg:gap-7 items-center w-[100%]">
-                <img
+                <Image
                   src={imageUrl || account?.profileImage || noImage.src || noImage}
-                  alt=""
+                  alt="Profile"
+                  width={192}
+                  height={192}
                   className="rounded w-36 h-36 sm:w-48 sm:h-48 lg:w-48 lg:h-48 border border-gray-300 object-cover"
+                  onError={(e) => {
+                    e.currentTarget.src = noImage.src || noImage;
+                  }}
                 />
                 <div className="self-auto w-full">
                   <h1 className="text-3xl lg:text-5xl font-bold text-slate-900">
                     {(!account?.firstName && !account?.lastName) ? "Store Owner" : `${account?.firstName || ""} ${account?.lastName || ""}`}
                   </h1>
-                  <p className="text-teal-600 font-medium">{email}</p>
+                  <p className="text-blue-600 font-medium">{email}</p>
 
                   <div className="mt-6 flex justify-start gap-3">
                     {edit && (
@@ -272,7 +262,7 @@ export default function Account() {
                     {save && (
                       <button
                         type="button"
-                        className="py-2 px-8 text-sm font-medium text-white bg-teal-600 rounded shadow-md hover:bg-teal-700 transition"
+                        className="py-2 px-8 text-sm font-medium text-white bg-blue-600 rounded shadow-md hover:bg-blue-700 transition"
                         onClick={() => setShowsave(true)}
                       >
                         Save Changes
@@ -292,9 +282,9 @@ export default function Account() {
                 <div className="flex-1 space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-bold text-teal-800 uppercase mb-1">First Name</label>
+                      <label className="block text-sm font-bold text-blue-800 uppercase mb-1">First Name</label>
                       <input
-                        className="w-full bg-slate-50 border border-slate-200 rounded-lg py-3 px-4 focus:ring-teal-500 focus:border-teal-500 transition disabled:opacity-50"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-lg py-3 px-4 focus:ring-blue-600 focus:border-blue-600 transition disabled:opacity-50"
                         name="firstName"
                         type="text"
                         placeholder={account?.firstName || "First Name"}
@@ -304,9 +294,9 @@ export default function Account() {
                       {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-bold text-teal-800 uppercase mb-1">Last Name</label>
+                      <label className="block text-sm font-bold text-blue-800 uppercase mb-1">Last Name</label>
                       <input
-                        className="w-full bg-slate-50 border border-slate-200 rounded-lg py-3 px-4 focus:ring-teal-500 focus:border-teal-500 transition disabled:opacity-50"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-lg py-3 px-4 focus:ring-blue-600 focus:border-blue-600 transition disabled:opacity-50"
                         name="lastName"
                         type="text"
                         placeholder={account?.lastName || "Last Name"}
@@ -317,13 +307,13 @@ export default function Account() {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-bold text-teal-800 uppercase mb-1">Gender</label>
+                    <label className="block text-sm font-bold text-blue-800 uppercase mb-1">Gender</label>
                     <select
                       disabled={isDisabled}
                       onChange={handleFormChange}
                       name="gender"
                       defaultValue={account?.gender || ""}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-lg py-3 px-4 focus:ring-teal-500 focus:border-teal-500 transition disabled:opacity-50"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-lg py-3 px-4 focus:ring-blue-600 focus:border-blue-600 transition disabled:opacity-50"
                     >
                       <option disabled value="">Select Gender</option>
                       <option value="Male">Male</option>
@@ -344,11 +334,12 @@ export default function Account() {
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-6">
-                    <div className="w-24 h-24 rounded-full overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center">
-                      <img
+                    <div className="w-24 h-24 rounded-full overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center relative">
+                      <Image
                         src={imageUrl || account?.profileImage || noImage.src || noImage}
                         alt="Profile"
-                        className="w-full h-full object-cover"
+                        fill
+                        className="object-cover"
                       />
                     </div>
                     <label
@@ -356,9 +347,9 @@ export default function Account() {
                       className="flex-1 flex flex-col items-center justify-center h-32 border-2 border-dashed border-slate-300 rounded-xl cursor-pointer bg-slate-50 hover:bg-slate-100 transition"
                     >
                       <div className="flex flex-col items-center justify-center py-4">
-                        <img src={addImageIcon.src || addImageIcon} alt="" className="w-8 h-8 mb-2 opacity-50" />
+                        <ImagePlus className="w-8 h-8 mb-2 text-slate-400" />
                         <p className="text-xs text-slate-500">
-                          <span className="font-bold text-teal-600">Click to upload</span> new photo
+                          <span className="font-bold text-blue-600">Click to upload</span> new photo
                         </p>
                         <p className="text-[10px] text-slate-400 mt-1">SVG, PNG, JPG (max 800x400px)</p>
                       </div>
@@ -375,8 +366,8 @@ export default function Account() {
       <Dialog open={showSave} onOpenChange={setShowsave}>
         <DialogContent className="max-w-md p-8">
           <div className="text-center">
-            <div className="w-20 h-20 bg-teal-50 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg className="w-10 h-10 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             </div>
@@ -384,7 +375,7 @@ export default function Account() {
             <p className="text-slate-500 mb-8">Confirming will save your updated information to your distributor profile.</p>
             <div className="space-y-3">
               <button
-                className="w-full py-3 bg-teal-600 text-white rounded-lg font-bold hover:bg-teal-700 transition flex items-center justify-center gap-2"
+                className="w-full py-3 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition flex items-center justify-center gap-2"
                 onClick={submit}
                 disabled={loadingConfirm}
               >

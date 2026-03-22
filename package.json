@@ -1,5 +1,5 @@
 {
-  "name": "h-phsar",
+  "name": "stockflow",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -22,7 +22,6 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.7",
-    "firebase": "^9.22.1",
     "flowbite": "^1.6.6",
     "flowbite-react": "^0.4.4",
     "formik": "^2.2.9",
@@ -47,7 +46,7 @@
     "react-switch": "^7.0.0",
     "react-tailwindcss-datepicker": "^1.6.1",
     "react-to-print": "^2.14.12",
-    "react-toastify": "^9.1.2",
+    "react-toastify": "^11.0.5",
     "sockjs-client": "^1.6.1",
     "stompjs": "^2.3.3",
     "sweetalert2": "^11.7.3",

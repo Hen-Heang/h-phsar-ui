@@ -1,4 +1,3 @@
-import { async } from "@firebase/util";
 import { api } from "../../../utils/api";
 import { setLoading } from "../../slices/retailer/searchSlice";
 
@@ -6,13 +5,10 @@ import { setLoading } from "../../slices/retailer/searchSlice";
 export const get_search= async(name,dispatch) => {
     try{
         dispatch(setLoading(true));
-        console.log("name",name)
         const response = await api.get(`retailer/stores/hybrid/search?name=${name}&sort=asc&by=name`)
-       console.log(response.data.data)
         return response;
     }
     catch (e){
-        console.log("Error", e.response);
         return e.response;
     }
 }

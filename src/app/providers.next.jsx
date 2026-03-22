@@ -22,6 +22,7 @@ const muiTheme = createTheme({
 });
 
 import { ThemeProvider as ModernThemeProvider } from "../components/modern/theme-provider";
+import ToastProvider from "../components/ToastProvider";
 
 export default function Providers({ children }) {
   const [queryClient] = useState(
@@ -42,7 +43,10 @@ export default function Providers({ children }) {
       <ThemeProvider theme={muiTheme}>
         <CssBaseline />
         <QueryClientProvider client={queryClient}>
-          <Provider store={store}>{children}</Provider>
+          <Provider store={store}>
+            {children}
+            <ToastProvider />
+          </Provider>
         </QueryClientProvider>
       </ThemeProvider>
     </ModernThemeProvider>

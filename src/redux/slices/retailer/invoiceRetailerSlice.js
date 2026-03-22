@@ -8,11 +8,9 @@ const invoiceRetailerSlice = createSlice({
     },
     reducers: {
         getInvoice: (state, action) => {
-            console.log("Get Invoice : ", action.payload)
             state.data = action.payload;
         },
         getOrderInvoice: (state, action) => {
-            console.log("Get order Invoice : ", action.payload)
             state.value = action.payload;
         }
     }

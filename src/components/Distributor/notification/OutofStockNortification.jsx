@@ -1,52 +1,10 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import oggy from "../../../assets/images/profile_acc.png";
-import noNotification from "../../../assets/images/distributor/no_notification.png";
+import { BellOff, User } from "lucide-react";
 import { get_all_notification } from "../../../redux/services/distributor/notification.service";
 import { getAllNotificationsDistributor } from "../../../redux/slices/distributor/notification/notificationSlice";
 export const OutofStockNotification = () => {
-  const [data, setData] = useState([
-    {
-        id: 1,
-        image: oggy,
-        status: "now",
-        name: "Notice product unavailable",
-        title: "coca is currently out of stock",
-      },
-    {
-        id: 2,
-        image: oggy,
-        status: "15m ago",
-        name: "Notice product unavailable",
-        title: "coca is currently out of stock",
-      },
-    {
-        id: 3,
-        image: oggy,
-        status: "now",
-        name: "Notice product unavailable",
-        title: "coca is currently out of stock",
-      },
-    {
-        id: 4,
-        image: oggy,
-        status: "15m ago",
-        name: "Notice product unavailable",
-        title: "coca is currently out of stock",
-      },
-    {
-        id: 5,
-        image: oggy,
-        status: "15m ago",
-        name: "Notice product unavailable",
-        title: "coca is currently out of stock",
-      },
-  
-   
-   
-  ]);
-
   const dispatch = useDispatch();
 
   const [noDataNotifications,setNoDataNotifications] = useState(false)
@@ -70,10 +28,7 @@ export const OutofStockNotification = () => {
   // ======================== handle read notifications ========================
   const [dataNotification, setDataNotification] = useState([]);
   const handleGetDataNotification = (data) => {
-    console.log("Data received : " + data);
     setDataNotification(data);
-    console.log("data notification received : " + dataNotification);
-    console.log("Hello world!",dataNotification.title);
   };
 
   return (
@@ -82,11 +37,7 @@ export const OutofStockNotification = () => {
     {noDataNotifications ? (
           <div className="w-full h-full">
             <div className="flex mx-auto justify-center items-center flex-col h-full gap-2">
-              <img
-                src={noNotification}
-                alt="no notifications"
-                className="max-w-full h-auto"
-              />
+              <BellOff className="w-12 h-12 text-slate-300 mb-2" />
               No notifications
             </div>
           </div>
@@ -101,15 +52,13 @@ export const OutofStockNotification = () => {
           onClick={() => handleGetDataNotification(item)}
         >
           <div className="flex mx-auto justify-evenly items-center w-[95%] py-2">
-              <img
-                src={item.image || oggy}
-                alt="notification avatar"
-                className="w-12 h-12 rounded-full object-cover"
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = oggy;
-                }}
-              />
+              {item.image ? (
+                <img src={item.image} alt="" className="w-12 h-12 rounded-full object-cover" />
+              ) : (
+                <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center">
+                  <User className="w-6 h-6 text-slate-400" />
+                </div>
+              )}
             <div className="w-72 ml-5">
               <h2
                 className={`text-lg font-medium ${

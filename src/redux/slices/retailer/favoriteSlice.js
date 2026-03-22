@@ -8,7 +8,6 @@ const favoriteSlice=createSlice({
     },
   reducers: {
     setLoadingFavorite: (state, action) => {
-      console.log("Loading from slice ", action.payload)
       state.loading = action.payload
     },
     getOnlyBookmark: (state, action) => {

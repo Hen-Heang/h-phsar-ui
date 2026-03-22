@@ -9,10 +9,8 @@ export const get_only_bookmark = async (dispatch) => {
     const response = await api.get(
       "retailer/stores/bookmark?pageNumber=1&pageSize=1000"
     );
-    console.log("Response : ", response);
     return response;
   } catch (e) {
-    console.log("Error :", e);
     // dispatch(setLoadingFavorite(false))
     return e;
   }
@@ -23,7 +21,6 @@ export const get_detail_shop = async (id) => {
     return response;
   } catch (e) {
 
-    console.log("Error :", e);
     
     return e;
   }
@@ -34,7 +31,6 @@ export const get_detail_product = async (id) => {
     const response = await api.get(`/retailer/stores/${id}/products`);
     return response;
   } catch (e) {
-    console.log("Error :", e);
     return e;
   }
 };
@@ -44,7 +40,6 @@ export const remove_bookmark = async (id) => {
     const response = await api.delete(`/retailer/stores/${id}/bookmark/remove`);
     return response;
   } catch (e) {
-    console.log("Error :", e);
     return e;
   }
 }

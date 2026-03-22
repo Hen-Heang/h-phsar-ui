@@ -1,4 +1,5 @@
 import React from 'react'
+import { Star } from "lucide-react"
 
 export default function CompleteOrder(props) {
   return (
@@ -169,12 +170,8 @@ export default function CompleteOrder(props) {
               </div>
               <div className="w-full rounded-lg border border-gray-400 mt-3">
                 <div className="flex flex-wrap w-full">
-                  <div className="w-2/12  p-4">
-                    <img
-                      className="w-16"
-                      src={(require("../../assets/images/rating 1.png")?.default || require("../../assets/images/rating 1.png"))}
-                      alt=""
-                    />
+                  <div className="w-2/12 p-4 flex items-center justify-center">
+                    <Star className="w-10 h-10 text-yellow-400 fill-yellow-400" />
                   </div>
                   <div className="w-7/12 p-4">
                     <div className="">
