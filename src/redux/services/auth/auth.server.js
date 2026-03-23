@@ -49,6 +49,7 @@ export const forget_password = async (data) => {
 };
 export const change_password = async (data) => {
   return apiPut("/authorization/change-password", {
+    auth: false,
     body: data,
   });
 };

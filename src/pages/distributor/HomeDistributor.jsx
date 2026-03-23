@@ -166,11 +166,11 @@ const HomeDistributor = () => {
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             {[
-              { label: "New Order", value: getActivityList.newOrder, Icon: ShoppingBag, color: "text-orange-600", bgColor: "bg-orange-50" },
-              { label: "Preparing", value: getActivityList.preparing, Icon: Package, color: "text-blue-600", bgColor: "bg-blue-50" },
-              { label: "Dispatch", value: getActivityList.dispatch, Icon: Truck, color: "text-purple-600", bgColor: "bg-purple-50" },
-              { label: "Confirming", value: getActivityList.confirming, Icon: Hourglass, color: "text-amber-600", bgColor: "bg-amber-50" },
-              { label: "Completed", value: getActivityList.completed, Icon: CheckCircle2, color: "text-emerald-600", bgColor: "bg-emerald-50" },
+              { label: "New Order", value: getActivityList?.newOrder ?? 0, Icon: ShoppingBag, color: "text-orange-600", bgColor: "bg-orange-50" },
+              { label: "Preparing", value: getActivityList?.preparing ?? 0, Icon: Package, color: "text-blue-600", bgColor: "bg-blue-50" },
+              { label: "Dispatch", value: getActivityList?.dispatch ?? 0, Icon: Truck, color: "text-purple-600", bgColor: "bg-purple-50" },
+              { label: "Confirming", value: getActivityList?.confirming ?? 0, Icon: Hourglass, color: "text-amber-600", bgColor: "bg-amber-50" },
+              { label: "Completed", value: getActivityList?.completed ?? 0, Icon: CheckCircle2, color: "text-emerald-600", bgColor: "bg-emerald-50" },
             ].map((item, idx) => (
               <div key={idx} className="flex flex-col items-center p-5 rounded-2xl bg-slate-50/50  border border-slate-100  transition-all hover:scale-[1.02]">
                 <div className={`p-3 ${item.bgColor} rounded-2xl shadow-sm mb-3`}>
