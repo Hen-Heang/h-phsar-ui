@@ -1,5 +1,19 @@
 const DEFAULT_API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8888";
+  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080";
+
+let isRedirecting = false;
+
+function handleUnauthorized() {
+  if (isRedirecting) return;
+  isRedirecting = true;
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("email");
+    window.location.href = "/sign-in";
+  }
+}
 
 function buildUrl(path, query) {
   const url = path.startsWith("http")
@@ -42,15 +56,10 @@ function getAuthHeaders(auth) {
 }
 
 export async function apiRequest(path, options = {}) {
-  const {
-    method = "GET",
-    body,
-    headers = {},
-    query,
-    auth = true,
-  } = options;
+  const { method = "GET", body, headers = {}, query, auth = true } = options;
 
-  const isFormData = typeof FormData !== "undefined" && body instanceof FormData;
+  const isFormData =
+    typeof FormData !== "undefined" && body instanceof FormData;
   const requestHeaders = {
     ...getAuthHeaders(auth),
     ...(!isFormData ? { "Content-Type": "application/json" } : {}),
@@ -61,9 +70,22 @@ export async function apiRequest(path, options = {}) {
     const response = await fetch(buildUrl(path, query), {
       method,
       headers: requestHeaders,
-      body: body === undefined ? undefined : isFormData ? body : JSON.stringify(body),
+      body:
+        body === undefined
+          ? undefined
+          : isFormData
+            ? body
+            : JSON.stringify(body),
       credentials: "include",
     });
+
+    if (response.status === 401 && auth) {
+      const hasToken =
+        typeof window !== "undefined" && !!localStorage.getItem("token");
+      if (hasToken) {
+        handleUnauthorized();
+      }
+    }
 
     const data = await parseResponseBody(response);
 
@@ -77,7 +99,8 @@ export async function apiRequest(path, options = {}) {
       ok: false,
       status: 0,
       data: {
-        detail: error instanceof Error ? error.message : "Network request failed",
+        detail:
+          error instanceof Error ? error.message : "Network request failed",
       },
     };
   }

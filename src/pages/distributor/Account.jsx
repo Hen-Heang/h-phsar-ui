@@ -107,8 +107,8 @@ export default function Account() {
         setNoDataAccount(true);
       } else {
         dispatch(getAccountDistributer(res.data.data));
-        setNewAccount(res.data.data);
-        setImageUrl(res.data.data.profileImage);
+        setNewAccount(res.data?.data);
+        setImageUrl(res.data.data?.profileImage);
         setloadingAccount(false);
         setNoDataAccount(false);
       }

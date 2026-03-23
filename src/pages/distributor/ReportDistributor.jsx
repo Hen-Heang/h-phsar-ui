@@ -50,7 +50,7 @@ function ReportDistributor() {
     const fetchData = async () => {
       const formattedStartDate = dayjs(startDate).startOf('month').format("YYYY-MM-DD");
       const formattedEndDate = dayjs(endDate).endOf('month').format("YYYY-MM-DD");
-      const url = `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8888"}/api/v1/distributor/reports?startDate=${formattedStartDate}&endDate=${formattedEndDate}`;
+      const url = `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080"}/api/v1/distributor/reports?startDate=${formattedStartDate}&endDate=${formattedEndDate}`;
       try {
         const response = await api.get(url);
         if (response.data?.data) {

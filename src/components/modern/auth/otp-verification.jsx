@@ -8,7 +8,7 @@ export function OTPVerification({ email, onVerify, onResend, isLoading, isResend
   const [otp, setOtp] = useState("");
 
   const handleVerify = () => {
-    if (otp.length === 6) {
+    if (otp.length === 4) {
       onVerify(otp);
     }
   };
@@ -25,7 +25,7 @@ export function OTPVerification({ email, onVerify, onResend, isLoading, isResend
         <OTPInput
           value={otp}
           onChange={setOtp}
-          numInputs={6}
+          numInputs={4}
           renderSeparator={<span className="mx-1 text-slate-300">-</span>}
           renderInput={(props) => (
             <input
@@ -44,7 +44,7 @@ export function OTPVerification({ email, onVerify, onResend, isLoading, isResend
       <Button
         onClick={handleVerify}
         className="w-full"
-        disabled={isLoading || otp.length !== 6}
+        disabled={isLoading || otp.length !== 4}
       >
         {isLoading ? (
           <>

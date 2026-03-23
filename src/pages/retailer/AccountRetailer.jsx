@@ -82,6 +82,9 @@ export default function AccountRetailer() {
         dispatch(getRetailerInfo(data));
         setFormState(data);
         setPreviewUrl(data.profileImage);
+      } else if (res.status === 401) {
+        // Token expired — RetailerShell or the response interceptor will redirect
+        return;
       } else if (res.status === 404) {
         setProfileExist(false);
         const defaultProfile = {

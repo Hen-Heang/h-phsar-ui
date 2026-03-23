@@ -79,7 +79,7 @@ const Navbar = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    const socket = new SockJS(`${process.env.NEXT_PUBLIC_WS_URL || "http://localhost:8888"}/ws`);
+    const socket = new SockJS(`${process.env.NEXT_PUBLIC_WS_URL || "http://localhost:8080"}/ws`);
     const stompClient = over(socket);
     stompClient.connect({}, () => {
       const userId = localStorage.getItem("userId");

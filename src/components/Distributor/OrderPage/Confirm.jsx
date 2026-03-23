@@ -38,7 +38,7 @@ export default function Confirm({ toggleTab5 }) {
 
   // WebSocket Connection
   useEffect(() => {
-    const Sock = new SockJS(`${process.env.NEXT_PUBLIC_WS_URL || "http://localhost:8888"}/ws`);
+    const Sock = new SockJS(`${process.env.NEXT_PUBLIC_WS_URL || "http://localhost:8080"}/ws`);
     const stompClient = over(Sock);
     stompClient.connect({}, () => {
       stompClient.subscribe(`/user/${localStorage.getItem("userId")}/private`, (payload) => {

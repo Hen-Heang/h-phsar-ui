@@ -211,7 +211,7 @@ export default function NewImport(props) {
                     {loading ? <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" /> : "Save Product"}
                   </Button>
                 </div>
-              </div>
+              </div>  
             </div>
           </form>
         </DialogContent>

@@ -695,7 +695,7 @@ export default function NavBarRetailerComponent() {
   var stompClient = null;
   const Sock = null;
   const connect = () => {
-    const Sock = new SockJS(`${process.env.NEXT_PUBLIC_WS_URL || "http://localhost:8888"}/ws`);
+    const Sock = new SockJS(`${process.env.NEXT_PUBLIC_WS_URL || "http://localhost:8080"}/ws`);
     stompClient = over(Sock);
     stompClient.connect({}, onConnected, onError);
   };
