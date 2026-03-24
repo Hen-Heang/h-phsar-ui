@@ -31,7 +31,7 @@ const OrderNotification = () => {
     });
   }, [dispatch]);
   const allDataNotificationRetailer = useSelector(
-    (state) => state.DataNotificationRetailer.dataNotificationRetailer
+    (state) => state.DataNotificationRetailer.dataNotificationRetailer,
   );
   // ======================== handle read notifications ========================
   const [loadingPro, setLoadingPro] = useState(false);
@@ -81,8 +81,7 @@ const OrderNotification = () => {
 
   const countAllNotificationUnseenOrderAccepted =
     allDataNotificationRetailer.filter(
-      (item) =>
-        item.notificationType === "ORDER_ACCEPTED"
+      (item) => item.notificationType === "ORDER_ACCEPTED",
     ).length;
   return (
     <div className="mt-3 -mx-4 ">
@@ -107,13 +106,16 @@ const OrderNotification = () => {
                         {dataNotification.notificationType === "ORDER_CANCELLED"
                           ? "Order Has Cancelled"
                           : dataNotification.notificationType === "NEW_ORDER"
-                          ? "New Order"
-                          : dataNotification.notificationType ===
-                            "ORDER_COMPLETE"
-                          ? "Order Complete"
-                          : "Out of stock"}
+                            ? "New Order"
+                            : dataNotification.notificationType ===
+                                "ORDER_COMPLETE"
+                              ? "Order Complete"
+                              : "Out of stock"}
                       </h3>
-                      <button onClick={() => setShowModal(false)} className="text-white hover:text-gray-200 transition-colors">
+                      <button
+                        onClick={() => setShowModal(false)}
+                        className="text-white hover:text-gray-200 transition-colors"
+                      >
                         <X className="h-6 w-6" />
                       </button>
                     </div>
@@ -127,9 +129,14 @@ const OrderNotification = () => {
                                 <div className="flex flex-wrap justify-center">
                                   <img
                                     alt="..."
-                                    src={getSafeImageSrc(dataNotification.image, imageTest)}
+                                    src={getSafeImageSrc(
+                                      dataNotification.image,
+                                      imageTest,
+                                    )}
                                     className="shadow-xl rounded-full align-middle border-none w-[100px] h-[100px]"
-                                    onError={(e) => applyImageFallback(e, imageTest)}
+                                    onError={(e) =>
+                                      applyImageFallback(e, imageTest)
+                                    }
                                   />
                                 </div>
                                 <div className="text-center mt-6">
@@ -167,66 +174,66 @@ const OrderNotification = () => {
           ) : null}
         </>
       )}
-      {noDataNotifications ||  countAllNotificationUnseenOrderAccepted < 0 ? (
-       <div className="h-96 w-full flex flex-col gap-2 justify-center items-center text-xl text-gray-500">
-       <BellOff className="w-12 h-12 text-slate-300 mb-2" />
-       No data notifications
-     </div>
+      {noDataNotifications || countAllNotificationUnseenOrderAccepted < 0 ? (
+        <div className="h-96 w-full flex flex-col gap-2 justify-center items-center text-xl text-gray-500">
+          <BellOff className="w-12 h-12 text-slate-300 mb-2" />
+          No data notifications
+        </div>
       ) : (
-      <div className="flex flex-col gap-1 overflow-auto h-96">
-        
-        {allDataNotificationRetailer.map((item) =>
-          item.notificationType === "ORDER_ACCEPTED" ? (
-            <div
-              key={item.id}
-              className={`${
-                item.seen === false ? "bg-blue-100" : null
-              } w-full rounded cursor-pointer`}
-              onClick={() => handleGetDataNotification(item)}
-            >
-              <div className="flex mx-auto justify-evenly items-center w-[95%] py-2">
-                <img
-                  src={getSafeImageSrc(item.image, imageTest)}
-                  alt=""
-                  className=" w-10 h-10 rounded-full"
-                  onError={(e) => applyImageFallback(e, imageTest)}
-                />
-                <div className="w-72 ml-5">
-                  <h2
-                    className={`text-base font-medium ${
-                      item.name === "Notice product unavailable"
-                        ? "text-red-600"
-                        : null
-                    }`}
-                  >
-                    {item.store}
-                  </h2>
-                  <p
-                    className={`text-xs ${
-                      item.title === "Out of stock." ? "text-red-600" : null
-                    }`}
-                  >
-                    {item.title}
-                  </p>
-                </div>
-                <div className="text-sm w-5 flex justify-center">
-                  {item.seen ? null : (
-                    <span className="w-2 h-2 rounded-full bg-primaryColorRetailer"></span>
-                  )}
-                </div>
-                <div className="text-sm w-20 flex justify-center">
-                  <span>
-                    {new Date(item.createdDate).toLocaleDateString("en-US", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
+        <div className="flex flex-col gap-1 overflow-auto h-96">
+          {allDataNotificationRetailer.map((item) =>
+            item.notificationType === "ORDER_ACCEPTED" ? (
+              <div
+                key={item.id}
+                className={`${
+                  item.seen === false ? "bg-blue-100" : null
+                } w-full rounded cursor-pointer`}
+                onClick={() => handleGetDataNotification(item)}
+              >
+                <div className="flex mx-auto justify-evenly items-center w-[95%] py-2">
+                  <img
+                    src={getSafeImageSrc(item.image, imageTest)}
+                    alt=""
+                    className=" w-10 h-10 rounded-full"
+                    onError={(e) => applyImageFallback(e, imageTest)}
+                  />
+                  <div className="w-72 ml-5">
+                    <h2
+                      className={`text-base font-medium ${
+                        item.name === "Notice product unavailable"
+                          ? "text-red-600"
+                          : null
+                      }`}
+                    >
+                      {item.store}
+                    </h2>
+                    <p
+                      className={`text-xs ${
+                        item.title === "Out of stock." ? "text-red-600" : null
+                      }`}
+                    >
+                      {item.title}
+                    </p>
+                  </div>
+                  <div className="text-sm w-5 flex justify-center">
+                    {item.seen ? null : (
+                      <span className="w-2 h-2 rounded-full bg-primaryColorRetailer"></span>
+                    )}
+                  </div>
+                  <div className="text-sm w-20 flex justify-center">
+                    <span>
+                      {new Date(item.createdDate).toLocaleDateString("en-US", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ) : null
-        )}
-      </div>)}
+            ) : null,
+          )}
+        </div>
+      )}
     </div>
   );
 };

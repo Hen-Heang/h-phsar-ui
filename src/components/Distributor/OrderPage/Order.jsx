@@ -22,11 +22,36 @@ export default function Order() {
   }, []);
 
   const tabs = [
-    { id: 1, label: "New Orders", icon: <ShoppingBag className="w-4 h-4" />, component: <NewOrder toggleTab2={() => setActiveTab(2)} /> },
-    { id: 2, label: "Preparing", icon: <Package className="w-4 h-4" />, component: <Preparing toggleTab3={() => setActiveTab(3)} /> },
-    { id: 3, label: "Dispatch", icon: <Truck className="w-4 h-4" />, component: <Dispatch toggleTab4={() => setActiveTab(4)} /> },
-    { id: 4, label: "Confirming", icon: <Clock className="w-4 h-4" />, component: <Confirm toggleTab5={() => setActiveTab(5)} /> },
-    { id: 5, label: "Completed", icon: <CheckCircle2 className="w-4 h-4" />, component: <Complete /> },
+    {
+      id: 1,
+      label: "New Orders",
+      icon: <ShoppingBag className="w-4 h-4" />,
+      component: <NewOrder toggleTab2={() => setActiveTab(2)} />,
+    },
+    {
+      id: 2,
+      label: "Preparing",
+      icon: <Package className="w-4 h-4" />,
+      component: <Preparing toggleTab3={() => setActiveTab(3)} />,
+    },
+    {
+      id: 3,
+      label: "Dispatch",
+      icon: <Truck className="w-4 h-4" />,
+      component: <Dispatch toggleTab4={() => setActiveTab(4)} />,
+    },
+    {
+      id: 4,
+      label: "Confirming",
+      icon: <Clock className="w-4 h-4" />,
+      component: <Confirm toggleTab5={() => setActiveTab(5)} />,
+    },
+    {
+      id: 5,
+      label: "Completed",
+      icon: <CheckCircle2 className="w-4 h-4" />,
+      component: <Complete />,
+    },
   ];
 
   return (
@@ -38,8 +63,12 @@ export default function Order() {
       <div className="bg-white  rounded-2xl shadow-sm border border-slate-100  overflow-hidden">
         <div className="p-6 md:p-8">
           <div className="mb-8">
-            <h1 className="text-3xl font-black text-slate-900 ">Order Activity</h1>
-            <p className="text-slate-500 mt-1">Monitor and manage your incoming retailer orders.</p>
+            <h1 className="text-3xl font-black text-slate-900 ">
+              Order Activity
+            </h1>
+            <p className="text-slate-500 mt-1">
+              Monitor and manage your incoming retailer orders.
+            </p>
           </div>
 
           <div className="border-b border-slate-100  mb-6">
@@ -76,7 +105,7 @@ export default function Order() {
                 exit={{ opacity: 0, x: -10 }}
                 transition={{ duration: 0.2 }}
               >
-                {tabs.find(t => t.id === activeTab)?.component}
+                {tabs.find((t) => t.id === activeTab)?.component}
               </motion.div>
             </AnimatePresence>
           </div>
@@ -85,4 +114,3 @@ export default function Order() {
     </motion.div>
   );
 }
-

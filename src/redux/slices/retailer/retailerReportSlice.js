@@ -5,7 +5,7 @@ const retailerReportSlice = createSlice({
   initialState: {
     retailerReport: {},
     loading: false,
-    error: null
+    error: null,
   },
   reducers: {
     setLoading: (state, action) => {
@@ -18,9 +18,10 @@ const retailerReportSlice = createSlice({
     setError: (state, action) => {
       state.error = action.payload;
       state.loading = false;
-    }
-  }
-})
+    },
+  },
+});
 
-export const { getRetailerReport, setLoading, setError } = retailerReportSlice.actions
+export const { getRetailerReport, setLoading, setError } =
+  retailerReportSlice.actions;
 export default retailerReportSlice.reducer;

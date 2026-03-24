@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  pageExtensions: ["next.js", "next.jsx"],
   images: {
     // Keep migration stable while legacy APIs return mixed image hosts.
     unoptimized: true,

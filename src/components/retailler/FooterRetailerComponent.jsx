@@ -31,7 +31,8 @@ export default function FooterRetailerComponent() {
                 Stay updated with StockFlow
               </h3>
               <p className="mt-2 text-slate-400">
-                Join our newsletter to receive the latest updates on new distributors and stock arrivals.
+                Join our newsletter to receive the latest updates on new
+                distributors and stock arrivals.
               </p>
             </div>
             <div className="flex w-full max-w-md flex-col gap-3 sm:flex-row">
@@ -61,7 +62,9 @@ export default function FooterRetailerComponent() {
               </span>
             </Link>
             <p className="mt-6 max-w-sm text-sm leading-relaxed text-slate-400">
-              The premier B2B marketplace connecting regional retailers with high-quality distributors. Streamline your procurement process with our modern warehouse management tools.
+              The premier B2B marketplace connecting regional retailers with
+              high-quality distributors. Streamline your procurement process
+              with our modern warehouse management tools.
             </p>
             <div className="mt-8 flex gap-3">
               {[
@@ -86,7 +89,9 @@ export default function FooterRetailerComponent() {
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:col-span-8 lg:ml-auto">
             {/* Navigation */}
             <div>
-              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-white">Platform</h4>
+              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-white">
+                Platform
+              </h4>
               <ul className="mt-6 space-y-4">
                 {[
                   { href: "/retailer/home", label: "Marketplace" },
@@ -110,7 +115,9 @@ export default function FooterRetailerComponent() {
 
             {/* Support */}
             <div>
-              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-white">Resources</h4>
+              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-white">
+                Resources
+              </h4>
               <ul className="mt-6 space-y-4">
                 {[
                   { label: "Help Center", href: "#" },
@@ -134,27 +141,35 @@ export default function FooterRetailerComponent() {
 
             {/* Contact */}
             <div>
-              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-white">Global Contact</h4>
+              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-white">
+                Global Contact
+              </h4>
               <ul className="mt-6 space-y-5">
                 <li className="flex items-start gap-3">
                   <Phone className="mt-0.5 h-4 w-4 text-orange-500" />
                   <div className="text-sm font-medium">
                     <p className="text-slate-200">+855 12 850 001</p>
-                    <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">HQ Hotline</p>
+                    <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">
+                      HQ Hotline
+                    </p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
                   <Mail className="mt-0.5 h-4 w-4 text-orange-500" />
                   <div className="text-sm font-medium">
                     <p className="text-slate-200">support@stockflow.com</p>
-                    <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">Inquiries</p>
+                    <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">
+                      Inquiries
+                    </p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
                   <MapPin className="mt-0.5 h-4 w-4 text-orange-500" />
                   <div className="text-sm font-medium">
                     <p className="text-slate-200">Phnom Penh, Cambodia</p>
-                    <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">Regional Hub</p>
+                    <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">
+                      Regional Hub
+                    </p>
                   </div>
                 </li>
               </ul>
@@ -166,21 +181,26 @@ export default function FooterRetailerComponent() {
         <div className="mt-16 pt-8 border-t border-slate-900 flex flex-col items-center justify-between gap-6 sm:flex-row">
           <div className="flex flex-col items-center sm:items-start gap-2">
             <p className="text-xs font-medium text-slate-500">
-              © {currentYear} StockFlow Commerce. Proudly developed by 11th Gen Students.
+              © {currentYear} StockFlow Commerce. Proudly developed by 11th Gen
+              Students.
             </p>
             <p className="text-[10px] text-slate-600 uppercase tracking-widest">
               Korea Software HRD Center • Enterprise Edition
             </p>
           </div>
-          
+
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-2 text-slate-500">
               <ShieldCheck className="h-4 w-4 text-emerald-500/60" />
-              <span className="text-[10px] font-black uppercase tracking-[0.2em]">Secure Cloud</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.2em]">
+                Secure Cloud
+              </span>
             </div>
             <div className="flex items-center gap-2 text-slate-500">
               <ShoppingBag className="h-4 w-4 text-blue-500/60" />
-              <span className="text-[10px] font-black uppercase tracking-[0.2em]">Certified Logistics</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.2em]">
+                Certified Logistics
+              </span>
             </div>
           </div>
         </div>

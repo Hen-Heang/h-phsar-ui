@@ -30,7 +30,7 @@ const AllNotification = () => {
     });
   }, [dispatch]);
   const allDataNotificationRetailer = useSelector(
-    (state) => state.DataNotificationRetailer.dataNotificationRetailer
+    (state) => state.DataNotificationRetailer.dataNotificationRetailer,
   );
   // ======================== handle read notifications ========================
   const [loadingPro, setLoadingPro] = useState(false);
@@ -99,11 +99,11 @@ const AllNotification = () => {
                         {dataNotification.notificationType === "ORDER_CANCELLED"
                           ? "Order Has Cancelled"
                           : dataNotification.notificationType === "NEW_ORDER"
-                          ? "New Order"
-                          : dataNotification.notificationType ===
-                            "ORDER_COMPLETE"
-                          ? "Order Complete"
-                          : "Out of stock"}
+                            ? "New Order"
+                            : dataNotification.notificationType ===
+                                "ORDER_COMPLETE"
+                              ? "Order Complete"
+                              : "Out of stock"}
                       </h3>
                       <button onClick={() => setShowModal(false)}>
                         <X className="h-6 w-6 text-white" />
@@ -119,9 +119,14 @@ const AllNotification = () => {
                                 <div className="flex flex-wrap justify-center">
                                   <img
                                     alt="..."
-                                    src={getSafeImageSrc(dataNotification.image, imageTest)}
+                                    src={getSafeImageSrc(
+                                      dataNotification.image,
+                                      imageTest,
+                                    )}
                                     className="shadow-xl rounded-full align-middle border-none w-[100px] h-[100px]"
-                                    onError={(e) => applyImageFallback(e, imageTest)}
+                                    onError={(e) =>
+                                      applyImageFallback(e, imageTest)
+                                    }
                                   />
                                 </div>
                                 <div className="text-center mt-6">

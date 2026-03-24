@@ -2,32 +2,32 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { 
-  MapPin, 
-  Calendar, 
-  Eye, 
-  Package, 
-  Truck, 
-  CheckCircle2, 
-  Clock, 
+import {
+  MapPin,
+  Calendar,
+  Eye,
+  Package,
+  Truck,
+  CheckCircle2,
+  Clock,
   XCircle,
   MoreHorizontal,
   ChevronRight,
-  User
+  User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import photoDefault from "../../../assets/images/distributor/photo.png";
 
-const OrderCard = ({ 
-  item, 
-  status, 
-  onViewDetails, 
-  onAction, 
-  actionLabel, 
+const OrderCard = ({
+  item,
+  status,
+  onViewDetails,
+  onAction,
+  actionLabel,
   actionIcon: ActionIcon,
   actionVariant = "default",
   isLoading = false,
-  index = 0
+  index = 0,
 }) => {
   const formatMoney = (value) => {
     const number = Number(value);
@@ -36,13 +36,20 @@ const OrderCard = ({
 
   const getStatusColor = (s) => {
     switch (s) {
-      case "Pending": return "bg-orange-50 text-orange-600 border-orange-100";
-      case "Preparing": return "bg-blue-50 text-blue-600 border-blue-100";
-      case "Dispatch": return "bg-purple-50 text-purple-600 border-purple-100";
-      case "Confirming": return "bg-amber-50 text-amber-600 border-amber-100";
-      case "Completed": return "bg-emerald-50 text-emerald-600 border-emerald-100";
-      case "Declined": return "bg-rose-50 text-rose-600 border-rose-100";
-      default: return "bg-slate-50 text-slate-600 border-slate-100";
+      case "Pending":
+        return "bg-orange-50 text-orange-600 border-orange-100";
+      case "Preparing":
+        return "bg-blue-50 text-blue-600 border-blue-100";
+      case "Dispatch":
+        return "bg-purple-50 text-purple-600 border-purple-100";
+      case "Confirming":
+        return "bg-amber-50 text-amber-600 border-amber-100";
+      case "Completed":
+        return "bg-emerald-50 text-emerald-600 border-emerald-100";
+      case "Declined":
+        return "bg-rose-50 text-rose-600 border-rose-100";
+      default:
+        return "bg-slate-50 text-slate-600 border-slate-100";
     }
   };
 
@@ -58,7 +65,11 @@ const OrderCard = ({
         <div className="flex items-center gap-3">
           <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-2xl border border-slate-100 bg-slate-50  ">
             <img
-              src={item.retailerImage && item.retailerImage !== "String" ? item.retailerImage : photoDefault.src || photoDefault}
+              src={
+                item.retailerImage && item.retailerImage !== "String"
+                  ? item.retailerImage
+                  : photoDefault.src || photoDefault
+              }
               className="h-full w-full object-cover"
               alt=""
             />
@@ -69,11 +80,15 @@ const OrderCard = ({
             </h3>
             <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
               <span className="text-blue-600 ">Order ID:</span>
-              <span className="truncate max-w-[80px]">#{item.id.slice(-8).toUpperCase()}</span>
+              <span className="truncate max-w-[80px]">
+                #{String(item.id).slice(-8).toUpperCase()}
+              </span>
             </div>
           </div>
         </div>
-        <div className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-wider ${getStatusColor(status)}`}>
+        <div
+          className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-wider ${getStatusColor(status)}`}
+        >
           {status}
         </div>
       </div>
@@ -89,7 +104,11 @@ const OrderCard = ({
         <div className="flex items-center gap-3 text-slate-500">
           <Calendar className="h-4 w-4 shrink-0 text-blue-600" />
           <p className="text-sm font-medium ">
-            {new Date(item.date).toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric' })}
+            {new Date(item.date).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })}
           </p>
         </div>
       </div>
@@ -97,12 +116,14 @@ const OrderCard = ({
       {/* Footer: Stats & Actions */}
       <div className="mt-8 flex items-center justify-between border-t border-slate-50 pt-6 ">
         <div className="flex flex-col">
-          <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Total Amount</span>
+          <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+            Total Amount
+          </span>
           <span className="text-lg font-black text-slate-900 ">
             ${formatMoney(item.total)}
           </span>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <button
             onClick={() => onViewDetails(item.id, item)}
@@ -111,7 +132,7 @@ const OrderCard = ({
           >
             <Eye className="h-5 w-5" />
           </button>
-          
+
           {onAction && actionLabel && (
             <Button
               size="sm"
@@ -119,7 +140,9 @@ const OrderCard = ({
               onClick={() => onAction(item.id, item)}
               disabled={isLoading}
               className={`h-11 rounded-xl px-5 font-bold shadow-lg transition-all active:scale-[0.98] ${
-                actionVariant === "default" ? "bg-blue-600 hover:bg-blue-700 shadow-blue-600/20" : ""
+                actionVariant === "default"
+                  ? "bg-blue-600 hover:bg-blue-700 shadow-blue-600/20"
+                  : ""
               }`}
             >
               {isLoading ? (

@@ -4,21 +4,21 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Home, 
-  Package, 
-  Layers, 
-  ShoppingCart, 
-  BarChart3, 
-  CheckSquare, 
-  Download, 
-  History, 
-  User, 
-  Store, 
-  LogOut, 
-  ChevronDown, 
+import {
+  Home,
+  Package,
+  Layers,
+  ShoppingCart,
+  BarChart3,
+  CheckSquare,
+  Download,
+  History,
+  User,
+  Store,
+  LogOut,
+  ChevronDown,
   X,
-  AlertTriangle
+  AlertTriangle,
 } from "lucide-react";
 
 import HamburgerButton from "../HamburgerMenuButton/HamburgerButton";
@@ -42,8 +42,12 @@ const Sidebar = () => {
 
   const [showSignOut, setShowSignOut] = useState(false);
   const [isOpenNewImport, setIsOpenNewImport] = useState(false);
-  const [isImportSectionOpen, setIsImportSectionOpen] = useState(pathname.includes('import') || pathname.includes('history'));
-  const [isProfileSectionOpen, setIsProfileSectionOpen] = useState(pathname.includes('account') || pathname.includes('store'));
+  const [isImportSectionOpen, setIsImportSectionOpen] = useState(
+    pathname.includes("import") || pathname.includes("history"),
+  );
+  const [isProfileSectionOpen, setIsProfileSectionOpen] = useState(
+    pathname.includes("account") || pathname.includes("store"),
+  );
 
   const handleSignOut = () => {
     localStorage.clear();
@@ -60,14 +64,18 @@ const Sidebar = () => {
     { title: "Category", path: "/distributor/category", icon: Layers },
     { title: "Order", path: "/distributor/order", icon: ShoppingCart },
     { title: "Report", path: "/distributor/report", icon: BarChart3 },
-    { title: "Order history", path: "/distributor/order-history", icon: CheckSquare },
+    {
+      title: "Order history",
+      path: "/distributor/order-history",
+      icon: CheckSquare,
+    },
   ];
 
   const getNavLinkClass = (path) => {
     const isActive = pathname === path;
     return `group relative flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 ${
-      isActive 
-        ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20 font-bold" 
+      isActive
+        ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20 font-bold"
         : "text-slate-500 hover:bg-slate-50  "
     }`;
   };
@@ -79,9 +87,15 @@ const Sidebar = () => {
         <div className="p-8">
           <Link href="/distributor/home" className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-xl bg-blue-600 p-2 flex items-center justify-center">
-              <img src={LOGO_final.src || LOGO_final} alt="StockFlow" className="h-full w-full object-contain brightness-0 invert" />
+              <img
+                src={LOGO_final.src || LOGO_final}
+                alt="StockFlow"
+                className="h-full w-full object-contain brightness-0 invert"
+              />
             </div>
-            <span className="text-xl font-black tracking-tight text-slate-900 ">StockFlow</span>
+            <span className="text-xl font-black tracking-tight text-slate-900 ">
+              StockFlow
+            </span>
           </Link>
         </div>
 
@@ -90,11 +104,16 @@ const Sidebar = () => {
             <div key={item.title}>
               {item.path ? (
                 <Link href={item.path} className={getNavLinkClass(item.path)}>
-                  <item.icon className={`w-5 h-5 ${pathname === item.path ? "text-white" : "text-slate-400 group-hover:text-blue-600"}`} />
+                  <item.icon
+                    className={`w-5 h-5 ${pathname === item.path ? "text-white" : "text-slate-400 group-hover:text-blue-600"}`}
+                  />
                   {item.title}
                 </Link>
               ) : (
-                <button onClick={item.onClick} className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-500 hover:bg-slate-50   transition-all group">
+                <button
+                  onClick={item.onClick}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-500 hover:bg-slate-50   transition-all group"
+                >
                   <item.icon className="w-5 h-5 text-slate-400 group-hover:text-blue-600" />
                   {item.title}
                 </button>
@@ -104,28 +123,40 @@ const Sidebar = () => {
 
           {/* Submenu: Import */}
           <div className="pt-2">
-            <button 
+            <button
               onClick={() => setIsImportSectionOpen(!isImportSectionOpen)}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all group ${
-                isImportSectionOpen ? "text-blue-600  font-bold" : "text-slate-500"
+                isImportSectionOpen
+                  ? "text-blue-600  font-bold"
+                  : "text-slate-500"
               } hover:bg-slate-50 `}
             >
-              <Download className={`w-5 h-5 ${isImportSectionOpen ? "text-blue-600" : "text-slate-400 group-hover:text-blue-600"}`} />
+              <Download
+                className={`w-5 h-5 ${isImportSectionOpen ? "text-blue-600" : "text-slate-400 group-hover:text-blue-600"}`}
+              />
               <span>Import</span>
-              <ChevronDown className={`ml-auto w-4 h-4 transition-transform ${isImportSectionOpen ? "rotate-180" : ""}`} />
+              <ChevronDown
+                className={`ml-auto w-4 h-4 transition-transform ${isImportSectionOpen ? "rotate-180" : ""}`}
+              />
             </button>
             <AnimatePresence>
               {isImportSectionOpen && (
-                <motion.div 
+                <motion.div
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
                   className="overflow-hidden pl-12 space-y-1"
                 >
-                  <button onClick={() => setIsOpenNewImport(true)} className="w-full text-left py-2 text-sm text-slate-500 hover:text-blue-600 transition-colors">
+                  <button
+                    onClick={() => setIsOpenNewImport(true)}
+                    className="w-full text-left py-2 text-sm text-slate-500 hover:text-blue-600 transition-colors"
+                  >
                     New Import
                   </button>
-                  <Link href="/distributor/history" className={`block py-2 text-sm transition-colors ${pathname === '/distributor/history' ? 'text-blue-600 font-bold' : 'text-slate-500 hover:text-blue-600'}`}>
+                  <Link
+                    href="/distributor/history"
+                    className={`block py-2 text-sm transition-colors ${pathname === "/distributor/history" ? "text-blue-600 font-bold" : "text-slate-500 hover:text-blue-600"}`}
+                  >
                     History
                   </Link>
                 </motion.div>
@@ -135,28 +166,40 @@ const Sidebar = () => {
 
           {/* Submenu: Profile */}
           <div>
-            <button 
+            <button
               onClick={() => setIsProfileSectionOpen(!isProfileSectionOpen)}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all group ${
-                isProfileSectionOpen ? "text-blue-600  font-bold" : "text-slate-500"
+                isProfileSectionOpen
+                  ? "text-blue-600  font-bold"
+                  : "text-slate-500"
               } hover:bg-slate-50 `}
             >
-              <User className={`w-5 h-5 ${isProfileSectionOpen ? "text-blue-600" : "text-slate-400 group-hover:text-blue-600"}`} />
+              <User
+                className={`w-5 h-5 ${isProfileSectionOpen ? "text-blue-600" : "text-slate-400 group-hover:text-blue-600"}`}
+              />
               <span>Settings</span>
-              <ChevronDown className={`ml-auto w-4 h-4 transition-transform ${isProfileSectionOpen ? "rotate-180" : ""}`} />
+              <ChevronDown
+                className={`ml-auto w-4 h-4 transition-transform ${isProfileSectionOpen ? "rotate-180" : ""}`}
+              />
             </button>
             <AnimatePresence>
               {isProfileSectionOpen && (
-                <motion.div 
+                <motion.div
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
                   className="overflow-hidden pl-12 space-y-1"
                 >
-                  <Link href="/distributor/account" className={`block py-2 text-sm transition-colors ${pathname === '/distributor/account' ? 'text-blue-600 font-bold' : 'text-slate-500 hover:text-blue-600'}`}>
+                  <Link
+                    href="/distributor/account"
+                    className={`block py-2 text-sm transition-colors ${pathname === "/distributor/account" ? "text-blue-600 font-bold" : "text-slate-500 hover:text-blue-600"}`}
+                  >
                     Account
                   </Link>
-                  <Link href="/distributor/store" className={`block py-2 text-sm transition-colors ${pathname === '/distributor/store' ? 'text-blue-600 font-bold' : 'text-slate-500 hover:text-blue-600'}`}>
+                  <Link
+                    href="/distributor/store"
+                    className={`block py-2 text-sm transition-colors ${pathname === "/distributor/store" ? "text-blue-600 font-bold" : "text-slate-500 hover:text-blue-600"}`}
+                  >
                     Store Profile
                   </Link>
                 </motion.div>
@@ -166,7 +209,7 @@ const Sidebar = () => {
         </nav>
 
         <div className="p-4 border-t border-slate-50 ">
-          <button 
+          <button
             onClick={() => setShowSignOut(true)}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-rose-500 hover:bg-rose-50  transition-all font-bold"
           >
@@ -180,25 +223,34 @@ const Sidebar = () => {
       <div className="lg:hidden sticky top-0 z-40 flex items-center justify-between px-6 h-16 bg-white  border-b border-slate-100 ">
         <div className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-lg bg-blue-600 p-1.5">
-            <img src={LOGO_final.src || LOGO_final} alt="Logo" className="h-full w-full object-contain brightness-0 invert" />
+            <img
+              src={LOGO_final.src || LOGO_final}
+              alt="Logo"
+              className="h-full w-full object-contain brightness-0 invert"
+            />
           </div>
-          <span className="text-lg font-black tracking-tight text-slate-900 ">StockFlow</span>
+          <span className="text-lg font-black tracking-tight text-slate-900 ">
+            StockFlow
+          </span>
         </div>
-        <HamburgerButton setMobileMenu={setMobileMenu} mobileMenu={mobileMenu} />
+        <HamburgerButton
+          setMobileMenu={setMobileMenu}
+          mobileMenu={mobileMenu}
+        />
       </div>
 
       {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {mobileMenu && (
           <div className="lg:hidden fixed inset-0 z-50">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMobileMenu(false)}
               className="absolute inset-0 bg-slate-950/20 backdrop-blur-sm"
             />
-            <motion.div 
+            <motion.div
               initial={{ x: "-100%" }}
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
@@ -208,11 +260,20 @@ const Sidebar = () => {
               <div className="p-6 border-b border-slate-50  flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="h-8 w-8 rounded-lg bg-blue-600 p-1.5">
-                    <img src={LOGO_final.src || LOGO_final} alt="Logo" className="h-full w-full object-contain brightness-0 invert" />
+                    <img
+                      src={LOGO_final.src || LOGO_final}
+                      alt="Logo"
+                      className="h-full w-full object-contain brightness-0 invert"
+                    />
                   </div>
-                  <span className="text-lg font-black text-slate-900 ">StockFlow</span>
+                  <span className="text-lg font-black text-slate-900 ">
+                    StockFlow
+                  </span>
                 </div>
-                <button onClick={() => setMobileMenu(false)} className="p-2 text-slate-400">
+                <button
+                  onClick={() => setMobileMenu(false)}
+                  className="p-2 text-slate-400"
+                >
                   <X className="w-6 h-6" />
                 </button>
               </div>
@@ -220,21 +281,26 @@ const Sidebar = () => {
                 {menuItems.map((item) => (
                   <div key={item.title}>
                     {item.path ? (
-                      <Link 
-                        href={item.path} 
+                      <Link
+                        href={item.path}
                         onClick={() => setMobileMenu(false)}
                         className={`flex items-center gap-4 px-4 py-4 rounded-2xl text-base font-bold ${
-                          pathname === item.path 
-                            ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' 
-                            : 'text-slate-600 '
+                          pathname === item.path
+                            ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20"
+                            : "text-slate-600 "
                         }`}
                       >
-                        <item.icon className={`w-5 h-5 ${pathname === item.path ? 'text-white' : 'text-slate-400'}`} /> 
+                        <item.icon
+                          className={`w-5 h-5 ${pathname === item.path ? "text-white" : "text-slate-400"}`}
+                        />
                         {item.title}
                       </Link>
                     ) : (
-                      <button 
-                        onClick={() => { item.onClick(); setMobileMenu(false); }}
+                      <button
+                        onClick={() => {
+                          item.onClick();
+                          setMobileMenu(false);
+                        }}
                         className="w-full flex items-center gap-4 px-4 py-4 rounded-2xl text-base font-bold text-slate-600  hover:bg-slate-50  transition-all"
                       >
                         <item.icon className="w-5 h-5 text-slate-400" />
@@ -243,17 +309,28 @@ const Sidebar = () => {
                     )}
                   </div>
                 ))}
-                
+
                 <div className="my-4 h-px bg-slate-50 " />
-                
-                <Link href="/distributor/account" onClick={() => setMobileMenu(false)} className="flex items-center gap-4 px-4 py-4 rounded-2xl text-base font-bold text-slate-600 ">
+
+                <Link
+                  href="/distributor/account"
+                  onClick={() => setMobileMenu(false)}
+                  className="flex items-center gap-4 px-4 py-4 rounded-2xl text-base font-bold text-slate-600 "
+                >
                   <User className="w-5 h-5 text-slate-400" /> Account Settings
                 </Link>
-                <Link href="/distributor/store" onClick={() => setMobileMenu(false)} className="flex items-center gap-4 px-4 py-4 rounded-2xl text-base font-bold text-slate-600 ">
+                <Link
+                  href="/distributor/store"
+                  onClick={() => setMobileMenu(false)}
+                  className="flex items-center gap-4 px-4 py-4 rounded-2xl text-base font-bold text-slate-600 "
+                >
                   <Store className="w-5 h-5 text-slate-400" /> Store Profile
                 </Link>
-                <button 
-                  onClick={() => { setMobileMenu(false); setShowSignOut(true); }}
+                <button
+                  onClick={() => {
+                    setMobileMenu(false);
+                    setShowSignOut(true);
+                  }}
                   className="w-full flex items-center gap-4 px-4 py-4 rounded-2xl text-base font-bold text-rose-500 hover:bg-rose-50  transition-all"
                 >
                   <LogOut className="w-5 h-5" /> Sign Out
@@ -265,27 +342,32 @@ const Sidebar = () => {
       </AnimatePresence>
 
       {/* Components & Dialogs */}
-      <NewImport isOpenNewImport={isOpenNewImport} handleShowImport={() => setIsOpenNewImport(false)} />
-
+      <NewImport
+        isOpenNewImport={isOpenNewImport}
+        handleShowImport={() => setIsOpenNewImport(false)}
+      />
 
       <Dialog open={showSignOut} onOpenChange={setShowSignOut}>
         <DialogContent className="max-w-md rounded-[2.5rem] p-8 text-center border-none shadow-2xl">
           <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-rose-50 text-rose-500 ">
             <AlertTriangle className="h-10 w-10" />
           </div>
-          <h3 className="text-2xl font-black tracking-tight text-slate-900 ">Sign Out?</h3>
+          <h3 className="text-2xl font-black tracking-tight text-slate-900 ">
+            Sign Out?
+          </h3>
           <p className="mt-4 text-slate-500 leading-relaxed">
-            Are you sure you want to end your distributor session? You'll need to sign back in to manage your inventory.
+            Are you sure you want to end your distributor session? You'll need
+            to sign back in to manage your inventory.
           </p>
           <div className="mt-10 flex gap-3">
-            <Button 
+            <Button
               className="h-14 flex-1 rounded-2xl bg-rose-500 font-bold text-white shadow-lg shadow-rose-500/20 hover:bg-rose-600 transition-all active:scale-[0.98]"
               onClick={handleSignOut}
             >
               Yes, Sign Out
             </Button>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="h-14 flex-1 rounded-2xl border-slate-200  font-bold text-slate-600  hover:bg-slate-50  transition-all active:scale-[0.98]"
               onClick={() => setShowSignOut(false)}
             >

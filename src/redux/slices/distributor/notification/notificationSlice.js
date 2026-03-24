@@ -14,19 +14,24 @@ const notificationSlice = createSlice({
       state.dataNotification = action.payload;
     },
     setUpdateDateNotification: (state, action) => {
-      state.dataNotification.map((item)=>{
-        if(item.id === action.payload.id){
+      state.dataNotification.map((item) => {
+        if (item.id === action.payload.id) {
           item.seen = true;
         }
-      })
+      });
     },
     setReadAllNotificationsDistributor: (state, action) => {
-      state.dataNotification.map((item)=>{
+      state.dataNotification.map((item) => {
         item.seen = true;
-      })
+      });
     },
   },
 });
 
-export const {setLoadingNewOrder, getAllNotificationsDistributor,setUpdateDateNotification,setReadAllNotificationsDistributor } = notificationSlice.actions;
+export const {
+  setLoadingNewOrder,
+  getAllNotificationsDistributor,
+  setUpdateDateNotification,
+  setReadAllNotificationsDistributor,
+} = notificationSlice.actions;
 export default notificationSlice.reducer;

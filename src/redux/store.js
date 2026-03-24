@@ -30,11 +30,11 @@ import profileSlice from "./slices/retailer/profileSlice";
 import invoiceRetailerSlice from "./slices/retailer/invoiceRetailerSlice";
 import invoiceDistributorSlice from "./slices/distributor/invoiceDistributorSlice";
 import searchSlice from "./slices/retailer/searchSlice";
-import retailerInfoSlice from "./slices/retailer/retailerProfileSlice"
+import retailerInfoSlice from "./slices/retailer/retailerProfileSlice";
 import authSlice from "./slices/auth/authSlice";
 import orderPageSlice from "./slices/distributor/orderPageSlice";
 import notificationSlice from "./slices/distributor/notification/notificationSlice";
-import retailerReportSlice from "./slices/retailer/retailerReportSlice"
+import retailerReportSlice from "./slices/retailer/retailerReportSlice";
 import notificationRetailerSlice from "./slices/retailer/notification/notificationRetailerSlice";
 import homeReportSlice from "./slices/distributor/homeReportSlice";
 import inDecreaseProductSlice from "./slices/retailer/inDecreaseProductSlice";

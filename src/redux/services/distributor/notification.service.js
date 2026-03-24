@@ -3,7 +3,7 @@ import { setLoadingNewOrder } from "../../slices/distributor/notification/notifi
 
 export const get_all_notification = async (dispatch) => {
   try {
-      dispatch(setLoadingNewOrder(true));
+    dispatch(setLoadingNewOrder(true));
     const response = await api.get(`/distributor/notifications`);
     return response;
   } catch (e) {

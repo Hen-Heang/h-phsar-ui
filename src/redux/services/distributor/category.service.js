@@ -9,7 +9,6 @@ export const get_all_category = async (dispatch) => {
 };
 
 export const add_new_category = async (data) => {
-
   const category = data.name;
   return apiPost("/api/v1/distributor/categories", {
     query: { name: category },

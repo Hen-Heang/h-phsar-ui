@@ -27,7 +27,7 @@ const productSlice = createSlice({
     },
     deleteProductDistributor: (state, action) => {
       state.product = state.product.filter(
-        (product) => product.id !== action.payload
+        (product) => product.id !== action.payload,
       );
     },
     updateProductDistributor: (state, action) => {
@@ -67,7 +67,6 @@ const productSlice = createSlice({
           item.price = action.payload.price;
         }
       });
-     
     },
   },
 });

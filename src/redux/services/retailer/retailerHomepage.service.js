@@ -14,7 +14,7 @@ import { setLoadingCategory } from "../../slices/distributor/categorySlice";
 export const get_all_highest_rate = async (sort, pageNumber, pageSize) => {
   try {
     const response = await api.get(
-      `/retailer/stores/sort/rated?sort=desc&pageNumber=1&pageSize=100`
+      `/retailer/stores/sort/rated?sort=desc&pageNumber=1&pageSize=100`,
     );
     // console.log("hahaha : " ,response.data.data);
     return response;
@@ -36,7 +36,7 @@ export const get_all_store = async () => {
 export const get_all_new_store = async (sort, pageNumber, pageSize) => {
   try {
     const response = await api.get(
-      `/retailer/stores/sort/date?sort=desc&pageNumber=1&pageSize=100`
+      `/retailer/stores/sort/date?sort=desc&pageNumber=1&pageSize=100`,
     );
     // console.log("fetchg get_all_new_store : ",response);
     return response;
@@ -48,7 +48,7 @@ export const get_all_new_store = async (sort, pageNumber, pageSize) => {
 export const get_all_orders = async (sort, pageNumber, pageSize) => {
   try {
     const response = await api.get(
-      "/retailer/orders?sort=desc&pageNumber=1&pageSize=100"
+      "/retailer/orders?sort=desc&pageNumber=1&pageSize=100",
     );
     // console.log(" response : ", response);
     return response;
@@ -60,7 +60,7 @@ export const get_all_orders = async (sort, pageNumber, pageSize) => {
 export const get_all_favorite = async (pageNumber, pageSize) => {
   try {
     const response = await api.get(
-      `/retailer/stores/bookmark?pageNumber=1&pageSize=1000`
+      `/retailer/stores/bookmark?pageNumber=1&pageSize=1000`,
     );
     // console.log(" response : ", response);
     return response;
@@ -72,7 +72,7 @@ export const get_all_favorite = async (pageNumber, pageSize) => {
 export const get_all_order_history = async (sort, pageNumber, pageSize) => {
   try {
     const response = await api.get(
-      `/retailer/history/order?sort=desc&pageNumber=1&pageSize=1000`
+      `/retailer/history/order?sort=desc&pageNumber=1&pageSize=1000`,
     );
     // console.log(response);
     return response;
@@ -84,7 +84,7 @@ export const get_all_order_history = async (sort, pageNumber, pageSize) => {
 export const get_all_order_draft = async (sort, pageNumber, pageSize) => {
   try {
     const response = await api.get(
-      `/retailer/history/draft?sort=desc&pageNumber=1&pageSize=1000`
+      `/retailer/history/draft?sort=desc&pageNumber=1&pageSize=1000`,
     );
     // console.log("response : ", response);
     return response;
@@ -114,7 +114,7 @@ export const get_all_product_by_storeId = async (storeId, dispatch) => {
   dispatch(setLoadingCard(true));
   try {
     const response = await api.get(
-      `/retailer/stores/${storeId}/products?sort=desc&by=created_date`
+      `/retailer/stores/${storeId}/products?sort=desc&by=created_date`,
     );
     // console.log("response get_all_product_by_storeId : ", response);
     return response;
@@ -138,12 +138,12 @@ export const get_all_category_by_storeId = async (storeId, dispatch) => {
 
 export const get_all_product_sort_by_created_date = async (
   storeId,
-  dispatch
+  dispatch,
 ) => {
   dispatch(setLoadingAdd(true));
   try {
     const response = await api.get(
-      `/retailer/stores/${storeId}/products?sort=asc&by=created_date`
+      `/retailer/stores/${storeId}/products?sort=asc&by=created_date`,
     );
     // console.log("get_all_product_in_cart : " ,response);
     return response;
@@ -157,7 +157,7 @@ export const get_all_product_sort_by_price = async (storeId, dispatch) => {
   dispatch(setLoadingPrice(true));
   try {
     const response = await api.get(
-      `/retailer/stores/${storeId}/products?sort=asc&by=price`
+      `/retailer/stores/${storeId}/products?sort=asc&by=price`,
     );
     // console.log("get_all_product_in_cart gagagaga : " ,response);
     return response;
@@ -170,7 +170,7 @@ export const get_all_product_sort_by_price = async (storeId, dispatch) => {
 export const get_all_product_by_category = async (storeId, categoryId) => {
   try {
     const response = await api.get(
-      `/retailer/stores/${storeId}/products/category?categoryId=${categoryId}`
+      `/retailer/stores/${storeId}/products/category?categoryId=${categoryId}`,
     );
     // console.log("get_all_product_by_category dwdww: ", response);
     return response;
@@ -188,7 +188,7 @@ export const add_product_to_cart = async (storeId, productId, qty) => {
           productId: productId,
           qty: qty,
         },
-      ]
+      ],
     );
 
     // console.log("add_product_to_cart dwdww: ", response);
@@ -201,7 +201,7 @@ export const add_product_to_cart = async (storeId, productId, qty) => {
 export const view_product_in_cart = async (storeId) => {
   try {
     const response = await api.get(
-      `/retailer/orders/cart/details?pageNumber=1&pageSize=1000&${storeId}`
+      `/retailer/orders/cart/details?pageNumber=1&pageSize=1000&${storeId}`,
     );
     // console.log("view_product_in_cart : " ,response);
     return response;
@@ -212,9 +212,7 @@ export const view_product_in_cart = async (storeId) => {
 
 export const get_all_product_in_cart = async () => {
   try {
-    const response = await api.get(
-      "/retailer/orders/cart/details?pageNumber=1&pageSize=1000"
-    );
+    const response = await api.get("retailer/orders/carts");
     return response;
   } catch (e) {
     return e;
@@ -224,7 +222,7 @@ export const get_all_product_in_cart = async () => {
 export const delete_product_in_cart = async (productId) => {
   try {
     const response = await api.delete(
-      `/retailer/orders/cart/product?productId=${productId}`
+      `/retailer/orders/cart/product?productId=${productId}`,
     );
     // console.log("get_all_product_in_cart : " ,response);
     return response;
@@ -235,11 +233,12 @@ export const delete_product_in_cart = async (productId) => {
 
 export const confirm_order_from_cart = async () => {
   try {
-    const response = await api.put(`retailer/orders/confirm`);
-    // console.log("get_all_product_in_cart : " ,response);
+    const response = await api.put(`retailer/orders/confirm`, null, {
+      skipAuthRedirect: true,
+    });
     return response;
   } catch (e) {
-    return e;
+    return e.response;
   }
 };
 
@@ -265,7 +264,7 @@ export const bookmark_store = async (storeId) => {
 export const get_all_bookmark_store = async () => {
   try {
     const response = await api.get(
-      `retailer/stores/bookmark?pageNumber=1&pageSize=1000`
+      `retailer/stores/bookmark?pageNumber=1&pageSize=1000`,
     );
     // console.log("gagag",response)
     return response;
@@ -277,7 +276,7 @@ export const get_all_bookmark_store = async () => {
 export const remove_bookmark_store = async (storeId) => {
   try {
     const response = await api.delete(
-      `retailer/stores/${storeId}/bookmark/remove`
+      `retailer/stores/${storeId}/bookmark/remove`,
     );
     return response;
   } catch (e) {
@@ -285,25 +284,23 @@ export const remove_bookmark_store = async (storeId) => {
   }
 };
 
-export const save_to_draft =async()=>{ 
-  try{
-    const response = await api.put(`retailer/orders/cart/draft`)
-    return response ;
-
-  }catch(e){
+export const save_to_draft = async () => {
+  try {
+    const response = await api.put(`retailer/orders/cart/draft`);
+    return response;
+  } catch (e) {
     return e;
   }
-} 
+};
 
-export const get_all_cart= async()=>{
-  try{
-    const response = await api.get(`retailer/orders/carts`)
-    return response ;
-    }catch(e){
-        return e;
+export const get_all_cart = async () => {
+  try {
+    const response = await api.get(`retailer/orders/carts`);
+    return response;
+  } catch (e) {
+    return e;
   }
-}
-
+};
 
 // export const remove_bookmark_store=async(storeId)=>{
 //   try{

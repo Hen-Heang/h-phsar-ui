@@ -1,1 +1,0 @@
-"use client"; import dynamic from "next/dynamic"; const NewImport = dynamic( () => import("@/components/Distributor/NewImport"), { ssr: false}); export default function DistributorImportProductPage() { return <NewImport />;} 

@@ -3,11 +3,11 @@ import { api } from "../../../utils/api";
 import { setLoadingFavorite } from "../../slices/retailer/favoriteSlice";
 
 export const get_only_bookmark = async (dispatch) => {
-  dispatch(setLoadingFavorite(true))
+  dispatch(setLoadingFavorite(true));
   try {
     // dispatch(setLoadingFavorite(true))
     const response = await api.get(
-      "retailer/stores/bookmark?pageNumber=1&pageSize=1000"
+      "retailer/stores/bookmark?pageNumber=1&pageSize=1000",
     );
     return response;
   } catch (e) {
@@ -20,8 +20,6 @@ export const get_detail_shop = async (id) => {
     const response = await api.get(`/retailer/stores/${id}`);
     return response;
   } catch (e) {
-
-    
     return e;
   }
 };
@@ -42,4 +40,4 @@ export const remove_bookmark = async (id) => {
   } catch (e) {
     return e;
   }
-}
+};

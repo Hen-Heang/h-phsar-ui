@@ -1,5 +1,5 @@
-import React from 'react'
-import { Star } from "lucide-react"
+import React from "react";
+import { Star } from "lucide-react";
 
 export default function CompleteOrder(props) {
   return (
@@ -213,7 +213,7 @@ export default function CompleteOrder(props) {
         </Modal>
       </React.Fragment> */}
     </div>
-  )
+  );
 }
 // const styles = {
 //     container: {
@@ -239,5 +239,5 @@ export default function CompleteOrder(props) {
 //       width: 300,
 //       padding: 10,
 //     }
-  
+
 //   };

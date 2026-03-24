@@ -30,7 +30,7 @@ const DeliveringNotification = () => {
     });
   }, [dispatch]);
   const allDataNotificationRetailer = useSelector(
-    (state) => state.DataNotificationRetailer.dataNotificationRetailer
+    (state) => state.DataNotificationRetailer.dataNotificationRetailer,
   );
   // ======================== handle read notifications ========================
   const [loadingPro, setLoadingPro] = useState(false);
@@ -76,13 +76,12 @@ const DeliveringNotification = () => {
     bottom: 0;
     left: 0;
   `;
-//   console.log("first image", noDataNotifications);
-//                ====== count notifications ORDER_DELIVERING======
+  //   console.log("first image", noDataNotifications);
+  //                ====== count notifications ORDER_DELIVERING======
 
   const countAllNotificationUnseenOrderDelivering =
     allDataNotificationRetailer.filter(
-      (item) =>
-        item.notificationType === "ORDER_DELIVERING"
+      (item) => item.notificationType === "ORDER_DELIVERING",
     ).length;
   return (
     <div className="mt-3 -mx-4 ">
@@ -107,11 +106,11 @@ const DeliveringNotification = () => {
                         {dataNotification.notificationType === "ORDER_CANCELLED"
                           ? "Order Has Cancelled"
                           : dataNotification.notificationType === "NEW_ORDER"
-                          ? "New Order"
-                          : dataNotification.notificationType ===
-                            "ORDER_COMPLETE"
-                          ? "Order Complete"
-                          : "Out of stock"}
+                            ? "New Order"
+                            : dataNotification.notificationType ===
+                                "ORDER_COMPLETE"
+                              ? "Order Complete"
+                              : "Out of stock"}
                       </h3>
                       <button onClick={() => setShowModal(false)}>
                         <X className="h-6 w-6 text-white" />
@@ -127,9 +126,14 @@ const DeliveringNotification = () => {
                                 <div className="flex flex-wrap justify-center">
                                   <img
                                     alt="..."
-                                    src={getSafeImageSrc(dataNotification.image, imageTest)}
+                                    src={getSafeImageSrc(
+                                      dataNotification.image,
+                                      imageTest,
+                                    )}
                                     className="shadow-xl rounded-full align-middle border-none w-[100px] h-[100px]"
-                                    onError={(e) => applyImageFallback(e, imageTest)}
+                                    onError={(e) =>
+                                      applyImageFallback(e, imageTest)
+                                    }
                                   />
                                 </div>
                                 <div className="text-center mt-6">
@@ -169,9 +173,9 @@ const DeliveringNotification = () => {
       )}
       {noDataNotifications || countAllNotificationUnseenOrderDelivering < 0 ? (
         <div className="h-96 w-full flex flex-col gap-2 justify-center items-center text-xl text-gray-500">
-        <BellOff className="w-12 h-12 text-slate-300 mb-2" />
-        No data notifications
-      </div>
+          <BellOff className="w-12 h-12 text-slate-300 mb-2" />
+          No data notifications
+        </div>
       ) : (
         <div className="flex flex-col gap-1 overflow-auto h-96">
           {allDataNotificationRetailer.map((item) =>
@@ -223,7 +227,7 @@ const DeliveringNotification = () => {
                   </div>
                 </div>
               </div>
-            ) : null
+            ) : null,
           )}
         </div>
       )}

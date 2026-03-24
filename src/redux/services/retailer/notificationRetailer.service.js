@@ -16,7 +16,7 @@ export const seen_notification_retailer = async (id) => {
     // console.log("Id from service", id);
     // dispatch(setLoadingTheOrder(true));
     const response = await api.put(`retailer/notifications/${id}/read`);
-      // console.log("All notifications service returned", response);
+    // console.log("All notifications service returned", response);
     return response;
   } catch (e) {
     return e.response;

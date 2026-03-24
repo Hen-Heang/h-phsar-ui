@@ -1,1 +1,0 @@
-"use client"; import dynamic from "next/dynamic"; const History = dynamic( () => import("@/components/Distributor/History"), { ssr: false}); export default function DistributorHistoryPage() { return <History />;} 

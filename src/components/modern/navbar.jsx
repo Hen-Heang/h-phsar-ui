@@ -12,7 +12,10 @@ export function ModernNavbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200/70 bg-white/80 backdrop-blur-md  ">
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6">
-        <a href="/" className="text-lg font-bold tracking-tight text-slate-900 ">
+        <a
+          href="/"
+          className="text-lg font-bold tracking-tight text-slate-900 "
+        >
           StockFlow 2026
         </a>
 
@@ -58,7 +61,10 @@ export function ModernNavbar() {
             <ul className="space-y-1">
               {LINKS.map((link) => (
                 <li key={link}>
-                  <a href="/#" className="block rounded-lg px-2 py-3 text-slate-700 transition hover:bg-slate-100  ">
+                  <a
+                    href="/#"
+                    className="block rounded-lg px-2 py-3 text-slate-700 transition hover:bg-slate-100  "
+                  >
                     {link}
                   </a>
                 </li>

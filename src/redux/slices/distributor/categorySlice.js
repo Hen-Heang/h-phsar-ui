@@ -24,12 +24,13 @@ const categorySlice = createSlice({
     },
     updateCategoryDistributor: (state, action) => {
       const { id, name } = action.payload;
-    
-      const categoryToUpdate = state.categories.find((category) => category.id === id);
+
+      const categoryToUpdate = state.categories.find(
+        (category) => category.id === id,
+      );
       if (categoryToUpdate) {
         categoryToUpdate.name = name;
       }
-    
     },
     deleteCategoryDistributor: (state, action) => {
       // state.categories.map((category) => {
@@ -40,7 +41,7 @@ const categorySlice = createSlice({
       //   }
       // });
       state.categories = state.categories.filter(
-        (category) => category.id !== action.payload
+        (category) => category.id !== action.payload,
       );
     },
   },

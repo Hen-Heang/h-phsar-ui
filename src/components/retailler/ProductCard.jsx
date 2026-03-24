@@ -45,16 +45,16 @@ export default function ProductCard({
           alt={product.name}
           className="h-full w-full object-contain mix-blend-multiply transition-transform "
         />
-        
+
         {/* Quick Add Overlay (Mobile/Hover) */}
         {!isUnavailable && quantity === 0 && (
           <div className="absolute inset-0 flex items-center justify-center bg-slate-900/0 opacity-0 transition-all group-hover:bg-slate-900/5 group-hover:opacity-100">
-             <button 
+            <button
               onClick={() => onIncrement(product.id)}
               className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-500 text-white shadow-xl transition hover:bg-orange-600 active:scale-90"
-             >
-                <Plus className="h-6 w-6" />
-             </button>
+            >
+              <Plus className="h-6 w-6" />
+            </button>
           </div>
         )}
       </div>
@@ -66,8 +66,12 @@ export default function ProductCard({
             {product.name}
           </h3>
           <div className="mt-1 flex items-center gap-2">
-            <span className="text-lg font-black text-orange-500">${product.price}</span>
-            <span className="text-[10px] font-medium text-slate-400">/ pack</span>
+            <span className="text-lg font-black text-orange-500">
+              ${product.price}
+            </span>
+            <span className="text-[10px] font-medium text-slate-400">
+              / pack
+            </span>
           </div>
         </div>
 
@@ -96,22 +100,32 @@ export default function ProductCard({
                 className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-slate-400 shadow-sm transition hover:text-orange-500 disabled:opacity-50 "
               >
                 {isLoadingDecrement ? (
-                  <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} className="h-4 w-4 border-2 border-orange-500 border-t-transparent rounded-full" />
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ repeat: Infinity, duration: 1 }}
+                    className="h-4 w-4 border-2 border-orange-500 border-t-transparent rounded-full"
+                  />
                 ) : (
                   <Minus className="h-4 w-4" />
                 )}
               </button>
-              
+
               <div className="relative flex-1">
                 <input
                   type="text"
                   value={quantity}
-                  onChange={(e) => !isUnavailable && onInputChange(product.id, e)}
+                  onChange={(e) =>
+                    !isUnavailable && onInputChange(product.id, e)
+                  }
                   className="w-full bg-transparent text-center text-sm font-black text-slate-900 outline-none "
                 />
                 {isLoadingInput && (
                   <div className="absolute inset-0 flex items-center justify-center bg-white/50 backdrop-blur-[1px] ">
-                    <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} className="h-3 w-3 border-2 border-orange-500 border-t-transparent rounded-full" />
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ repeat: Infinity, duration: 1 }}
+                      className="h-3 w-3 border-2 border-orange-500 border-t-transparent rounded-full"
+                    />
                   </div>
                 )}
               </div>
@@ -122,7 +136,11 @@ export default function ProductCard({
                 className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-slate-400 shadow-sm transition hover:text-orange-500 disabled:opacity-50 "
               >
                 {isLoadingIncrement ? (
-                  <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} className="h-4 w-4 border-2 border-orange-500 border-t-transparent rounded-full" />
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ repeat: Infinity, duration: 1 }}
+                    className="h-4 w-4 border-2 border-orange-500 border-t-transparent rounded-full"
+                  />
                 ) : (
                   <Plus className="h-4 w-4" />
                 )}
@@ -133,13 +151,17 @@ export default function ProductCard({
               disabled={isUnavailable || disabled || isLoadingIncrement}
               onClick={() => onIncrement(product.id)}
               className={`h-12 w-full rounded-2xl font-bold transition-all active:scale-[0.98] ${
-                isUnavailable 
-                ? "bg-slate-200 text-slate-400  " 
-                : "bg-slate-900 text-white hover:bg-orange-500  "
+                isUnavailable
+                  ? "bg-slate-200 text-slate-400  "
+                  : "bg-slate-900 text-white hover:bg-orange-500  "
               }`}
             >
               {isLoadingIncrement ? (
-                <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} className="h-5 w-5 border-2 border-white border-t-transparent rounded-full" />
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ repeat: Infinity, duration: 1 }}
+                  className="h-5 w-5 border-2 border-white border-t-transparent rounded-full"
+                />
               ) : (
                 <span className="flex items-center gap-2">
                   <ShoppingCart className="h-4 w-4" />

@@ -1,9 +1,9 @@
-# Getting Started with StockFlow Commerce
+# Getting Started with H-Phsar Commerce
 
-StockFlow Commerce is currently running on Next.js (App Router shell) with a legacy React Router app mounted inside.
+H-Phsar Commerce is currently running on Next.js (App Router shell) with a legacy React Router app mounted inside.
 
-## Introduction of StockFlow Commerce
-StockFlow Commerce is a stock and order management platform for distributors and retailers.
+## Introduction of H-Phsar Commerce
+H-Phsar Commerce is a stock and order management platform for distributors and retailers.
 
 ## Technologies
 - [Next.js](https://nextjs.org/)
@@ -28,7 +28,7 @@ npm run start
 ```
 
 ## Features
-StockFlow Commerce has two main account roles: Distributor and Retailer.
+H-Phsar Commerce has two main account roles: Distributor and Retailer.
 
 - Authentication: users can register and log in using email verification/OTP flow.
 
@@ -53,4 +53,4 @@ StockFlow Commerce has two main account roles: Distributor and Retailer.
 - Main branch: `main`
 
 ## Notes
-This project originated as a collaborative team project and is now maintained and extended as **StockFlow Commerce**.
+This project originated as a collaborative team project and is now maintained and extended as **H-Phsar Commerce**.

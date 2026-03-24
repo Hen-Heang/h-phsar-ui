@@ -23,7 +23,8 @@ export function HeroSection() {
           </h1>
 
           <p className="mx-auto mt-5 max-w-2xl text-base text-slate-600  md:text-lg">
-            Ship faster with a refined UI, meaningful motion, and a clean design system that scales.
+            Ship faster with a refined UI, meaningful motion, and a clean design
+            system that scales.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">

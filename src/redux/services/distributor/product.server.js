@@ -2,7 +2,7 @@ import { apiDelete, apiGet, apiPost, apiPut } from "@/lib/http/api-client";
 import { setLoading } from "../../slices/distributor/productSlice";
 
 export const get_all_product_distributor = async (dispatch) => {
-  dispatch(setLoading(true));
+  if (dispatch) dispatch(setLoading(true));
   return apiGet("/api/v1/distributor/products/sort", {
     query: { sort: "desc", by: "createdDate", pageNumber: 1, pageSize: 1000 },
   });
@@ -42,8 +42,8 @@ export const import_product_distributor = async (data) => {
     {
       id: parseInt(data.id),
       qty: parseInt(data.qty),
-      price: parseFloat(data.price)
-    }
+      price: parseFloat(data.price),
+    },
   ];
   return apiPost("/api/v1/distributor/products/import", { body: payload });
 };

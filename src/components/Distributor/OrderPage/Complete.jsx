@@ -3,18 +3,17 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  CheckCircle2, 
-  FileText, 
-  Plus
-} from "lucide-react";
+import { CheckCircle2, FileText, Plus } from "lucide-react";
 import ReactPaginate from "react-paginate";
 import { useReactToPrint } from "react-to-print";
 import { PropagateLoader } from "react-spinners";
 import { over } from "stompjs";
 import SockJS from "sockjs-client";
 
-import { get_all_complete, get_all_complete_withoutLoading } from "../../../redux/services/distributor/complete.service";
+import {
+  get_all_complete,
+  get_all_complete_withoutLoading,
+} from "../../../redux/services/distributor/complete.service";
 import { getProductDetail } from "../../../redux/slices/distributor/productSlice";
 import { get_invoice_by_id } from "../../../redux/services/distributor/invoice.service";
 import { get_detail_product } from "../../../redux/services/distributor/product.service";
@@ -32,7 +31,9 @@ import Invoice from "./Invoice";
 
 export default function Complete({ toggleTab }) {
   const dispatch = useDispatch();
-  const confirmList = useSelector((state) => state.distributorOrder.dataComplete);
+  const confirmList = useSelector(
+    (state) => state.distributorOrder.dataComplete,
+  );
   const loading = useSelector((state) => state.distributorOrder.loading);
   const invoiceList = useSelector((state) => state.invoiceDis.data);
 
@@ -51,15 +52,28 @@ export default function Complete({ toggleTab }) {
 
   // WebSocket Connection
   useEffect(() => {
-    const Sock = new SockJS(`${process.env.NEXT_PUBLIC_WS_URL || "http://localhost:8080"}/ws`);
+    const Sock = new SockJS(
+      `${process.env.NEXT_PUBLIC_WS_URL || "http://localhost:8080"}/ws`,
+    );
     const stompClient = over(Sock);
-    stompClient.connect({}, () => {
-      stompClient.subscribe(`/user/${localStorage.getItem("userId")}/private`, (payload) => {
-        if (JSON.parse(payload.body).status === "ORDER") {
-          get_all_complete_withoutLoading().then(r => r.data.status === 200 && dispatch(getAllComplete(r.data.data)));
-        }
-      });
-    }, () => {});
+    stompClient.connect(
+      {},
+      () => {
+        stompClient.subscribe(
+          `/user/${localStorage.getItem("userId")}/private`,
+          (payload) => {
+            if (JSON.parse(payload.body).status === "ORDER") {
+              get_all_complete_withoutLoading().then(
+                (r) =>
+                  r.data.status === 200 &&
+                  dispatch(getAllComplete(r.data.data)),
+              );
+            }
+          },
+        );
+      },
+      () => {},
+    );
     return () => Sock.close();
   }, [dispatch]);
 
@@ -67,20 +81,23 @@ export default function Complete({ toggleTab }) {
   useEffect(() => {
     dispatch(setLoadingCompleted(true));
     get_all_complete(dispatch)
-      .then(r => r?.data?.status === 200 && dispatch(getAllComplete(r.data.data)))
+      .then(
+        (r) => r?.data?.status === 200 && dispatch(getAllComplete(r.data.data)),
+      )
       .finally(() => dispatch(setLoadingCompleted(false)));
   }, [dispatch]);
 
   const currentItems = confirmList.slice(itemOffset, itemOffset + 6);
   const pageCount = Math.ceil(confirmList.length / 6);
 
-  const handlePageChange = (e) => setItemOffset((e.selected * 6) % confirmList.length);
+  const handlePageChange = (e) =>
+    setItemOffset((e.selected * 6) % confirmList.length);
 
   const onViewDetails = (id) => {
     setOpen(true);
     setLoadingPro(true);
     get_detail_product(id)
-      .then(r => dispatch(getProductDetail(r.data.data.products)))
+      .then((r) => dispatch(getProductDetail(r.data.data.products)))
       .finally(() => setLoadingPro(false));
   };
 
@@ -103,8 +120,12 @@ export default function Complete({ toggleTab }) {
       ) : confirmList.length === 0 ? (
         <div className="flex h-96 flex-col items-center justify-center rounded-[3rem] border-2 border-dashed border-slate-200 bg-white/50  ">
           <CheckCircle2 className="h-16 w-16 text-slate-200 " />
-          <h3 className="mt-6 text-xl font-bold text-slate-900 ">No Completed Orders</h3>
-          <p className="mt-2 text-slate-500">Completed and confirmed orders will be archived here.</p>
+          <h3 className="mt-6 text-xl font-bold text-slate-900 ">
+            No Completed Orders
+          </h3>
+          <p className="mt-2 text-slate-500">
+            Completed and confirmed orders will be archived here.
+          </p>
         </div>
       ) : (
         <>
@@ -145,7 +166,11 @@ export default function Complete({ toggleTab }) {
         </>
       )}
 
-      <Product handlePro={() => setOpen(false)} isOpen={isOpen} loadingPro={loadingPro} />
+      <Product
+        handlePro={() => setOpen(false)}
+        isOpen={isOpen}
+        loadingPro={loadingPro}
+      />
       <Invoice
         handleInvoice={() => setInvoice(false)}
         invoice={invoice}

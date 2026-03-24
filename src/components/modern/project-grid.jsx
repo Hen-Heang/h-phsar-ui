@@ -1,19 +1,28 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
 
 const PROJECTS = [
   {
     title: "Retail Analytics",
-    description: "Real-time sales trends and actionable inventory recommendations.",
+    description:
+      "Real-time sales trends and actionable inventory recommendations.",
   },
   {
     title: "Distributor Portal",
-    description: "Unified purchase flow with status tracking and smart notifications.",
+    description:
+      "Unified purchase flow with status tracking and smart notifications.",
   },
   {
     title: "Automated Reorder",
-    description: "Threshold-based restocking that reduces out-of-stock incidents.",
+    description:
+      "Threshold-based restocking that reduces out-of-stock incidents.",
   },
   {
     title: "Revenue Dashboard",
@@ -33,8 +42,12 @@ export function ProjectGrid() {
   return (
     <section className="mx-auto max-w-6xl px-4 pb-20 md:px-6">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-slate-900  md:text-3xl">Project Highlights</h2>
-        <p className="mt-2 text-slate-600 ">Reusable card UI with motion and dark mode support.</p>
+        <h2 className="text-2xl font-bold text-slate-900  md:text-3xl">
+          Project Highlights
+        </h2>
+        <p className="mt-2 text-slate-600 ">
+          Reusable card UI with motion and dark mode support.
+        </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

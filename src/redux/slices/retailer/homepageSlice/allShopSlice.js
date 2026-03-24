@@ -107,7 +107,7 @@ const allShopSlice = createSlice({
     AddProductToCart: (state, action) => {
       const newProduct = action.payload[0];
       const existingProduct = state.productInCartData.find(
-        (product) => product.productId === newProduct.productId
+        (product) => product.productId === newProduct.productId,
       );
 
       if (existingProduct) {
@@ -146,7 +146,7 @@ const allShopSlice = createSlice({
       // if (state.productInCartData !== null){
 
       state.productInCartData = state.productInCartData.filter(
-        (item) => item.productId !== itemId
+        (item) => item.productId !== itemId,
       );
 
       // }
@@ -225,7 +225,7 @@ const allShopSlice = createSlice({
     AddProductToCart: (state, action) => {
       const newProduct = action.payload[0];
       const existingProduct = state.productInCartData.find(
-        (product) => product.productId === newProduct.productId
+        (product) => product.productId === newProduct.productId,
       );
 
       if (existingProduct) {
@@ -264,7 +264,7 @@ const allShopSlice = createSlice({
       // console.log("geageageag", state.productInCartData )
       // if (state.productInCartData !== null){
       state.productInCartData = state.productInCartData.filter(
-        (item) => item.productId !== itemId
+        (item) => item.productId !== itemId,
       );
       // }
     },
@@ -274,18 +274,19 @@ const allShopSlice = createSlice({
     },
 
     cancelProductInCart: (state, action) => {
-      state.productInCartData = []},
+      state.productInCartData = [];
+    },
 
     draftStore2: (state, action) => {
       state.productInCartData = [];
     },
-  
+
     setUpdateBookmarkOneStore: (state, action) => {
-        if (      state.oneShopData.id === action.payload.id) {
-          // console.log("bookmarkStore : ",item.isBookmarked)
-          // console.log("bookmarkStore payload : ",action.payload.isBookmarked)
-          state.oneShopData.isBookmarked = !action.payload.isBookmarked;
-        }
+      if (state.oneShopData.id === action.payload.id) {
+        // console.log("bookmarkStore : ",item.isBookmarked)
+        // console.log("bookmarkStore payload : ",action.payload.isBookmarked)
+        state.oneShopData.isBookmarked = !action.payload.isBookmarked;
+      }
     },
   },
 });

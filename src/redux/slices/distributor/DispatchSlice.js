@@ -8,5 +8,6 @@ const dispatchSlice = createSlice({
   reducers: {},
 });
 
-export const { getAlldispatch, removeDisItem, getDelivered } = dispatchSlice.actions;
+export const { getAlldispatch, removeDisItem, getDelivered } =
+  dispatchSlice.actions;
 export default dispatchSlice.reducer;

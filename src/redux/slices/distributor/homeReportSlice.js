@@ -1,7 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const homeReportSlice = createSlice({
-
   name: "homeReport",
   initialState: {
     distributorReport: {
@@ -15,8 +14,8 @@ const homeReportSlice = createSlice({
   reducers: {
     getDistributorReport: (state, action) => {
       state.distributorReport = action.payload;
+    },
   },
-}
-})
-export const { getDistributorReport } = homeReportSlice.actions
+});
+export const { getDistributorReport } = homeReportSlice.actions;
 export default homeReportSlice.reducer;

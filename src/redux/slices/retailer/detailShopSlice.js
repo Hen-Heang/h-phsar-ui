@@ -1,19 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const detailShopSlice = createSlice({
-  name: 'detail',
+  name: "detail",
   initialState: {
-    data: [
-      
-    ]
+    data: [],
   },
   reducers: {
     getDetailShop: (state, action) => {
-      state.data = action.payload
-      
-    }
-  }
-
-})
-export const { getDetailShop } = detailShopSlice.actions
-export default detailShopSlice.reducer
+      state.data = action.payload;
+    },
+  },
+});
+export const { getDetailShop } = detailShopSlice.actions;
+export default detailShopSlice.reducer;
