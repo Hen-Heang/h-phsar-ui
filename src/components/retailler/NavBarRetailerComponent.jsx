@@ -93,14 +93,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { sendOneSignalNotification } from "@/lib/notifications/send-onesignal-client";
 export default function NavBarRetailerComponent() {
   const [loadingSearch, setLoadingSearch] = useState(false);
 
@@ -233,7 +228,7 @@ export default function NavBarRetailerComponent() {
   const [loadingProducts, setLoadingProducts] = useState(new Set()); // Initialize the loading state for products
   const [loadingProducts2, setLoadingProducts2] = useState(new Set()); // for decrement button
   const [counterLocalStorage, setCounterLocalStorage] = useState(
-    JSON.parse(localStorage.getItem("counter")) || {},
+    JSON.parse(localStorage.getItem("counter")) || {}
   );
   const localStoreId = localStorage.getItem("storeIdLocalStorage");
   const localStoreName = localStorage.getItem("storeNameLocalStorage");
@@ -249,14 +244,14 @@ export default function NavBarRetailerComponent() {
     });
 
     setLoadingProducts2((prevLoadingProducts) =>
-      new Set(prevLoadingProducts).add(productId),
+      new Set(prevLoadingProducts).add(productId)
     ); // Start loading indicator for the current product
 
     const currentValue = parseInt(counterLocalStorage[productId] || 0);
     // console.log("gagagag",currentValue);
     if (currentValue === 1) {
       delete_product_in_cart(productId).then(
-        dispatch(deleteProductInCart(productId)),
+        dispatch(deleteProductInCart(productId))
       );
 
       const updatedCounters = { ...counterLocalStorage };
@@ -278,7 +273,7 @@ export default function NavBarRetailerComponent() {
     }
     if (currentValue > 0) {
       const product = productInCartData.find(
-        (item) => item.productId === productId,
+        (item) => item.productId === productId
       );
       const qty = currentValue - 1;
 
@@ -291,7 +286,7 @@ export default function NavBarRetailerComponent() {
             const response = await add_product_to_cart(
               localStoreId,
               productId,
-              qty,
+              qty
             );
             const endTime = performance.now(); // Track end time of API call
             dispatch(AddProductToCart(response.data.data));
@@ -353,12 +348,12 @@ export default function NavBarRetailerComponent() {
   const handleInputChange = async (productId, e) => {
     const value = parseInt(e.target.value);
     const product = productInCartData.find(
-      (item) => item.productId === productId,
+      (item) => item.productId === productId
     );
 
     if (value === 0) {
       delete_product_in_cart(productId).then(
-        dispatch(deleteProductInCart(productId)),
+        dispatch(deleteProductInCart(productId))
       );
       const productNull = productInCartData.length === 1;
       if (productNull) {
@@ -392,7 +387,7 @@ export default function NavBarRetailerComponent() {
           const response = await add_product_to_cart(
             localStoreId,
             productId,
-            value,
+            value
           );
           const endTime = performance.now();
 
@@ -430,7 +425,7 @@ export default function NavBarRetailerComponent() {
 
   const handleIncrement = async (productId) => {
     const product = productInCartData.find(
-      (item) => item.productId === productId,
+      (item) => item.productId === productId
     );
 
     setDisabledButtons((prevDisabledButtons) => {
@@ -440,7 +435,7 @@ export default function NavBarRetailerComponent() {
     });
 
     setLoadingProducts((prevLoadingProducts) =>
-      new Set(prevLoadingProducts).add(productId),
+      new Set(prevLoadingProducts).add(productId)
     ); // Start loading indicator for the current product
 
     const currentValue = parseInt(counterLocalStorage[productId] || 0);
@@ -492,7 +487,7 @@ export default function NavBarRetailerComponent() {
         "User have no profile. Please setup user profile to make order."
       ) {
         toast.error(
-          "Opps, you have no profile. Please setup user profile to make order.",
+          "Opps, you have no profile. Please setup user profile to make order."
         );
         setLoadingProducts((prevLoadingProducts) => {
           const updatedLoadingProducts = new Set(prevLoadingProducts);
@@ -535,7 +530,7 @@ export default function NavBarRetailerComponent() {
   // onClickDeleteProductInCart
   const onClickDeleteProductInCart = (productId) => {
     delete_product_in_cart(productId).then(
-      dispatch(deleteProductInCart(productId)),
+      dispatch(deleteProductInCart(productId))
     );
 
     const updatedCounters = { ...counterLocalStorage };
@@ -558,31 +553,41 @@ export default function NavBarRetailerComponent() {
     }
   };
 
-  const handleClickCheckOut = async (option) => {
+  const handleClickCheckOut = (option) => {
+    // confirm_order_from_cart().then((e)=> dispatch(checkoutProduct(e.data.data)))
+    const message = "You have new order...!";
     if (option === "yes") {
-      const response = await confirm_order_from_cart();
-
-      if (response?.status === 401 || response?.status === 403) {
-        toast.error("Session expired. Please sign in again.");
-        return;
-      }
-
-      if (!response || response.status < 200 || response.status >= 300) {
-        toast.error("Checkout failed. Please try again.");
-        return;
-      }
-
-      dispatch(checkoutProduct(response.data));
+      confirm_order_from_cart()
+        .then(async (response) => {
+          // console.log("message from add to cart:", response.data.data.userId);
+          // =========== push notification ==============
+          const notification = {
+            contents: { en: message },
+            include_external_user_ids: [response.data.data.userId.toString()],
+          };
+          try {
+            const notificationResponse = await sendOneSignalNotification(notification);
+          } catch (error) {
+          }
+          dispatch(checkoutProduct(response.data));
+        })
+        .catch((error) => {
+          // Handle the error if needed
+        });
+      // remove data from local storage
 
       localStorage.removeItem("storeNameLocalStorage");
-      localStorage.removeItem("storeIdLocalStorage");
 
       const updatedCounters = { ...counterLocalStorage };
+      localStorage.removeItem("storeIdLocalStorage");
+
       for (let key in updatedCounters) {
         delete updatedCounters[key];
       }
+      // delete updatedCounters;
       localStorage.setItem("counter", JSON.stringify(updatedCounters));
 
+      // Dispatch the custom event to notify other components about the local storage update
       const localStorageUpdatedEvent = new CustomEvent("localStorageUpdated", {
         detail: updatedCounters,
       });
@@ -596,7 +601,7 @@ export default function NavBarRetailerComponent() {
   const handleClickCancel = (option) => {
     if (option === "yes") {
       cancel_order_from_cart().then((e) =>
-        dispatch(cancelProductInCart(e.data)),
+        dispatch(cancelProductInCart(e.data))
       );
       // remove data from local storage
       localStorage.removeItem("storeIdLocalStorage");
@@ -650,6 +655,24 @@ export default function NavBarRetailerComponent() {
   // ================== account =================
   useEffect(() => {
     get_retailer_profile().then((res) => {
+      if (!res || res.status === 404) {
+        dispatch(
+          getRetailerInfo({
+            id: null,
+            retailerAccountId: null,
+            firstName: "unknown",
+            lastName: "guest",
+            gender: "unknown",
+            address: "unknown",
+            primaryPhoneNumber: "0XXXXXXXX",
+            profileImage:
+              "https://firebasestorage.googleapis.com/v0/b/wm-file-upload.appspot.com/o/download.png?alt=media&token=f3aa8608-77b4-4437-af13-993de6ac2e84",
+            createdDate: null,
+            updatedDate: null,
+            additionalPhoneNumber: null,
+          })
+        );
+      }
       if (res?.status === 200) {
         dispatch(getRetailerInfo(res.data.data));
       }
@@ -670,53 +693,49 @@ export default function NavBarRetailerComponent() {
   const [noDataNotifications, setDataNotifications] = useState(false);
   // ===================== websocket =================
   const stompClientRef = useRef(null);
+  const onPrivateMessage = (payload) => {
+    var payloadData = JSON.parse(payload.body);
+    switch (payloadData.status) {
+      case "ORDER":
+        get_all_notification_retailer().then((res) => {
+          if (res.status === 200) {
+            dispatch(getAllNotificationRetailers(res.data.data));
+            setDataNotifications(false);
+          } else {
+            setDataNotifications(true);
+          }
+        });
+        break;
+    }
+  };
   const connect = () => {
-    if (stompClientRef.current?.connected) return;
-    const Sock = new SockJS(
-      `${process.env.NEXT_PUBLIC_WS_URL || "http://localhost:8080"}/ws`,
-    );
+    const Sock = new SockJS(`${process.env.NEXT_PUBLIC_WS_URL || "http://localhost:8080"}/ws`);
     const client = over(Sock);
     stompClientRef.current = client;
     client.connect(
       {},
       () => {
-        // Bail out if this client was replaced before it finished connecting
-        if (stompClientRef.current !== client) {
-          try { client.disconnect(() => {}); } catch (_) {}
-          return;
-        }
-        const retailerId = localStorage.getItem("userId");
         client.subscribe(
-          `/topic/notifications/${retailerId}`,
-          onPrivateMessage,
+          "/user/" + localStorage.getItem("userId") + "/private",
+          onPrivateMessage
         );
+        client.send("/app/message", {}, JSON.stringify({ status: "JOIN" }));
       },
-      onError,
+      () => {}
     );
   };
   const disconnectFromSocket = () => {
-    if (stompClientRef.current && stompClientRef.current.connected) {
+    if (stompClientRef.current?.connected) {
       stompClientRef.current.disconnect();
-      stompClientRef.current = null;
     }
   };
-  const onPrivateMessage = (payload) => {
-    var payloadData = JSON.parse(payload.body);
-    if (payloadData.status === "NEW_NOTIFICATION") {
-      get_all_notification_retailer().then((res) => {
-        if (res.status === 200) {
-          dispatch(getAllNotificationRetailers(res.data.data));
-          setDataNotifications(false);
-        } else {
-          setDataNotifications(true);
-        }
-      });
-    }
-  };
-  const onError = (_err) => {};
   useEffect(() => {
     connect();
-    return () => disconnectFromSocket();
+    return () => {
+      if (stompClientRef.current?.connected) {
+        stompClientRef.current.disconnect();
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -739,12 +758,12 @@ export default function NavBarRetailerComponent() {
     },
   }));
   const allDataNotificationRetailer = useSelector(
-    (state) => state.DataNotificationRetailer.dataNotificationRetailer,
+    (state) => state.DataNotificationRetailer.dataNotificationRetailer
   );
   //                ====== count notifications ======
 
   const countAllNotificationUnseen = allDataNotificationRetailer.filter(
-    (item) => item.seen === false,
+    (item) => item.seen === false
   ).length;
   // console.log("first notification", countAllNotificationUnseen);
   //                ====== count notifications ORDER_ACCEPTED======
@@ -752,28 +771,28 @@ export default function NavBarRetailerComponent() {
   const countAllNotificationUnseenOrderAccepted =
     allDataNotificationRetailer.filter(
       (item) =>
-        item.notificationType === "ORDER_ACCEPTED" && item.seen === false,
+        item.notificationType === "ORDER_ACCEPTED" && item.seen === false
     ).length;
   //                ====== count notifications ORDER_DELIVERING======
 
   const countAllNotificationUnseenOrderDelivering =
     allDataNotificationRetailer.filter(
       (item) =>
-        item.notificationType === "ORDER_DELIVERING" && item.seen === false,
+        item.notificationType === "ORDER_DELIVERING" && item.seen === false
     ).length;
   //                ====== count notifications ORDER_CONFIRMING======
 
   const countAllNotificationUnseenOrderConfirming =
     allDataNotificationRetailer.filter(
       (item) =>
-        item.notificationType === "ORDER_CONFIRMING" && item.seen === false,
+        item.notificationType === "ORDER_CONFIRMING" && item.seen === false
     ).length;
   //                ====== count notifications ORDER_REJECTED======
 
   const countAllNotificationUnseenOrderRejected =
     allDataNotificationRetailer.filter(
       (item) =>
-        item.notificationType === "ORDER_REJECTED" && item.seen === false,
+        item.notificationType === "ORDER_REJECTED" && item.seen === false
     ).length;
 
   //    ================== mark read all notifications =================
@@ -800,9 +819,7 @@ export default function NavBarRetailerComponent() {
     dispatch(setStoreId(id));
 
     dispatch(setStoreId(id)); // Dispatch the setStoreId action
-    router.push(
-      `/retailer/distributor-shop?storeId=${id}&storeName=${encodeURIComponent(storeName)}`,
-    );
+    router.push(`/retailer/distributor-shop?storeId=${id}&storeName=${encodeURIComponent(storeName)}`);
 
     // navigate(`/retailer/distributor-shop/${id}`);
     window.scrollTo(0, 0);
@@ -838,9 +855,7 @@ export default function NavBarRetailerComponent() {
             <input
               type="text"
               onChange={handleFormChange}
-              onKeyDown={(event) =>
-                event.key === "Enter" && searchProductByStore()
-              }
+              onKeyDown={(event) => event.key === "Enter" && searchProductByStore()}
               value={onChangeSearch}
               className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 py-2.5 pl-11 pr-24 text-sm transition-all focus:border-orange-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-orange-500/10     "
               placeholder="Search products, stores..."
@@ -865,21 +880,14 @@ export default function NavBarRetailerComponent() {
                 <Bell className="h-5 w-5" />
                 {countAllNotificationUnseen > 0 && (
                   <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-[10px] font-bold text-white ring-2 ring-white ">
-                    {countAllNotificationUnseen > 99
-                      ? "99+"
-                      : countAllNotificationUnseen}
+                    {countAllNotificationUnseen > 99 ? "99+" : countAllNotificationUnseen}
                   </span>
                 )}
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              className="w-[min(28rem,95vw)] overflow-hidden rounded-2xl p-0 shadow-2xl"
-            >
+            <DropdownMenuContent align="end" className="w-[min(28rem,95vw)] overflow-hidden rounded-2xl p-0 shadow-2xl">
               <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 px-5 py-4  ">
-                <h3 className="text-sm font-bold text-slate-900 ">
-                  Notifications
-                </h3>
+                <h3 className="text-sm font-bold text-slate-900 ">Notifications</h3>
                 <button
                   onClick={handleReadAllNotifications}
                   className="text-xs font-semibold text-orange-500 transition hover:text-orange-600"
@@ -892,26 +900,10 @@ export default function NavBarRetailerComponent() {
                 <div className="flex gap-1 overflow-x-auto p-2 scrollbar-hide">
                   {[
                     { id: 1, label: "All", count: countAllNotificationUnseen },
-                    {
-                      id: 2,
-                      label: "Accepted",
-                      count: countAllNotificationUnseenOrderAccepted,
-                    },
-                    {
-                      id: 3,
-                      label: "Shipping",
-                      count: countAllNotificationUnseenOrderDelivering,
-                    },
-                    {
-                      id: 4,
-                      label: "Confirming",
-                      count: countAllNotificationUnseenOrderConfirming,
-                    },
-                    {
-                      id: 5,
-                      label: "Rejected",
-                      count: countAllNotificationUnseenOrderRejected,
-                    },
+                    { id: 2, label: "Accepted", count: countAllNotificationUnseenOrderAccepted },
+                    { id: 3, label: "Shipping", count: countAllNotificationUnseenOrderDelivering },
+                    { id: 4, label: "Confirming", count: countAllNotificationUnseenOrderConfirming },
+                    { id: 5, label: "Rejected", count: countAllNotificationUnseenOrderRejected },
                   ].map((tab) => (
                     <button
                       key={tab.id}
@@ -924,9 +916,7 @@ export default function NavBarRetailerComponent() {
                     >
                       {tab.label}
                       {tab.count > 0 && (
-                        <span
-                          className={`h-1.5 w-1.5 rounded-full ${toggleState === tab.id ? "bg-orange-500" : "bg-slate-300 "}`}
-                        />
+                        <span className={`h-1.5 w-1.5 rounded-full ${toggleState === tab.id ? "bg-orange-500" : "bg-slate-300 "}`} />
                       )}
                     </button>
                   ))}
@@ -965,19 +955,13 @@ export default function NavBarRetailerComponent() {
                 )}
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              className="w-[min(32rem,95vw)] overflow-hidden rounded-2xl p-0 shadow-2xl"
-            >
+            <DropdownMenuContent align="end" className="w-[min(32rem,95vw)] overflow-hidden rounded-2xl p-0 shadow-2xl">
               <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 px-5 py-4  ">
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900 ">
-                    Your Cart
-                  </h3>
+                  <h3 className="text-sm font-bold text-slate-900 ">Your Cart</h3>
                   {productInCartData.length > 0 && (
                     <p className="text-[10px] font-medium text-slate-500">
-                      Order from{" "}
-                      <span className="text-orange-500">{localStoreName}</span>
+                      Order from <span className="text-orange-500">{localStoreName}</span>
                     </p>
                   )}
                 </div>
@@ -996,10 +980,7 @@ export default function NavBarRetailerComponent() {
                 {productInCartData.length > 0 ? (
                   <div className="divide-y divide-slate-50 ">
                     {productInCartData.map((item) => (
-                      <div
-                        key={item.productId}
-                        className="group flex items-center gap-4 p-4 transition-colors hover:bg-slate-50/50 "
-                      >
+                      <div key={item.productId} className="group flex items-center gap-4 p-4 transition-colors hover:bg-slate-50/50 ">
                         <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl border border-slate-100 bg-white  ">
                           <img
                             src={getSafeImageSrc(item.image, noImage)}
@@ -1009,18 +990,12 @@ export default function NavBarRetailerComponent() {
                           />
                         </div>
                         <div className="flex flex-1 flex-col gap-1">
-                          <h4 className="line-clamp-1 text-xs font-bold text-slate-900 ">
-                            {item.productName}
-                          </h4>
+                          <h4 className="line-clamp-1 text-xs font-bold text-slate-900 ">{item.productName}</h4>
                           <div className="flex items-center gap-2">
-                            <span className="text-xs font-medium text-slate-500">
-                              ${item.unitPrice}
-                            </span>
-                            <span className="text-[10px] text-slate-300">
-                              / pack
-                            </span>
+                            <span className="text-xs font-medium text-slate-500">${item.unitPrice}</span>
+                            <span className="text-[10px] text-slate-300">/ pack</span>
                           </div>
-
+                          
                           <div className="mt-2 flex items-center gap-3">
                             <div className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white p-1  ">
                               <button
@@ -1028,14 +1003,7 @@ export default function NavBarRetailerComponent() {
                                 className="flex h-6 w-6 items-center justify-center rounded-md text-slate-400 transition hover:bg-slate-50 hover:text-orange-500 "
                               >
                                 {loadingProducts2.has(item.productId) ? (
-                                  <motion.div
-                                    animate={{ rotate: 360 }}
-                                    transition={{
-                                      repeat: Infinity,
-                                      duration: 1,
-                                    }}
-                                    className="h-3 w-3 border-2 border-orange-500 border-t-transparent rounded-full"
-                                  />
+                                  <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} className="h-3 w-3 border-2 border-orange-500 border-t-transparent rounded-full" />
                                 ) : (
                                   <Minus className="h-3 w-3" />
                                 )}
@@ -1043,9 +1011,7 @@ export default function NavBarRetailerComponent() {
                               <input
                                 type="text"
                                 value={counterLocalStorage[item.productId] || 0}
-                                onChange={(e) =>
-                                  handleInputChange(item.productId, e)
-                                }
+                                onChange={(e) => handleInputChange(item.productId, e)}
                                 className="w-8 bg-transparent text-center text-xs font-bold text-slate-900 focus:outline-none "
                               />
                               <button
@@ -1053,14 +1019,7 @@ export default function NavBarRetailerComponent() {
                                 className="flex h-6 w-6 items-center justify-center rounded-md text-slate-400 transition hover:bg-slate-50 hover:text-orange-500 "
                               >
                                 {loadingProducts.has(item.productId) ? (
-                                  <motion.div
-                                    animate={{ rotate: 360 }}
-                                    transition={{
-                                      repeat: Infinity,
-                                      duration: 1,
-                                    }}
-                                    className="h-3 w-3 border-2 border-orange-500 border-t-transparent rounded-full"
-                                  />
+                                  <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} className="h-3 w-3 border-2 border-orange-500 border-t-transparent rounded-full" />
                                 ) : (
                                   <Plus className="h-3 w-3" />
                                 )}
@@ -1069,13 +1028,9 @@ export default function NavBarRetailerComponent() {
                           </div>
                         </div>
                         <div className="flex flex-col items-end gap-3">
-                          <span className="text-sm font-black text-slate-900 ">
-                            ${item.subTotal.toFixed(2)}
-                          </span>
+                          <span className="text-sm font-black text-slate-900 ">${item.subTotal.toFixed(2)}</span>
                           <button
-                            onClick={() =>
-                              onClickDeleteProductInCart(item.productId)
-                            }
+                            onClick={() => onClickDeleteProductInCart(item.productId)}
                             className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-300 transition hover:bg-red-50 hover:text-red-500  "
                           >
                             <Trash2 className="h-4 w-4" />
@@ -1090,12 +1045,8 @@ export default function NavBarRetailerComponent() {
                       <ShoppingBag className="h-10 w-10 text-slate-200 " />
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-slate-900 ">
-                        Empty Cart
-                      </h4>
-                      <p className="text-xs text-slate-500">
-                        Your shopping cart is waiting to be filled.
-                      </p>
+                      <h4 className="text-sm font-bold text-slate-900 ">Empty Cart</h4>
+                      <p className="text-xs text-slate-500">Your shopping cart is waiting to be filled.</p>
                     </div>
                   </div>
                 )}
@@ -1104,14 +1055,9 @@ export default function NavBarRetailerComponent() {
               {productInCartData.length > 0 && (
                 <div className="border-t border-slate-100 bg-slate-50/50 p-5  ">
                   <div className="mb-4 flex items-center justify-between">
-                    <span className="text-xs font-medium text-slate-500">
-                      Subtotal
-                    </span>
+                    <span className="text-xs font-medium text-slate-500">Subtotal</span>
                     <span className="text-lg font-black text-slate-900 ">
-                      $
-                      {productInCartData
-                        .reduce((sum, item) => sum + item.subTotal, 0)
-                        .toFixed(2)}
+                      ${productInCartData.reduce((sum, item) => sum + item.subTotal, 0).toFixed(2)}
                     </span>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
@@ -1137,10 +1083,7 @@ export default function NavBarRetailerComponent() {
           {/* User Profile */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                className="relative h-10 w-10 p-0 overflow-hidden rounded-xl border-2 border-white bg-slate-100 shadow-sm transition-transform active:scale-95"
-              >
+              <Button variant="ghost" className="relative h-10 w-10 p-0 overflow-hidden rounded-xl border-2 border-white bg-slate-100 shadow-sm transition-transform active:scale-95">
                 {profile?.profileImage ? (
                   <img
                     src={profile.profileImage}
@@ -1151,14 +1094,9 @@ export default function NavBarRetailerComponent() {
                 )}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              className="w-56 overflow-hidden rounded-2xl p-0 shadow-2xl"
-            >
+            <DropdownMenuContent align="end" className="w-56 overflow-hidden rounded-2xl p-0 shadow-2xl">
               <div className="bg-slate-50/50 p-4 ">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                  Account
-                </p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Account</p>
                 <p className="line-clamp-1 text-sm font-bold text-slate-900 ">
                   {profile.firstName} {profile.lastName}
                 </p>
@@ -1191,11 +1129,7 @@ export default function NavBarRetailerComponent() {
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 lg:hidden   "
           >
-            {isMobileMenuOpen ? (
-              <X className="h-5 w-5" />
-            ) : (
-              <Menu className="h-5 w-5" />
-            )}
+            {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
       </div>
@@ -1218,9 +1152,7 @@ export default function NavBarRetailerComponent() {
                 href={link.href}
                 onClick={handleClearSearch}
                 className={`group relative text-sm font-bold transition-colors ${
-                  isActive
-                    ? "text-orange-500"
-                    : "text-slate-500 hover:text-slate-900  "
+                  isActive ? "text-orange-500" : "text-slate-500 hover:text-slate-900  "
                 }`}
               >
                 {link.label}
@@ -1256,9 +1188,7 @@ export default function NavBarRetailerComponent() {
             >
               <div className="flex flex-col h-full">
                 <div className="flex items-center justify-between p-6">
-                  <span className="text-lg font-black text-slate-900 ">
-                    Menu
-                  </span>
+                  <span className="text-lg font-black text-slate-900 ">Menu</span>
                   <button
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-50 text-slate-500 "
@@ -1274,9 +1204,7 @@ export default function NavBarRetailerComponent() {
                     <input
                       type="text"
                       onChange={handleFormChange}
-                      onKeyDown={(event) =>
-                        event.key === "Enter" && searchProductByStore()
-                      }
+                      onKeyDown={(event) => event.key === "Enter" && searchProductByStore()}
                       value={onChangeSearch}
                       className="w-full rounded-xl border border-slate-100 bg-slate-50 py-2 pl-10 pr-4 text-xs  "
                       placeholder="Search..."
@@ -1333,10 +1261,9 @@ export default function NavBarRetailerComponent() {
             <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-red-50 text-red-500 ">
               <XCircle className="h-10 w-10" />
             </div>
-            <DialogTitle className="text-xl font-bold text-slate-900">Cancel Order?</DialogTitle>
+            <DialogTitle className="text-xl font-bold text-slate-900 ">Cancel Order?</DialogTitle>
             <p className="mt-2 text-sm text-slate-500">
-              Are you sure you want to cancel this order? This action cannot be
-              undone.
+              Are you sure you want to cancel this order? This action cannot be undone.
             </p>
             <div className="mt-8 flex gap-3">
               <button
@@ -1356,22 +1283,15 @@ export default function NavBarRetailerComponent() {
         </DialogContent>
       </Dialog>
 
-      <Dialog
-        open={success}
-        onOpenChange={(open) => !open && setSuccess(!success)}
-      >
+      <Dialog open={success} onOpenChange={(open) => !open && setSuccess(!success)}>
         <DialogContent className="max-w-md rounded-2xl p-0 overflow-hidden">
           <div className="p-8 text-center">
             <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-50 text-green-500 ">
               <CheckCircle2 className="h-10 w-10" />
             </div>
-            <DialogTitle className="text-xl font-bold text-slate-900">Confirm Order</DialogTitle>
+            <DialogTitle className="text-xl font-bold text-slate-900 ">Confirm Order</DialogTitle>
             <p className="mt-2 text-sm text-slate-500">
-              Ready to place your order with{" "}
-              <span className="text-orange-500 font-bold">
-                {localStoreName}
-              </span>
-              ?
+              Ready to place your order with <span className="text-orange-500 font-bold">{localStoreName}</span>?
             </p>
             <div className="mt-8 flex gap-3">
               <button
@@ -1391,16 +1311,13 @@ export default function NavBarRetailerComponent() {
         </DialogContent>
       </Dialog>
 
-      <Dialog
-        open={success2}
-        onOpenChange={(open) => !open && setSuccess2(!success2)}
-      >
+      <Dialog open={success2} onOpenChange={(open) => !open && setSuccess2(!success2)}>
         <DialogContent className="max-w-md rounded-2xl p-0 overflow-hidden">
           <div className="p-8 text-center">
             <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-orange-50 text-orange-500 ">
               <Package className="h-10 w-10" />
             </div>
-            <DialogTitle className="text-xl font-bold text-slate-900">Save as Draft</DialogTitle>
+            <DialogTitle className="text-xl font-bold text-slate-900 ">Save as Draft</DialogTitle>
             <p className="mt-2 text-sm text-slate-500">
               Save your current cart to finish it later?
             </p>
@@ -1422,16 +1339,13 @@ export default function NavBarRetailerComponent() {
         </DialogContent>
       </Dialog>
 
-      <Dialog
-        open={confOrder}
-        onOpenChange={(open) => !open && setConfOrder(!confOrder)}
-      >
+      <Dialog open={confOrder} onOpenChange={(open) => !open && setConfOrder(!confOrder)}>
         <DialogContent className="max-w-md rounded-2xl p-0 overflow-hidden">
           <div className="p-8 text-center">
             <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-blue-50 text-blue-500 ">
               <Clock className="h-10 w-10" />
             </div>
-            <DialogTitle className="text-xl font-bold text-slate-900">Ongoing Order</DialogTitle>
+            <DialogTitle className="text-xl font-bold text-slate-900 ">Ongoing Order</DialogTitle>
             <p className="mt-2 text-sm text-slate-500">
               Please checkout your previous order before starting a new one.
             </p>

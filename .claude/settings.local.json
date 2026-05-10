@@ -2,16 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(grep -v '`/')",
-      "Bash(rm src/pages/auth/SignUpPage.jsx)",
-      "Bash(rm src/components/modern/auth/signup-form.jsx)",
-      "Bash(mv src/pages/auth/SignUpPage.next.tsx src/pages/auth/SignUpPage.next.tsx)",
-      "Bash(npx tsc:*)",
-      "Bash(find c:/Practice/h-phsar-ui -name *.cache -not -path */node_modules/*)",
-      "Bash(grep -rn \"push\\\\|replace\\\\|href\" c:/Practice/h-phsar-ui/src --include=*.tsx --include=*.ts --include=*.jsx --include=*.js)",
-      "Bash(grep '\\\\${')",
-      "Bash(grep -rn distributor c:/Practice/h-phsar-ui/src --include=*.tsx --include=*.ts --include=*.jsx --include=*.js)",
-      "Bash(grep -rn handleInvoice c:/Practice/h-phsar-ui/src --include=*.tsx --include=*.jsx)",
-      "Bash(grep -rn \"get_invoice\\\\|invoice\\\\|receipt\\\\|Invoice\" c:/Practice/h-phsar-ui/src/components/retailler --include=*.tsx --include=*.jsx -n)"
+      "Bash(PGPASSWORD=123 /Library/PostgreSQL/18/bin/psql *)",
+      "Bash(git add *)",
+      "Bash(git rebase *)"
     ]
   }
 }

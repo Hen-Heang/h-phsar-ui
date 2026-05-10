@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -6,7 +7,7 @@ import { Button } from "../ui/button";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
-  email: z.string().email("Please enter a valid email."),
+  email: z.email("Please enter a valid email."),
   message: z.string().min(10, "Message must be at least 10 characters."),
 });
 
@@ -21,7 +22,7 @@ export function ContactForm() {
     defaultValues: { name: "", email: "", message: "" },
   });
 
-  const onSubmit = async (values) => {
+  const onSubmit = async () => {
     await new Promise((resolve) => setTimeout(resolve, 600));
     reset();
   };

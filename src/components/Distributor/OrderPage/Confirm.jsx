@@ -1,16 +1,20 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
-import { Clock, Plus } from "lucide-react";
+import { 
+  Clock, 
+  Plus
+} from "lucide-react";
 import ReactPaginate from "react-paginate";
 import { PropagateLoader } from "react-spinners";
-import useWebSocket from "@/shared/hooks/useWebSocket";
+import { over } from "stompjs";
+import SockJS from "sockjs-client";
 
-import {
-  get_all_confirm,
-  get_all_confirm_withoutLoading,
+import { 
+  get_all_confirm, 
+  get_all_confirm_withoutLoading 
 } from "../../../redux/services/distributor/Confirm.service";
 import { getProductDetail } from "../../../redux/slices/distributor/productSlice";
 import { get_detail_product } from "../../../redux/services/distributor/product.service";
@@ -23,61 +27,47 @@ import Product from "./Product";
 
 export default function Confirm({ toggleTab5 }) {
   const dispatch = useDispatch();
-  const confirmList = useSelector(
-    (state) => state.distributorOrder.confirmData,
-  );
+  const confirmList = useSelector((state) => state.distributorOrder.confirmData);
   const loading = useSelector((state) => state.distributorOrder.loading);
 
   const [itemOffset, setItemOffset] = useState(0);
   const itemsPerPage = 6;
-
+  
   const [isOpen, setOpen] = useState(false);
   const [loadingPro, setLoadingPro] = useState(false);
 
   // WebSocket Connection
-  const wsUserId =
-    typeof window !== "undefined" ? localStorage.getItem("userId") : "";
-
-  const onWebSocketMessage = useCallback(
-    (payload) => {
-      if (payload.status === "ORDER") {
-        get_all_confirm_withoutLoading().then(
-          (r) =>
-            r?.data?.status === 200 &&
-            dispatch(getConfirmOrder(r.data.data)),
-        );
-      }
-    },
-    [dispatch],
-  );
-
-  useWebSocket(
-    wsUserId ? `/user/${wsUserId}/private` : null,
-    onWebSocketMessage,
-  );
+  useEffect(() => {
+    const Sock = new SockJS(`${process.env.NEXT_PUBLIC_WS_URL || "http://localhost:8080"}/ws`);
+    const stompClient = over(Sock);
+    stompClient.connect({}, () => {
+      stompClient.subscribe(`/user/${localStorage.getItem("userId")}/private`, (payload) => {
+        if (JSON.parse(payload.body).status === "ORDER") {
+          get_all_confirm_withoutLoading().then(r => r.data.status === 200 && dispatch(getConfirmOrder(r.data.data)));
+        }
+      });
+    }, () => {});
+    return () => Sock.close();
+  }, [dispatch]);
 
   // Initial Fetch
   useEffect(() => {
     dispatch(setLoadingTheOrder(true));
     get_all_confirm(dispatch)
-      .then(
-        (r) =>
-          r?.data?.status === 200 && dispatch(getConfirmOrder(r.data.data)),
-      )
+      .then(r => r?.data?.status === 200 && dispatch(getConfirmOrder(r.data.data)))
       .finally(() => dispatch(setLoadingTheOrder(false)));
   }, [dispatch]);
 
   const currentItems = confirmList.slice(itemOffset, itemOffset + itemsPerPage);
   const pageCount = Math.ceil(confirmList.length / itemsPerPage);
 
-  const handlePageChange = (e) =>
-    setItemOffset((e.selected * itemsPerPage) % confirmList.length);
+  const handlePageChange = (e) => setItemOffset((e.selected * itemsPerPage) % confirmList.length);
 
   const onViewDetails = (id) => {
     setOpen(true);
     setLoadingPro(true);
     get_detail_product(id)
-      .then((r) => dispatch(getProductDetail(r.data.data.products)))
+      .then(r => dispatch(getProductDetail(r.data.data.products)))
       .finally(() => setLoadingPro(false));
   };
 
@@ -90,12 +80,8 @@ export default function Confirm({ toggleTab5 }) {
       ) : confirmList.length === 0 ? (
         <div className="flex h-96 flex-col items-center justify-center rounded-[3rem] border-2 border-dashed border-slate-200 bg-white/50  ">
           <Clock className="h-16 w-16 text-slate-200 " />
-          <h3 className="mt-6 text-xl font-bold text-slate-900 ">
-            Waiting for Confirmation
-          </h3>
-          <p className="mt-2 text-slate-500">
-            Retailers are currently reviewing their delivered stock.
-          </p>
+          <h3 className="mt-6 text-xl font-bold text-slate-900 ">No Pending Deliveries</h3>
+          <p className="mt-2 text-slate-500">Orders marked as delivered will appear here briefly before auto-completing.</p>
         </div>
       ) : (
         <>
@@ -132,11 +118,7 @@ export default function Confirm({ toggleTab5 }) {
         </>
       )}
 
-      <Product
-        handlePro={() => setOpen(false)}
-        isOpen={isOpen}
-        loadingPro={loadingPro}
-      />
+      <Product handlePro={() => setOpen(false)} isOpen={isOpen} loadingPro={loadingPro} />
     </div>
   );
 }

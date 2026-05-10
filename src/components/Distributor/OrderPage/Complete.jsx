@@ -46,7 +46,7 @@ export default function Complete({ toggleTab }) {
 
   const invoiceRef = useRef();
   const hanldePrint = useReactToPrint({
-    content: () => invoiceRef.current,
+    contentRef: invoiceRef,
     documentTitle: "invoice",
   });
 

@@ -45,7 +45,7 @@
     "react-spinners": "^0.13.8",
     "react-switch": "^7.0.0",
     "react-tailwindcss-datepicker": "^1.6.1",
-    "react-to-print": "^2.14.12",
+    "react-to-print": "^3.3.0",
     "react-toastify": "^11.0.5",
     "sockjs-client": "^1.6.1",
     "stompjs": "^2.3.3",

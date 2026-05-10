@@ -5,6 +5,7 @@ const productSlice = createSlice({
   name: "product",
   initialState: {
     product: [],
+    orderProducts: [],
     loading: false,
   },
   reducers: {
@@ -45,7 +46,7 @@ const productSlice = createSlice({
       });
     },
     getProductDetail: (state, action) => {
-      state.product = action.payload;
+      state.orderProducts = action.payload;
     },
     setUnpublished: (state, action) => {
       state.product.map((item) => {
