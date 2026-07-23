@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const notificationRetailerSlice = createSlice({
   name: "notification-retailer",
   initialState: {
-    dataNotificationRetailer: [],
+    dataNotificationRetailer: /** @type {any[]} */ ([]),
   },
   reducers: {
     getAllNotificationRetailers: (state, action) => {

@@ -4,7 +4,7 @@ import {
   draft_to_request,
   get_draft_history,
 } from "../../redux/services/retailer/draftHistory.service";
-import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch as useDispatch, useAppSelector as useSelector } from "@/redux/hooks";
 import {
   setLoadingDraft,
 } from "../../redux/slices/retailer/draftHistorySlice";

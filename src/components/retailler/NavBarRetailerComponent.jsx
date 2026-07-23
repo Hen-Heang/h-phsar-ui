@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import AllNotification from "./notification/AllNotification";
@@ -9,7 +9,7 @@ import RestockNotification from "./notification/RestockNotification";
 import noImage from "../../assets/images/distributor/account.png";
 import retailerLogo from "../../assets/images/retailer/retailerLogo01.png";
 import { applyImageFallback, getSafeImageSrc } from "@/lib/images";
-import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch as useDispatch, useAppSelector as useSelector } from "@/redux/hooks";
 import { toast } from "react-toastify";
 import {
   decrement,
@@ -62,8 +62,7 @@ import Badge from "@mui/material/Badge";
 import DeliveringNotification from "./notification/DeliveringNotificaiton";
 import ConfirmingNotification from "./notification/ConfirmingNotification";
 import RejectNotification from "./notification/RejectNotification";
-import { over } from "stompjs";
-import SockJS from "sockjs-client";
+import useWebSocket from "@/shared/hooks/useWebSocket";
 import {
   Search,
   Bell,
@@ -137,7 +136,7 @@ export default function NavBarRetailerComponent() {
         .catch((err) => {
           dispatch(setLoading(false));
         });
-      router.push("/retailer/searching-shop");
+      router.push("/buyer/search");
       // navigate("/retailer/skeleton-search")
     }
   };
@@ -268,7 +267,7 @@ export default function NavBarRetailerComponent() {
       //  console.log("wtf",productNull)
       if (productNull) {
         cancel_order_from_cart();
-        // console.log('niceeeeeeeeeee')
+        
       }
     }
     if (currentValue > 0) {
@@ -691,52 +690,30 @@ export default function NavBarRetailerComponent() {
 
   //=================================================== Handle all notifications ==========================================
   const [noDataNotifications, setDataNotifications] = useState(false);
-  // ===================== websocket =================
-  const stompClientRef = useRef(null);
-  const onPrivateMessage = (payload) => {
-    var payloadData = JSON.parse(payload.body);
-    switch (payloadData.status) {
-      case "ORDER":
-        get_all_notification_retailer().then((res) => {
-          if (res.status === 200) {
-            dispatch(getAllNotificationRetailers(res.data.data));
-            setDataNotifications(false);
-          } else {
-            setDataNotifications(true);
-          }
-        });
-        break;
-    }
-  };
-  const connect = () => {
-    const Sock = new SockJS(`${process.env.NEXT_PUBLIC_WS_URL || "http://localhost:8080"}/ws`);
-    const client = over(Sock);
-    stompClientRef.current = client;
-    client.connect(
-      {},
-      () => {
-        client.subscribe(
-          "/user/" + localStorage.getItem("userId") + "/private",
-          onPrivateMessage
-        );
-        client.send("/app/message", {}, JSON.stringify({ status: "JOIN" }));
-      },
-      () => {}
-    );
-  };
-  const disconnectFromSocket = () => {
-    if (stompClientRef.current?.connected) {
-      stompClientRef.current.disconnect();
-    }
-  };
+  const [userId, setUserId] = useState(null);
+
   useEffect(() => {
-    connect();
-    return () => {
-      if (stompClientRef.current?.connected) {
-        stompClientRef.current.disconnect();
-      }
-    };
+    setUserId(localStorage.getItem("userId"));
   }, []);
+
+  // The backend only ever publishes to /topic/notifications/{buyerId} with a
+  // plain string body — any message means "refresh notifications", there's
+  // no structured status to branch on.
+  const onPrivateMessage = useCallback(() => {
+    get_all_notification_retailer().then((res) => {
+      if (res.status === 200) {
+        dispatch(getAllNotificationRetailers(res.data.data));
+        setDataNotifications(false);
+      } else {
+        setDataNotifications(true);
+      }
+    });
+  }, [dispatch]);
+
+  useWebSocket(
+    userId ? `/topic/notifications/${userId}` : null,
+    onPrivateMessage,
+  );
 
   useEffect(() => {
     get_all_notification_retailer().then((res) => {
@@ -819,9 +796,9 @@ export default function NavBarRetailerComponent() {
     dispatch(setStoreId(id));
 
     dispatch(setStoreId(id)); // Dispatch the setStoreId action
-    router.push(`/retailer/distributor-shop?storeId=${id}&storeName=${encodeURIComponent(storeName)}`);
+    router.push(`/buyer/store?storeId=${id}&storeName=${encodeURIComponent(storeName)}`);
 
-    // navigate(`/retailer/distributor-shop/${id}`);
+    // navigate(`/buyer/store/${id}`);
     window.scrollTo(0, 0);
   };
 
@@ -832,7 +809,7 @@ export default function NavBarRetailerComponent() {
       <div className="mx-auto flex h-20 max-w-[105rem] items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Brand/Logo */}
         <Link
-          href="/retailer/home"
+          href="/buyer/home"
           onClick={handleClearSearch}
           className="flex items-center gap-3 transition-opacity hover:opacity-90"
         >
@@ -1104,7 +1081,7 @@ export default function NavBarRetailerComponent() {
               <div className="p-1.5">
                 <DropdownMenuItem asChild>
                   <Link
-                    href="/retailer/profile"
+                    href="/buyer/profile"
                     onClick={handleClearSearch}
                     className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-orange-500 focus:bg-slate-50 focus:text-orange-500   "
                   >
@@ -1138,12 +1115,12 @@ export default function NavBarRetailerComponent() {
       <nav className="hidden border-t border-slate-100 bg-white   lg:block">
         <div className="mx-auto flex h-12 max-w-[105rem] items-center justify-center gap-8 px-8">
           {[
-            { href: "/retailer/home", label: "Home" },
-            { href: "/retailer/order", label: "Order" },
-            { href: "/retailer/favorite", label: "Favorite" },
-            { href: "/retailer/report", label: "Report" },
-            { href: "/retailer/draft", label: "Draft" },
-            { href: "/retailer/order-history", label: "Order History" },
+            { href: "/buyer/home", label: "Home" },
+            { href: "/buyer/orders", label: "Order" },
+            { href: "/buyer/bookmarks", label: "Favorite" },
+            { href: "/buyer/reports", label: "Report" },
+            { href: "/buyer/drafts", label: "Draft" },
+            { href: "/buyer/order-history", label: "Order History" },
           ].map((link) => {
             const isActive = pathname === link.href;
             return (
@@ -1214,12 +1191,12 @@ export default function NavBarRetailerComponent() {
 
                 <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
                   {[
-                    { href: "/retailer/home", label: "Home" },
-                    { href: "/retailer/order", label: "Order" },
-                    { href: "/retailer/favorite", label: "Favorite" },
-                    { href: "/retailer/report", label: "Report" },
-                    { href: "/retailer/draft", label: "Draft" },
-                    { href: "/retailer/order-history", label: "Order History" },
+                    { href: "/buyer/home", label: "Home" },
+                    { href: "/buyer/orders", label: "Order" },
+                    { href: "/buyer/bookmarks", label: "Favorite" },
+                    { href: "/buyer/reports", label: "Report" },
+                    { href: "/buyer/drafts", label: "Draft" },
+                    { href: "/buyer/order-history", label: "Order History" },
                   ].map((link) => (
                     <Link
                       key={link.href}

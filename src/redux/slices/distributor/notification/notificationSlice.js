@@ -3,7 +3,7 @@ import { createAction, createSlice } from "@reduxjs/toolkit";
 const notificationSlice = createSlice({
   name: "notification",
   initialState: {
-    dataNotification: [],
+    dataNotification: /** @type {any[]} */ ([]),
     loadingNewOrder: false,
   },
   reducers: {

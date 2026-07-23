@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
+import { ROLES, roleIdToRole } from "@/config/roles";
 
 export default function DistributorShell({ children }) {
   const router = useRouter();
@@ -11,9 +12,13 @@ export default function DistributorShell({ children }) {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    const role = localStorage.getItem("role");
-    console.log("[DistributorShell] token:", !!token, "| role:", role);
-    if (!token || String(role) !== "1") {
+    let role = null;
+    try {
+      role = roleIdToRole(Number(localStorage.getItem("role")));
+    } catch {
+      role = null;
+    }
+    if (!token || role !== ROLES.SUPPLIER) {
       router.replace("/sign-in");
     } else {
       setIsAuthorized(true);

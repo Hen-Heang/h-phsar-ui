@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import NavBarRetailerComponent from "./NavBarRetailerComponent";
 import FooterRetailerComponent from "./FooterRetailerComponent";
+import { ROLES, roleIdToRole } from "@/config/roles";
 
 export default function RetailerShell({ children }) {
   const router = useRouter();
@@ -11,9 +12,13 @@ export default function RetailerShell({ children }) {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    const role = localStorage.getItem("role");
-    console.log("[RetailerShell] token:", !!token, "| role:", role);
-    if (!token || String(role) !== "2") {
+    let role = null;
+    try {
+      role = roleIdToRole(Number(localStorage.getItem("role")));
+    } catch {
+      role = null;
+    }
+    if (!token || role !== ROLES.BUYER) {
       router.replace("/sign-in");
     } else {
       setIsAuthorized(true);

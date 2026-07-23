@@ -1,4 +1,4 @@
-import { apiPost } from "@/lib/http/api-client";
+import { apiPost } from "@/utils/api";
 
 /**
  * Upload an image file to the backend and return the public URL.

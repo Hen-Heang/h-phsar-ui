@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const detailProductSlice = createSlice({
   name: "detailProduct",
   initialState: {
-    data: [],
+    data: /** @type {any[]} */ ([]),
   },
   reducers: {
     getDetailProduct: (state, action) => {

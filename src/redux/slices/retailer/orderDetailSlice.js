@@ -2,8 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const orderDetailSlice = createSlice({
   name: "orderDetail",
   initialState: {
-    data: [],
-    dataOrder: [],
+    data: /** @type {any[]} */ ([]),
+    dataOrder: /** @type {any[]} */ ([]),
   },
   reducers: {
     getOrderById: (state, action) => {

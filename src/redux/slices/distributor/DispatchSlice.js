@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const dispatchSlice = createSlice({
   name: "dispatch",
   initialState: {
-    dispatchData: [],
+    dispatchData: /** @type {any[]} */ ([]),
   },
   reducers: {},
 });

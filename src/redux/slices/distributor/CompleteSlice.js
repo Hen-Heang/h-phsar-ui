@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const completeSlice = createSlice({
   name: "complete",
   initialState: {
-    dataComplete: [],
+    dataComplete: /** @type {any[]} */ ([]),
     loading: false,
   },
   reducers: {

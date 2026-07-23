@@ -4,8 +4,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const productSlice = createSlice({
   name: "product",
   initialState: {
-    product: [],
-    orderProducts: [],
+    product: /** @type {any[]} */ ([]),
+    orderProducts: /** @type {any[]} */ ([]),
     loading: false,
   },
   reducers: {

@@ -14,6 +14,13 @@ interface WebSocketHookReturn {
 
 /**
  * A custom hook to manage WebSocket connections with SockJS and Stomp.
+ *
+ * Verified against the backend (h-phsar-api-full): the only destination it
+ * ever publishes to is `/topic/notifications/{buyerId}` (SupplierOrderServiceImpl),
+ * with a literal string body, not JSON — there is no supplier- or admin-facing
+ * topic. Do not subscribe suppliers/admins to a topic keyed by their own
+ * userId; it will never receive anything.
+ *
  * @param {string | null} topic - The WebSocket topic to subscribe to.
  * @param {function} onMessage - Callback for when a message is received.
  * @param {boolean} connectOnMount - Whether to connect when the component mounts.
@@ -76,12 +83,13 @@ export default function useWebSocket(
 
           if (topic) {
             client.subscribe(topic, (payload) => {
-              if (onMessage) {
-                try {
-                  onMessage(JSON.parse(payload.body));
-                } catch (e) {
-                  console.error("Error parsing WebSocket message:", e);
-                }
+              if (!onMessage) return;
+              // The backend sends a plain string body (e.g. "NEW_NOTIFICATION"),
+              // not JSON — only fall back to the raw string, never throw.
+              try {
+                onMessage(JSON.parse(payload.body));
+              } catch {
+                onMessage(payload.body);
               }
             });
           }

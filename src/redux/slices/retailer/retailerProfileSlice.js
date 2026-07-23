@@ -10,7 +10,7 @@ const retailerInfoSlice = createSlice({
       address: "",
       primaryPhoneNumber: "",
       profileImage: "",
-      additionalPhoneNumber: [],
+      additionalPhoneNumber: /** @type {any[]} */ ([]),
     },
     loading: false,
     error: null,

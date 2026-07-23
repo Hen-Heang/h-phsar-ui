@@ -10,7 +10,12 @@ export const metadata = {
     "StockFlow Commerce platform for distributor and retailer operations.",
 };
 
-export default function RootLayout({ children }) {
+// The whole app is auth-gated client-side (localStorage) and Redux-backed —
+// there is no server-renderable page today, so static prerendering only
+// produces broken builds. Revisit once server-aware auth/layouts exist.
+export const dynamic = "force-dynamic";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>

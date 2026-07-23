@@ -1,5 +1,5 @@
 import React from 'react'
-import { useSelector } from 'react-redux';
+import { useAppSelector as useSelector } from "@/redux/hooks";
 import { PropagateLoader } from 'react-spinners';
 import noImage from "../../assets/images/retailer/No_image_available.png";
 import { applyImageFallback, getSafeImageSrc } from "@/lib/images";

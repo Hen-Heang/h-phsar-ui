@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch as useDispatch, useAppSelector as useSelector } from "@/redux/hooks";
 import { toast } from "react-toastify";
 import LoadingOverlay from "react-loading-overlay";
 import { styled } from "@mui/material";

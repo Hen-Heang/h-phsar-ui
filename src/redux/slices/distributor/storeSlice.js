@@ -5,7 +5,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const shopSlice = createSlice({
   name: "shop",
   initialState: {
-    store: [],
+    store: /** @type {any[]} */ ([]),
   },
   reducers: {
     addNewShop: (state, action) => {

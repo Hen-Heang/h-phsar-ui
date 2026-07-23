@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const searchSlice = createSlice({
   name: "searchProduct",
   initialState: {
-    item: [],
+    item: /** @type {any[]} */ ([]),
     loading: false,
     error: false,
     // item1: [],

@@ -1,5 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+// @ts-nocheck -- legacy page, pending UI-11 TypeScript alignment pass
+import React, { useCallback, useEffect, useState } from "react";
+import { useAppDispatch as useDispatch, useAppSelector as useSelector } from "@/redux/hooks";
 import ReactPaginate from "react-paginate";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -27,9 +28,8 @@ import {
   RefreshCcw
 } from "lucide-react";
 import { toast } from "react-toastify";
-import { over } from "stompjs";
-import SockJS from "sockjs-client";
 import { PropagateLoader } from "react-spinners";
+import useWebSocket from "@/shared/hooks/useWebSocket";
 
 import { 
   confirm_transaction, 
@@ -37,13 +37,11 @@ import {
   get_orderById, 
   get_order_detail 
 } from "../../redux/services/retailer/orderDetail.service";
-import { 
-  confirmTransaction, 
-  deleteRequest, 
-  getOrderDetail, 
-  setChangeOrderStatus, 
-  setChangeOrderStatusDeclind, 
-  setLoadingOrder 
+import {
+  confirmTransaction,
+  deleteRequest,
+  getOrderDetail,
+  setLoadingOrder
 } from "../../redux/slices/retailer/orderSlice";
 import { 
   getOrderById, 
@@ -72,50 +70,10 @@ export default function OrderPage() {
   const [dataRequest, setDataRequest] = useState(null);
   const [ratingMap, setRatingMap] = useState({});
   const [hoverMap, setHoverMap] = useState({});
-  const autoConfirmedRef = useRef(new Set());
+  const [confirmingId, setConfirmingId] = useState(null);
+  const [userId, setUserId] = useState(null);
 
-  useEffect(() => {
-    document.title = "StockFlow | Orders";
-    fetchOrders();
-
-    const Sock = new SockJS(`${process.env.NEXT_PUBLIC_WS_URL || "http://localhost:8080"}/ws`);
-    const client = over(Sock);
-    client.connect({}, () => {
-      client.subscribe(`/user/${localStorage.getItem("userId")}/private`, (payload) => {
-        const payloadData = JSON.parse(payload.body);
-        if (payloadData.status === "ORDER") dispatch(setChangeOrderStatus(payloadData.message));
-        else if (payloadData.status === "DECLINE") dispatch(setChangeOrderStatusDeclind(payloadData.message));
-      });
-      client.send("/app/message", {}, JSON.stringify({ status: "JOIN" }));
-    }, () => {});
-
-    return () => Sock.close();
-  }, [dispatch]);
-
-  // Auto-confirm delivered orders — no manual action needed from retailer
-  useEffect(() => {
-    orderList
-      .filter(o => o.status === "Confirming" && !autoConfirmedRef.current.has(o.id))
-      .forEach(o => {
-        autoConfirmedRef.current.add(o.id);
-        confirm_transaction(o.id)
-          .then(res => {
-            if (res?.data?.data) {
-              const userId = res.data.data?.userId;
-              if (userId != null) {
-                sendOneSignalNotification({
-                  contents: { en: "Order confirmed as delivered." },
-                  include_external_user_ids: [userId.toString()],
-                });
-              }
-              dispatch(confirmTransaction(o.id));
-            }
-          })
-          .catch(() => {});
-      });
-  }, [orderList, dispatch]);
-
-  const fetchOrders = () => {
+  const fetchOrders = useCallback(() => {
     dispatch(setLoadingOrder(true));
     get_order_detail(dispatch)
       .then((r) => {
@@ -124,7 +82,18 @@ export default function OrderPage() {
         }
       })
       .finally(() => dispatch(setLoadingOrder(false)));
-  };
+  }, [dispatch]);
+
+  useEffect(() => {
+    document.title = "StockFlow | Orders";
+    setUserId(localStorage.getItem("userId"));
+    fetchOrders();
+  }, [fetchOrders]);
+
+  // The backend only ever publishes to /topic/notifications/{buyerId} — a
+  // push notification just means "something changed," so refetch rather than
+  // trying to interpret the (plain-string) message body.
+  useWebSocket(userId ? `/topic/notifications/${userId}` : null, fetchOrders);
 
   const handleProductById = (id) => {
     setLoadingPro(true);
@@ -153,61 +122,86 @@ export default function OrderPage() {
     });
   };
 
+  // The only path to COMPLETED is the buyer explicitly confirming receipt —
+  // this must be a deliberate action, never automatic (backend design: only
+  // the buyer may complete an order, and only once they've actually gotten it).
+  const handleConfirmReceipt = (id) => {
+    setConfirmingId(id);
+    confirm_transaction(id)
+      .then((res) => {
+        if (res?.data?.data) {
+          const userId = res.data.data?.userId;
+          if (userId != null) {
+            sendOneSignalNotification({
+              contents: { en: "Order confirmed as delivered." },
+              include_external_user_ids: [userId.toString()],
+            });
+          }
+          dispatch(confirmTransaction({ id, status: "COMPLETED" }));
+          toast.success("Receipt confirmed — thanks!");
+        } else {
+          toast.error("Couldn't confirm receipt. Please try again.");
+        }
+      })
+      .catch(() => toast.error("Couldn't confirm receipt. Please try again."))
+      .finally(() => setConfirmingId(null));
+  };
+
   const itemsPerPage = 6;
   const pageCount = Math.ceil(orderList.length / itemsPerPage);
   const currentOrders = orderList.slice(itemOffset, itemOffset + itemsPerPage);
 
   const getStatusConfig = (status) => {
     switch (status) {
-      case "Pending":
-      case "Draft": return { 
-        color: "text-orange-600", 
-        bg: "bg-orange-50", 
+      case "CART":
+      case "DRAFT":
+      case "PENDING": return {
+        color: "text-orange-600",
+        bg: "bg-orange-50",
         border: "border-orange-100",
         icon: ClipboardList,
+        label: "Pending",
         progress: 20
       };
-      case "Preparing": return { 
-        color: "text-blue-600", 
-        bg: "bg-blue-50", 
+      case "PROCESSING": return {
+        color: "text-blue-600",
+        bg: "bg-blue-50",
         border: "border-blue-100",
         icon: Package,
-        progress: 40
+        label: "Preparing",
+        progress: 45
       };
-      case "Shipping": return { 
-        color: "text-purple-600", 
-        bg: "bg-purple-50", 
+      case "DISPATCHED": return {
+        color: "text-purple-600",
+        bg: "bg-purple-50",
         border: "border-purple-100",
         icon: Truck,
-        progress: 60
+        label: "Dispatched",
+        progress: 75
       };
-      case "Confirming": return {
+      case "COMPLETED": return {
         color: "text-emerald-600",
         bg: "bg-emerald-50",
         border: "border-emerald-100",
         icon: CheckCircle2,
-        label: "Delivered",
-        progress: 95
-      };
-      case "Complete": return { 
-        color: "text-emerald-600", 
-        bg: "bg-emerald-50", 
-        border: "border-emerald-100",
-        icon: CheckCircle2,
+        label: "Completed",
         progress: 100
       };
-      case "Declined": return { 
-        color: "text-rose-600", 
-        bg: "bg-rose-50", 
+      case "REJECTED":
+      case "CANCELLED": return {
+        color: "text-rose-600",
+        bg: "bg-rose-50",
         border: "border-rose-100",
         icon: XCircle,
+        label: status === "REJECTED" ? "Declined" : "Cancelled",
         progress: 0
       };
-      default: return { 
-        color: "text-slate-600", 
-        bg: "bg-slate-50", 
+      default: return {
+        color: "text-slate-600",
+        bg: "bg-slate-50",
         border: "border-slate-100",
         icon: History,
+        label: status,
         progress: 0
       };
     }
@@ -327,7 +321,7 @@ export default function OrderPage() {
 
                           {/* Actions */}
                           <div className="flex flex-col gap-3">
-                            {item.status === "Confirming" && (
+                            {item.status === "COMPLETED" && (
                               <div className="flex items-center justify-between px-1">
                                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Rate experience</span>
                                 <div className="flex items-center gap-1">
@@ -363,7 +357,21 @@ export default function OrderPage() {
                                 View Receipt
                               </Button>
 
-                              {(item.status === "Pending" || item.status === "Draft") && (
+                              {item.status === "DISPATCHED" && (
+                                <Button
+                                  className="h-12 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase tracking-widest active:scale-[0.98] transition-all"
+                                  disabled={confirmingId === item.id}
+                                  onClick={() => handleConfirmReceipt(item.id)}
+                                >
+                                  {confirmingId === item.id ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                  ) : (
+                                    "Confirm Receipt"
+                                  )}
+                                </Button>
+                              )}
+
+                              {item.status === "PENDING" && (
                                 <button
                                   onClick={() => {
                                     setDataRequest(item);
@@ -419,8 +427,8 @@ export default function OrderPage() {
           </div>
           <DialogTitle className="text-2xl font-black tracking-tight text-slate-900 ">Withdraw Request?</DialogTitle>
           <p className="mt-4 text-slate-500 leading-relaxed font-medium">
-            Are you sure you want to cancel your order from <span className="font-bold text-orange-500">{dataRequest?.storeName}</span>? 
-            The items will be returned to your active draft.
+            Are you sure you want to cancel your order from <span className="font-bold text-orange-500">{dataRequest?.storeName}</span>?
+            This can't be undone — you'll need to place a new order if you change your mind.
           </p>
           <div className="mt-10 flex gap-4">
             <Button 

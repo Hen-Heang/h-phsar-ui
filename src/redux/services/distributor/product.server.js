@@ -1,9 +1,9 @@
-import { apiDelete, apiGet, apiPost, apiPut } from "@/lib/http/api-client";
+import { apiDelete, apiGet, apiPost, apiPut } from "@/utils/api";
 import { setLoading } from "../../slices/distributor/productSlice";
 
 export const get_all_product_distributor = async (dispatch) => {
   if (dispatch) dispatch(setLoading(true));
-  return apiGet("/api/v1/distributor/products/sort", {
+  return apiGet("/api/v1/suppliers/products/sort", {
     query: { sort: "desc", by: "createdDate", pageNumber: 1, pageSize: 1000 },
   });
 };
@@ -18,23 +18,23 @@ export const add_new_product_distributor = async (data) => {
     price: parseFloat(item.price),
     qty: parseInt(item.qty),
   }));
-  return apiPost("/api/v1/distributor/products", { body: products });
+  return apiPost("/api/v1/suppliers/products", { body: products });
 };
 
 export const update_product_distributor = async (data, id) => {
-  return apiPut(`/api/v1/distributor/products/${id}`, { body: data });
+  return apiPut(`/api/v1/suppliers/products/${id}`, { body: data });
 };
 
 export const delete_product_distributor = async (id) => {
-  return apiDelete(`/api/v1/distributor/products/${id}`);
+  return apiDelete(`/api/v1/suppliers/products/${id}`);
 };
 
 // publish  products
 export const publish_product_distributor = async (id) => {
-  return apiPut(`/api/v1/distributor/products/${id}/publish`);
+  return apiPut(`/api/v1/suppliers/products/${id}/publish`);
 };
 export const unPublish_product_distributor = async (id) => {
-  return apiPut(`/api/v1/distributor/products/${id}/unlist`);
+  return apiPut(`/api/v1/suppliers/products/${id}/unlist`);
 };
 // import products
 export const import_product_distributor = async (data) => {
@@ -45,5 +45,5 @@ export const import_product_distributor = async (data) => {
       price: parseFloat(data.price),
     },
   ];
-  return apiPost("/api/v1/distributor/products/import", { body: payload });
+  return apiPost("/api/v1/suppliers/products/import", { body: payload });
 };

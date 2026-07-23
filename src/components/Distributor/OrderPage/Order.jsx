@@ -33,8 +33,8 @@ export default function Order() {
   useEffect(() => {
     Promise.allSettled([
       get_newOrder_withoutLoading(),
-      api.get(`/distributor/orders/preparing?sort=desc&pageNumber=1&pageSize=1000`).catch(e => e.response),
-      api.get(`/distributor/orders/dispatching?sort=desc&pageNumber=1&pageSize=1000`).catch(e => e.response),
+      api.get(`/suppliers/orders/preparing?sort=desc&pageNumber=1&pageSize=1000`).catch(e => e.response),
+      api.get(`/suppliers/orders/dispatching?sort=desc&pageNumber=1&pageSize=1000`).catch(e => e.response),
       get_all_confirm_withoutLoading(),
       get_all_complete_withoutLoading(),
     ]).then(([newOrder, preparing, dispatching, confirm, complete]) => {

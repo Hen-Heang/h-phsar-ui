@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 
 import HamburgerButton from "../HamburgerMenuButton/HamburgerButton";
-import { useDispatch } from "react-redux";
+import { useAppDispatch as useDispatch } from "@/redux/hooks";
 import { getAllCategoryDistributor } from "../../redux/slices/distributor/categorySlice";
 import NewImport from "./NewImport";
 import { getAllProduct } from "../../redux/slices/distributor/productSlice";
@@ -55,12 +55,12 @@ const Sidebar = () => {
   };
 
   const menuItems = [
-    { title: "Home", path: "/distributor/home", icon: Home },
-    { title: "Product", path: "/distributor/product", icon: Package },
-    { title: "Category", path: "/distributor/category", icon: Layers },
-    { title: "Order", path: "/distributor/order", icon: ShoppingCart },
-    { title: "Report", path: "/distributor/report", icon: BarChart3 },
-    { title: "Order history", path: "/distributor/order-history", icon: CheckSquare },
+    { title: "Home", path: "/supplier/dashboard", icon: Home },
+    { title: "Product", path: "/supplier/products", icon: Package },
+    { title: "Category", path: "/supplier/categories", icon: Layers },
+    { title: "Order", path: "/supplier/orders", icon: ShoppingCart },
+    { title: "Report", path: "/supplier/reports", icon: BarChart3 },
+    { title: "Order history", path: "/supplier/order-history", icon: CheckSquare },
   ];
 
   const getNavLinkClass = (path) => {
@@ -77,7 +77,7 @@ const Sidebar = () => {
       {/* Desktop Sidebar */}
       <aside className="hidden lg:flex flex-col sticky top-0 h-screen w-72 bg-white border-r border-slate-100   transition-colors">
         <div className="p-8">
-          <Link href="/distributor/home" className="flex items-center gap-3">
+          <Link href="/supplier/dashboard" className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-xl bg-blue-600 p-2 flex items-center justify-center">
               <img src={LOGO_final.src || LOGO_final} alt="StockFlow" className="h-full w-full object-contain brightness-0 invert" />
             </div>
@@ -125,7 +125,7 @@ const Sidebar = () => {
                   <button onClick={() => setIsOpenNewImport(true)} className="w-full text-left py-2 text-sm text-slate-500 hover:text-blue-600 transition-colors">
                     New Import
                   </button>
-                  <Link href="/distributor/history" className={`block py-2 text-sm transition-colors ${pathname === '/distributor/history' ? 'text-blue-600 font-bold' : 'text-slate-500 hover:text-blue-600'}`}>
+                  <Link href="/supplier/import-history" className={`block py-2 text-sm transition-colors ${pathname === '/supplier/import-history' ? 'text-blue-600 font-bold' : 'text-slate-500 hover:text-blue-600'}`}>
                     History
                   </Link>
                 </motion.div>
@@ -153,10 +153,10 @@ const Sidebar = () => {
                   exit={{ height: 0, opacity: 0 }}
                   className="overflow-hidden pl-12 space-y-1"
                 >
-                  <Link href="/distributor/account" className={`block py-2 text-sm transition-colors ${pathname === '/distributor/account' ? 'text-blue-600 font-bold' : 'text-slate-500 hover:text-blue-600'}`}>
+                  <Link href="/supplier/profile" className={`block py-2 text-sm transition-colors ${pathname === '/supplier/profile' ? 'text-blue-600 font-bold' : 'text-slate-500 hover:text-blue-600'}`}>
                     Account
                   </Link>
-                  <Link href="/distributor/store" className={`block py-2 text-sm transition-colors ${pathname === '/distributor/store' ? 'text-blue-600 font-bold' : 'text-slate-500 hover:text-blue-600'}`}>
+                  <Link href="/supplier/store" className={`block py-2 text-sm transition-colors ${pathname === '/supplier/store' ? 'text-blue-600 font-bold' : 'text-slate-500 hover:text-blue-600'}`}>
                     Store Profile
                   </Link>
                 </motion.div>
@@ -246,10 +246,10 @@ const Sidebar = () => {
                 
                 <div className="my-4 h-px bg-slate-50 " />
                 
-                <Link href="/distributor/account" onClick={() => setMobileMenu(false)} className="flex items-center gap-4 px-4 py-4 rounded-2xl text-base font-bold text-slate-600 ">
+                <Link href="/supplier/profile" onClick={() => setMobileMenu(false)} className="flex items-center gap-4 px-4 py-4 rounded-2xl text-base font-bold text-slate-600 ">
                   <User className="w-5 h-5 text-slate-400" /> Account Settings
                 </Link>
-                <Link href="/distributor/store" onClick={() => setMobileMenu(false)} className="flex items-center gap-4 px-4 py-4 rounded-2xl text-base font-bold text-slate-600 ">
+                <Link href="/supplier/store" onClick={() => setMobileMenu(false)} className="flex items-center gap-4 px-4 py-4 rounded-2xl text-base font-bold text-slate-600 ">
                   <Store className="w-5 h-5 text-slate-400" /> Store Profile
                 </Link>
                 <button 

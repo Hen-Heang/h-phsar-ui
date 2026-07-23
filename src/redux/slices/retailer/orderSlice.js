@@ -2,10 +2,10 @@ import { createSlice } from "@reduxjs/toolkit";
 const orderSlice = createSlice({
   name: "order",
   initialState: {
-    data: [],
-    dataDispatch: [],
+    data: /** @type {any[]} */ ([]),
+    dataDispatch: /** @type {any[]} */ ([]),
     loading: false,
-    dataDraft: [],
+    dataDraft: /** @type {any[]} */ ([]),
   },
   reducers: {
     setLoadingOrder: (state, action) => {
@@ -14,16 +14,15 @@ const orderSlice = createSlice({
     getOrderDetail: (state, action) => {
       state.data = action.payload;
     },
+    // Sets the real backend status returned by the receive-confirmation call,
+    // rather than fabricating one — see OrderPage.tsx's onConfirmReceipt.
     confirmTransaction: (state, action) => {
-      // const itemId = action.payload;
-      // console.log("Hello , ",action.payload)
+      const { id, status } = action.payload;
       state.data.forEach((item) => {
-        if (item.id === action.payload) {
-          // console.log("complete id in slice : ",action.payload)
-          item.status = "Complete";
+        if (item.id === id) {
+          item.status = status;
         }
       });
-      // state.data= state.data.filter((item) => item.id !== itemId);
     },
     getDraftHis: (state, action) => {
       state.dataDraft = action.payload;
@@ -55,51 +54,9 @@ const orderSlice = createSlice({
     deleteRequest: (state, action) => {
       state.data = state.data.filter((item) => item.id !== action.payload);
     },
-    changeToDeliver: (state, action) => {
-      // const itemId = action.payload;
-      // console.log("Hello , ",action.payload)
-      state.data.forEach((item) => {
-        if (item.id === action.payload) {
-          // console.log("complete id in slice : ",action.payload)
-          item.status = "Dispatching";
-        }
-      });
-      // state.data= state.data.filter((item) => item.id !== itemId);
-    },
-    setChangeOrderStatus: (state, action) => {
-      state.data.forEach((item) => {
-        if (item.id === parseInt(action.payload, 10)) {
-          // console.log("item id", item.id)
-          // console.log("item id", action.payload)
-          // console.log("item state 1: " + item.status)
-          if (item.status === "Pending") {
-            item.status = "Preparing";
-          } else if (item.status === "Preparing") {
-            item.status = "Dispatching";
-          } else if (item.status === "Dispatching") {
-            item.status = "Confirming";
-          } else {
-            item.status = "Complete";
-          }
-        }
-      });
-    },
-    setChangeOrderStatusDeclind: (state, action) => {
-      state.data.forEach((item) => {
-        if (item.id === parseInt(action.payload, 10)) {
-          // console.log("item id", item.id)
-          item.status = "Declined";
-          // console.log("item id", action.payload)
-          // console.log("item state 1: " + item.status)
-        }
-      });
-    },
   },
 });
 export const {
-  setChangeOrderStatusDeclind,
-  setChangeOrderStatus,
-  changeToDeliver,
   getOrderDetail,
   confirmTransaction,
   setLoadingOrder,

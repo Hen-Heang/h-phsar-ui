@@ -24,7 +24,7 @@ const muiTheme = createTheme({
 import { ThemeProvider as ModernThemeProvider } from "../components/modern/theme-provider";
 import ToastProvider from "../components/ToastProvider";
 
-export default function Providers({ children }) {
+export default function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
     () =>
       new QueryClient({

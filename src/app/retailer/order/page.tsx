@@ -1,11 +1,5 @@
-"use client";
+import { redirect } from "next/navigation";
 
-import dynamic from "next/dynamic";
-
-const OrderPage = dynamic(() => import("@/components/retailler/OrderPage"), {
-  ssr: false,
-});
-
-export default function RetailerOrderPage() {
-  return <OrderPage />;
+export default function RedirectUretailerorderPage() {
+  redirect("/buyer/orders");
 }

@@ -1,12 +1,5 @@
-"use client";
+import { redirect } from "next/navigation";
 
-import dynamic from "next/dynamic";
-
-const ProductDistributorPage = dynamic(
-  () => import("@/pages/distributor/ProductDistributor"),
-  { ssr: false },
-);
-
-export default function DistributorProductPage() {
-  return <ProductDistributorPage />;
+export default function RedirectUdistributorproductPage() {
+  redirect("/supplier/products");
 }

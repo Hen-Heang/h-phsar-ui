@@ -1,12 +1,14 @@
-"use client";
+import { redirect } from "next/navigation";
 
-import dynamic from "next/dynamic";
-
-const DistributorStoreRetailer = dynamic(
-  () => import("@/pages/retailer/DistributorStoreRetailer"),
-  { ssr: false },
-);
-
-export default function RetailerDistributorShopPage() {
-  return <DistributorStoreRetailer />;
+export default async function RedirectRetailerDistributorShopPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(await searchParams)) {
+    if (typeof value === "string") params.set(key, value);
+  }
+  const query = params.toString();
+  redirect(`/buyer/store${query ? `?${query}` : ""}`);
 }

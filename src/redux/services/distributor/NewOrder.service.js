@@ -7,7 +7,7 @@ export const get_newOrder = async (dispatch) => {
   try {
     dispatch(setLoadingTheOrder(true));
     const response = await api.get(
-      `/distributor/orders/pending?sort=desc&pageNumber=1&pageSize=1000`,
+      `/suppliers/orders/pending?sort=desc&pageNumber=1&pageSize=1000`,
     );
     return response;
   } catch (e) {
@@ -17,7 +17,7 @@ export const get_newOrder = async (dispatch) => {
 export const get_newOrder_withoutLoading = async () => {
   try {
     const response = await api.get(
-      `/distributor/orders/pending?sort=desc&pageNumber=1&pageSize=1000`,
+      `/suppliers/orders/pending?sort=desc&pageNumber=1&pageSize=1000`,
     );
     return response;
   } catch (e) {
@@ -27,7 +27,7 @@ export const get_newOrder_withoutLoading = async () => {
 export const get_accept_newOrder = async (id) => {
   try {
     const response = await api.put(
-      `/distributor/orders/pending/accept/${id}`,
+      `/suppliers/orders/pending/accept/${id}`,
       null,
       { skipAuthRedirect: true },
     );
@@ -39,7 +39,7 @@ export const get_accept_newOrder = async (id) => {
 export const decline_order = async (id) => {
   try {
     const response = await api.put(
-      `/distributor/orders/pending/decline/${id}`,
+      `/suppliers/orders/pending/decline/${id}`,
       null,
       { skipAuthRedirect: true },
     );

@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch as useDispatch, useAppSelector as useSelector } from "@/redux/hooks";
 import { BellOff, User } from "lucide-react";
 import { get_all_notification } from "../../../redux/services/distributor/notification.service";
 import { getAllNotificationsDistributor } from "../../../redux/slices/distributor/notification/notificationSlice";

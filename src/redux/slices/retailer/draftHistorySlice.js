@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const draftHistorySlice = createSlice({
   name: "draft",
   initialState: {
-    data: [],
+    data: /** @type {any[]} */ ([]),
     loading: false,
   },
   reducers: {

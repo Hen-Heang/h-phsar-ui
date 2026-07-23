@@ -5,7 +5,7 @@ export const get_all_preparing = async (dispatch) => {
   try {
     dispatch(setLoadingTheOrder(true));
     const response = await api.get(
-      `/distributor/orders/preparing?sort=desc&pageNumber=1&pageSize=1000`,
+      `/suppliers/orders/preparing?sort=desc&pageNumber=1&pageSize=1000`,
     );
     return response;
   } catch (e) {
@@ -15,7 +15,7 @@ export const get_all_preparing = async (dispatch) => {
 export const get_finish = async (id) => {
   try {
     const response = await api.put(
-      `/distributor/orders/preparing/${id}`,
+      `/suppliers/orders/preparing/${id}`,
       // ,{
       //         headers: localStorage.getItem("token"),
       // }

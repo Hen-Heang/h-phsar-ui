@@ -1,12 +1,5 @@
-"use client";
+import { redirect } from "next/navigation";
 
-import dynamic from "next/dynamic";
-
-const FavoriteProduct = dynamic(
-  () => import("@/pages/retailer/FavoriteProduct"),
-  { ssr: false },
-);
-
-export default function RetailerFavoritePage() {
-  return <FavoriteProduct />;
+export default function RedirectUretailerfavoritePage() {
+  redirect("/buyer/bookmarks");
 }

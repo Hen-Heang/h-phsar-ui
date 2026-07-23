@@ -3,11 +3,11 @@ import { createSlice } from "@reduxjs/toolkit";
 const orderPageSlice = createSlice({
   name: "distributorOrder",
   initialState: {
-    orderData: [],
-    preData: [],
-    disData: [],
-    confirmData: [],
-    dataComplete: [],
+    orderData: /** @type {any[]} */ ([]),
+    preData: /** @type {any[]} */ ([]),
+    disData: /** @type {any[]} */ ([]),
+    confirmData: /** @type {any[]} */ ([]),
+    dataComplete: /** @type {any[]} */ ([]),
     loading: false,
   },
   reducers: {

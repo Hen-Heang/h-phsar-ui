@@ -1,32 +1,27 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch as useDispatch, useAppSelector as useSelector } from "@/redux/hooks";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Truck, 
-  CheckCircle, 
+import {
+  Truck,
   Plus
 } from "lucide-react";
-import { toast } from "react-toastify";
 import ReactPaginate from "react-paginate";
-import { PropagateLoader } from "react-spinners";
 
 import {
   get_all_dispatch,
-  get_delivered,
 } from "../../../redux/services/distributor/Dispatch.service";
 import { getProductDetail } from "../../../redux/slices/distributor/productSlice";
 import { get_detail_product } from "../../../redux/services/distributor/product.service";
 import {
-  addDataToConfirm,
-  deliverdOrder,
   getDispatch,
   setLoadingTheOrder,
 } from "../../../redux/slices/distributor/orderPageSlice";
-import { sendOneSignalNotification } from "@/lib/notifications/send-onesignal-client";
 import OrderCard from "./OrderCard";
 import Product from "./Product";
+import { LoadingState } from "@/components/ui/loading-state";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export default function Dispatch({ toggleTab4 }) {
   const dispatch = useDispatch();
@@ -35,10 +30,9 @@ export default function Dispatch({ toggleTab4 }) {
 
   const [itemOffset, setItemOffset] = useState(0);
   const itemsPerPage = 6;
-  
+
   const [isOpen, setOpen] = useState(false);
   const [loadingPro, setLoadingPro] = useState(false);
-  const [dispatchLoading, setDispatchLoading] = useState(false);
 
   useEffect(() => {
     dispatch(setLoadingTheOrder(true));
@@ -52,29 +46,9 @@ export default function Dispatch({ toggleTab4 }) {
 
   const handlePageChange = (e) => setItemOffset((e.selected * itemsPerPage) % dispatchList.length);
 
-  const onDelivered = async (id, item) => {
-    setDispatchLoading(true);
-    try {
-      const res = await get_delivered(id);
-      if (res.status === 409) {
-        toast.error(res.data.detail);
-      } else {
-        const userId = res.data.data?.userId;
-        if (userId != null) {
-          await sendOneSignalNotification({
-            contents: { en: "Your order has been delivered, please check your order details." },
-            include_external_user_ids: [userId.toString()],
-          });
-        }
-        dispatch(deliverdOrder(id));
-        dispatch(addDataToConfirm(item));
-        toast.success("Order marked as delivered!");
-      }
-    } finally {
-      setDispatchLoading(false);
-    }
-  };
-
+  // Supplier responsibility ends at dispatch — only the buyer can mark an
+  // order as received/completed (backend returns 403 for any supplier
+  // attempt), so this tab is read-only tracking, not an action queue.
   const onViewDetails = (id) => {
     setOpen(true);
     setLoadingPro(true);
@@ -86,15 +60,13 @@ export default function Dispatch({ toggleTab4 }) {
   return (
     <div className="w-full">
       {loading ? (
-        <div className="flex h-96 items-center justify-center">
-          <PropagateLoader color="#0f766e" />
-        </div>
+        <LoadingState />
       ) : dispatchList.length === 0 ? (
-        <div className="flex h-96 flex-col items-center justify-center rounded-[3rem] border-2 border-dashed border-slate-200 bg-white/50  ">
-          <Truck className="h-16 w-16 text-slate-200 " />
-          <h3 className="mt-6 text-xl font-bold text-slate-900 ">No Active Deliveries</h3>
-          <p className="mt-2 text-slate-500">Track orders that are currently on their way to retailers.</p>
-        </div>
+        <EmptyState
+          icon={Truck}
+          title="No Active Deliveries"
+          description="Track orders that are currently on their way to buyers."
+        />
       ) : (
         <>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
@@ -105,11 +77,7 @@ export default function Dispatch({ toggleTab4 }) {
                   index={idx}
                   item={item}
                   status="Dispatch"
-                  actionLabel="Mark Delivered"
-                  actionIcon={CheckCircle}
-                  onAction={onDelivered}
                   onViewDetails={onViewDetails}
-                  isLoading={dispatchLoading}
                 />
               ))}
             </AnimatePresence>

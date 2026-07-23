@@ -7,6 +7,6 @@ const RetailerShell = dynamic(
   { ssr: false },
 );
 
-export default function RetailerLayout({ children }) {
+export default function RetailerLayout({ children }: { children: React.ReactNode }) {
   return <RetailerShell>{children}</RetailerShell>;
 }

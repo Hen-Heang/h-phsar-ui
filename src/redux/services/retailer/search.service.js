@@ -5,7 +5,7 @@ export const get_search = async (name, dispatch) => {
   try {
     dispatch(setLoading(true));
     const response = await api.get(
-      `retailer/stores/hybrid/search?name=${name}&sort=asc&by=name`,
+      `buyers/stores/hybrid/search?name=${name}&sort=asc&by=name`,
     );
     return response;
   } catch (e) {
@@ -15,7 +15,7 @@ export const get_search = async (name, dispatch) => {
 
 // export const get_search_category =async(category)=>{
 //     try{
-//         const response = await api.get(`retailer/stores/category/search?name=${category}&sort=ASC&by=name`)
+//         const response = await api.get(`buyers/stores/category/search?name=${category}&sort=ASC&by=name`)
 //         return response;
 //     }
 //     catch(e){

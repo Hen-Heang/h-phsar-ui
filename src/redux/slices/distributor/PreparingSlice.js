@@ -2,9 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 const thePreparingSlice = createSlice({
   name: "preparing",
   initialState: {
-    items: [],
-    preData: [],
-    dispatchData: [],
+    items: /** @type {any[]} */ ([]),
+    preData: /** @type {any[]} */ ([]),
+    dispatchData: /** @type {any[]} */ ([]),
   },
   reducers: {
     getAllNewOrder1: (state, action) => {

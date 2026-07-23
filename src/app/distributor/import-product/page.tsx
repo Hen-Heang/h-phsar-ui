@@ -1,8 +1,5 @@
-"use client";
-import dynamic from "next/dynamic";
-const NewImport = dynamic(() => import("@/components/Distributor/NewImport"), {
-  ssr: false,
-});
-export default function DistributorImportProductPage() {
-  return <NewImport />;
+import { redirect } from "next/navigation";
+
+export default function RedirectUdistributorimportproductPage() {
+  redirect("/supplier/inventory");
 }

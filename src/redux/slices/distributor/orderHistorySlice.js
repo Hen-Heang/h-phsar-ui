@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const orderHistorySlice = createSlice({
   name: "orderHistory",
   initialState: {
-    data: [],
+    data: /** @type {any[]} */ ([]),
     loading: false,
   },
   reducers: {

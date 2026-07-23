@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useAppSelector as useSelector } from "@/redux/hooks";
 import {
   Dialog,
   DialogContent,

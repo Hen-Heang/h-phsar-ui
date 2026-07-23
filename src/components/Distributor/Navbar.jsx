@@ -7,7 +7,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch as useDispatch, useAppSelector as useSelector } from "@/redux/hooks";
 import { useRouter } from "next/navigation";
 import {
   Bell,
@@ -256,13 +256,13 @@ const Navbar = () => {
             className="w-56 p-2 rounded-2xl border-slate-100 shadow-xl"
           >
             <DropdownMenuItem
-              onClick={() => router.push("/distributor/account")}
+              onClick={() => router.push("/supplier/profile")}
               className="rounded-lg gap-3 py-2.5"
             >
               <User className="w-4 h-4 text-slate-400" /> Account Settings
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => router.push("/distributor/store")}
+              onClick={() => router.push("/supplier/store")}
               className="rounded-lg gap-3 py-2.5"
             >
               <Store className="w-4 h-4 text-slate-400" /> My Store

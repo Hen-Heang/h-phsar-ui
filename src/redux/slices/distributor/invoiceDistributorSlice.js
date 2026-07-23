@@ -3,8 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const invoiceDistributorSlice = createSlice({
   name: "invoiceDis",
   initialState: {
-    data: [],
-    dataOrder: [],
+    data: /** @type {any[]} */ ([]),
+    dataOrder: /** @type {any[]} */ ([]),
   },
   reducers: {
     getInvoiceById: (state, action) => {

@@ -5,7 +5,7 @@ export const get_retailer_report = async (startDate, endDate) => {
     // console.log("Hi start : ", startDate);
     // console.log("Hi end : ", endDate);
     const response = await api.get(
-      `retailer/reports?startDate=${startDate}&endDate=${endDate}`,
+      `buyers/reports?startDate=${startDate}&endDate=${endDate}`,
     );
     return response;
   } catch (e) {

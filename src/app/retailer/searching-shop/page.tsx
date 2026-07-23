@@ -1,12 +1,5 @@
-"use client";
+import { redirect } from "next/navigation";
 
-import dynamic from "next/dynamic";
-
-const SearchingRetailer = dynamic(
-  () => import("@/components/retailler/SearchingRetailer"),
-  { ssr: false },
-);
-
-export default function RetailerSearchingPage() {
-  return <SearchingRetailer />;
+export default function RedirectUretailersearchingshopPage() {
+  redirect("/buyer/search");
 }

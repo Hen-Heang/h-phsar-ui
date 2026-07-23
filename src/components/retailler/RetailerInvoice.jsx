@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch as useDispatch, useAppSelector as useSelector } from "@/redux/hooks";
 import { useReactToPrint } from 'react-to-print';
 import {PropagateLoader} from 'react-spinners'
 import noImage from '../../assets/images/no_image.jpg';

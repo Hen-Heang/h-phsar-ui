@@ -4,7 +4,7 @@ export const get_all_notification_retailer = async () => {
   try {
     // console.log("Id from service", id);
     // dispatch(setLoadingTheOrder(true));
-    const response = await api.get(`/retailer/notifications`);
+    const response = await api.get(`/buyers/notifications`);
     //   console.log("All notifications service returned", response);
     return response;
   } catch (e) {
@@ -15,7 +15,7 @@ export const seen_notification_retailer = async (id) => {
   try {
     // console.log("Id from service", id);
     // dispatch(setLoadingTheOrder(true));
-    const response = await api.put(`retailer/notifications/${id}/read`);
+    const response = await api.put(`buyers/notifications/${id}/read`);
     // console.log("All notifications service returned", response);
     return response;
   } catch (e) {
@@ -26,7 +26,7 @@ export const mark_read_all_notification_retailer = async () => {
   try {
     // console.log("Id from service", id);
     // dispatch(setLoadingTheOrder(true));
-    const response = await api.put(`/retailer/notifications/read`);
+    const response = await api.put(`/buyers/notifications/read`);
     return response;
   } catch (e) {
     return e.response;

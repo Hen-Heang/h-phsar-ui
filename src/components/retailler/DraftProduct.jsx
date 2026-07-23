@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useSelector } from "react-redux";
+import { useAppSelector as useSelector } from "@/redux/hooks";
 export default function DraftProduct(props) {
   return (
     <div>

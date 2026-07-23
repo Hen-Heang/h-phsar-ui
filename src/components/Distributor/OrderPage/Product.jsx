@@ -2,7 +2,7 @@ import React from 'react'
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch as useDispatch, useAppSelector as useSelector } from "@/redux/hooks";
 import { useEffect } from 'react';
 import { get_detail_product } from '../../../redux/services/distributor/product.service';
 import { getProductDetail } from '../../../redux/slices/distributor/productSlice';

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch as useDispatch, useAppSelector as useSelector } from "@/redux/hooks";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
@@ -26,7 +26,7 @@ export default function SearchingRetailer() {
 
   const onClickGetDataShop = (id, storeName) => {
     router.push(
-      `/retailer/distributor-shop?storeId=${id}&storeName=${encodeURIComponent(storeName)}`,
+      `/buyer/store?storeId=${id}&storeName=${encodeURIComponent(storeName)}`,
     );
     window.scrollTo(0, 0);
   };
@@ -61,7 +61,7 @@ export default function SearchingRetailer() {
             <Button
               variant="outline"
               className="mt-8 h-12 rounded-2xl border-slate-200 "
-              onClick={() => router.push("/retailer/home")}
+              onClick={() => router.push("/buyer/home")}
             >
               Back to Marketplace
             </Button>

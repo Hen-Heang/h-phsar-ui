@@ -4,8 +4,8 @@ const homeReportSlice = createSlice({
   name: "homeReport",
   initialState: {
     distributorReport: {
-      month: [],
-      totalOrderEachMonth: [],
+      month: /** @type {any[]} */ ([]),
+      totalOrderEachMonth: /** @type {any[]} */ ([]),
       totalOrder: 0,
       totalProductImport: 0,
       totalProductSold: 0,

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch as useDispatch, useAppSelector as useSelector } from "@/redux/hooks";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   ShoppingBag, 
@@ -10,16 +10,12 @@ import {
   Plus
 } from "lucide-react";
 import { toast } from "react-toastify";
-import { over } from "stompjs";
-import SockJS from "sockjs-client";
 import ReactPaginate from "react-paginate";
-import { PropagateLoader } from "react-spinners";
 
 import {
   decline_order,
   get_accept_newOrder,
   get_newOrder,
-  get_newOrder_withoutLoading,
 } from "../../../redux/services/distributor/NewOrder.service";
 import { getProductDetail } from "../../../redux/slices/distributor/productSlice";
 import { get_detail_product } from "../../../redux/services/distributor/product.service";
@@ -34,6 +30,8 @@ import { sendOneSignalNotification } from "@/lib/notifications/send-onesignal-cl
 import OrderCard from "./OrderCard";
 import ConfirmBox from "./ConfirmBox";
 import ProdunctNewOrder from "./ProdunctNewOrder";
+import { LoadingState } from "@/components/ui/loading-state";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export default function NewOrder({ toggleTab2 }) {
   const dispatch = useDispatch();
@@ -49,20 +47,8 @@ export default function NewOrder({ toggleTab2 }) {
   const [loadingPro, setLoadingPro] = useState(false);
   const [loadingAccept, setLoadingAccept] = useState(false);
 
-  // WebSocket Connection
-  useEffect(() => {
-    const Sock = new SockJS(`${process.env.NEXT_PUBLIC_WS_URL || "http://localhost:8080"}/ws`);
-    const stompClient = over(Sock);
-    stompClient.connect({}, () => {
-      stompClient.subscribe(`/user/${localStorage.getItem("userId")}/private`, (payload) => {
-        if (JSON.parse(payload.body).status === "ORDER") {
-          get_newOrder_withoutLoading().then(r => r.data.status === 200 && dispatch(getNewOrder(r.data.data)));
-        }
-      });
-    }, () => {});
-    return () => Sock.close();
-  }, [dispatch]);
-
+  // No supplier-facing WebSocket topic exists on the backend today — use the
+  // "Sync" action / refetch on tab focus instead of a real-time push.
   // Initial Fetch
   useEffect(() => {
     dispatch(setLoadingTheOrder(true));
@@ -130,15 +116,13 @@ export default function NewOrder({ toggleTab2 }) {
   return (
     <div className="w-full">
       {loading ? (
-        <div className="flex h-96 items-center justify-center">
-          <PropagateLoader color="#0f766e" />
-        </div>
+        <LoadingState />
       ) : newOrderList.length === 0 ? (
-        <div className="flex h-96 flex-col items-center justify-center rounded-[3rem] border-2 border-dashed border-slate-200 bg-white/50  ">
-          <ShoppingBag className="h-16 w-16 text-slate-200 " />
-          <h3 className="mt-6 text-xl font-bold text-slate-900 ">No New Orders</h3>
-          <p className="mt-2 text-slate-500">Wait for retailers to place new stock requests.</p>
-        </div>
+        <EmptyState
+          icon={ShoppingBag}
+          title="No New Orders"
+          description="Wait for buyers to place new stock requests."
+        />
       ) : (
         <>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">

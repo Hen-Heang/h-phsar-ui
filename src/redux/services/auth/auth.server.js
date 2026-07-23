@@ -1,4 +1,4 @@
-import { apiPost, apiPut } from "@/lib/http/api-client";
+import { apiPost, apiPut } from "@/utils/api";
 
 export const registerService = async ({ email, password }, id) => {
   const data = {

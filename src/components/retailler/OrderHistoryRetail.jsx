@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch as useDispatch, useAppSelector as useSelector } from "@/redux/hooks";
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   History, 
@@ -111,7 +111,7 @@ export default function OrderHistoryRetail() {
   };
 
   const getStatusConfig = (status) => {
-    return status === "Complete" 
+    return status === "COMPLETED"
       ? { color: "text-emerald-600", bg: "bg-emerald-50", icon: CheckCircle2 }
       : { color: "text-rose-600", bg: "bg-rose-50", icon: XCircle };
   };
@@ -255,7 +255,7 @@ export default function OrderHistoryRetail() {
 
                           {/* Actions */}
                           <div className="col-span-1 lg:col-span-3 flex justify-end gap-2">
-                            {item.order.status === "Complete" ? (
+                            {item.order.status === "COMPLETED" ? (
                               <Button 
                                 onClick={() => handleInvoice(item.order.id)}
                                 className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest gap-2 flex-1 lg:flex-none px-6"

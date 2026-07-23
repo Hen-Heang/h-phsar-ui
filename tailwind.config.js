@@ -1,12 +1,7 @@
 
 module.exports = ({
-    content: ['./src/**/*.{js,jsx,ts,tsx}',"./node_modules/flowbite/**/*.js","./node_modules/react-tailwindcss-datepicker/dist/index.esm.js",'node_modules/preline/dist/*.js',
-    'node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}'
-    // content: ['./src/**/*.{js,jsx,ts,tsx}',"./node_modules/flowbite/**/*.js",'node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}'
-],
+    content: ['./src/**/*.{js,jsx,ts,tsx}',"./node_modules/react-tailwindcss-datepicker/dist/index.esm.js"],
 
-    // enable dark mode via class strategy
-    // content: ['./src/**/*.{js,jsx,ts,tsx}',"./node_modules/flowbite/**/*.js",'node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}'],
     darkMode: 'class',
     theme: {
         extend: {
@@ -55,7 +50,7 @@ module.exports = ({
             },   
         },
     },
-    plugins: [ require('flowbite/plugin'),require('preline/plugin')],
+    plugins: [],
     variants: {
         scrollbar: ['rounded']
     }

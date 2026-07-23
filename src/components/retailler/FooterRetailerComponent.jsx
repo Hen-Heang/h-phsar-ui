@@ -53,7 +53,7 @@ export default function FooterRetailerComponent() {
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
           {/* Brand Column */}
           <div className="lg:col-span-4">
-            <Link href="/retailer/home" className="flex items-center gap-3">
+            <Link href="/buyer/home" className="flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-500 text-white shadow-lg shadow-orange-500/20">
                 <Package className="h-7 w-7" />
               </div>
@@ -94,11 +94,11 @@ export default function FooterRetailerComponent() {
               </h4>
               <ul className="mt-6 space-y-4">
                 {[
-                  { href: "/retailer/home", label: "Marketplace" },
-                  { href: "/retailer/order", label: "Order Tracking" },
-                  { href: "/retailer/favorite", label: "Saved Shops" },
-                  { href: "/retailer/report", label: "Business Intelligence" },
-                  { href: "/retailer/draft", label: "Saved Drafts" },
+                  { href: "/buyer/home", label: "Marketplace" },
+                  { href: "/buyer/orders", label: "Order Tracking" },
+                  { href: "/buyer/bookmarks", label: "Saved Shops" },
+                  { href: "/buyer/reports", label: "Business Intelligence" },
+                  { href: "/buyer/drafts", label: "Saved Drafts" },
                 ].map((link) => (
                   <li key={link.label}>
                     <Link

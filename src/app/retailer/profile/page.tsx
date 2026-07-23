@@ -1,12 +1,5 @@
-"use client";
+import { redirect } from "next/navigation";
 
-import dynamic from "next/dynamic";
-
-const AccountRetailer = dynamic(
-  () => import("@/pages/retailer/AccountRetailer"),
-  { ssr: false },
-);
-
-export default function RetailerProfilePage() {
-  return <AccountRetailer />;
+export default function RedirectUretailerprofilePage() {
+  redirect("/buyer/profile");
 }

@@ -1,4 +1,4 @@
-import { apiPost, apiPut, type ApiResponse } from "@/lib/http/api-client";
+import { apiPost, apiPut, type ApiResult } from "@/utils/api";
 import type {
   BackendResponse,
   LoginCredentials,
@@ -7,15 +7,15 @@ import type {
   ResetPasswordRequest,
 } from "@/types/auth";
 
-export type LoginApiResponse = ApiResponse<BackendResponse<LoginData>>;
+export type LoginApiResponse = ApiResult<BackendResponse<LoginData>>;
 
-export const registerService = (data: RegisterRequest): Promise<ApiResponse> =>
+export const registerService = (data: RegisterRequest): Promise<ApiResult> =>
   apiPost("/authorization/register", {
     auth: false,
     body: data,
   });
 
-export const generateCodeService = (email: string): Promise<ApiResponse> =>
+export const generateCodeService = (email: string): Promise<ApiResult> =>
   apiPost("/authorization/api/v1/otp/generate", {
     auth: false,
     query: { email },
@@ -29,30 +29,38 @@ export const loginService = (
     body: credentials,
   });
 
-export const sendForgotPasswordOtp = (email: string): Promise<ApiResponse> =>
-  apiPut("/authorization/forget", {
+// Password reset has one backend endpoint that both verifies the OTP and sets
+// the new password (PUT /authorization/forget?otp=&email=&newPassword=) — there
+// is no separate "just send me an OTP" reset endpoint. Sending the OTP itself
+// reuses the same generate-code endpoint as signup verification.
+export const sendForgotPasswordOtp = (email: string): Promise<ApiResult> =>
+  apiPost("/authorization/api/v1/otp/generate", {
     auth: false,
     query: { email },
   });
 
 export const resetPasswordService = (
   data: ResetPasswordRequest,
-): Promise<ApiResponse> =>
-  apiPut("/authorization/change-password", {
+): Promise<ApiResult> =>
+  apiPut("/authorization/forget", {
     auth: false,
-    body: data,
+    query: {
+      otp: data.otp,
+      email: data.email,
+      newPassword: data.password,
+    },
   });
 
 export const verifyEmailService = (
   email: string,
   otp: string,
-): Promise<ApiResponse> =>
+): Promise<ApiResult> =>
   apiPost("/authorization/api/v1/otp/verify", {
     auth: false,
     query: { otp, email },
   });
 
-export const resendVerificationCode = (email: string): Promise<ApiResponse> =>
+export const resendVerificationCode = (email: string): Promise<ApiResult> =>
   apiPost("/authorization/api/v1/otp/generate", {
     auth: false,
     query: { email },

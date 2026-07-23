@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch as useDispatch, useAppSelector as useSelector } from "@/redux/hooks";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Package, 
@@ -10,7 +10,6 @@ import {
 } from "lucide-react";
 import { toast } from "react-toastify";
 import ReactPaginate from "react-paginate";
-import { PropagateLoader } from "react-spinners";
 
 import {
   get_all_preparing,
@@ -27,6 +26,8 @@ import {
 import { sendOneSignalNotification } from "@/lib/notifications/send-onesignal-client";
 import OrderCard from "./OrderCard";
 import Product from "./Product";
+import { LoadingState } from "@/components/ui/loading-state";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export default function Preparing({ toggleTab3 }) {
   const dispatch = useDispatch();
@@ -86,15 +87,13 @@ export default function Preparing({ toggleTab3 }) {
   return (
     <div className="w-full">
       {loading ? (
-        <div className="flex h-96 items-center justify-center">
-          <PropagateLoader color="#0f766e" />
-        </div>
+        <LoadingState />
       ) : preparingList.length === 0 ? (
-        <div className="flex h-96 flex-col items-center justify-center rounded-[3rem] border-2 border-dashed border-slate-200 bg-white/50  ">
-          <Package className="h-16 w-16 text-slate-200 " />
-          <h3 className="mt-6 text-xl font-bold text-slate-900 ">No Orders in Preparation</h3>
-          <p className="mt-2 text-slate-500">Items you've accepted will appear here while being packed.</p>
-        </div>
+        <EmptyState
+          icon={Package}
+          title="No Orders in Preparation"
+          description="Items you've accepted will appear here while being packed."
+        />
       ) : (
         <>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">

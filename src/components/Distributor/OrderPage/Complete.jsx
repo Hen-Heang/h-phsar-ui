@@ -1,18 +1,14 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch as useDispatch, useAppSelector as useSelector } from "@/redux/hooks";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, FileText, Plus } from "lucide-react";
 import ReactPaginate from "react-paginate";
 import { useReactToPrint } from "react-to-print";
-import { PropagateLoader } from "react-spinners";
-import { over } from "stompjs";
-import SockJS from "sockjs-client";
 
 import {
   get_all_complete,
-  get_all_complete_withoutLoading,
 } from "../../../redux/services/distributor/complete.service";
 import { getProductDetail } from "../../../redux/slices/distributor/productSlice";
 import { get_invoice_by_id } from "../../../redux/services/distributor/invoice.service";
@@ -28,6 +24,8 @@ import {
 import OrderCard from "./OrderCard";
 import Product from "./Product";
 import Invoice from "./Invoice";
+import { LoadingState } from "@/components/ui/loading-state";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export default function Complete({ toggleTab }) {
   const dispatch = useDispatch();
@@ -50,33 +48,8 @@ export default function Complete({ toggleTab }) {
     documentTitle: "invoice",
   });
 
-  // WebSocket Connection
-  useEffect(() => {
-    const Sock = new SockJS(
-      `${process.env.NEXT_PUBLIC_WS_URL || "http://localhost:8080"}/ws`,
-    );
-    const stompClient = over(Sock);
-    stompClient.connect(
-      {},
-      () => {
-        stompClient.subscribe(
-          `/user/${localStorage.getItem("userId")}/private`,
-          (payload) => {
-            if (JSON.parse(payload.body).status === "ORDER") {
-              get_all_complete_withoutLoading().then(
-                (r) =>
-                  r.data.status === 200 &&
-                  dispatch(getAllComplete(r.data.data)),
-              );
-            }
-          },
-        );
-      },
-      () => {},
-    );
-    return () => Sock.close();
-  }, [dispatch]);
-
+  // No supplier-facing WebSocket topic exists on the backend today — use the
+  // "Sync" action / refetch on tab focus instead of a real-time push.
   // Initial Fetch
   useEffect(() => {
     dispatch(setLoadingCompleted(true));
@@ -114,19 +87,13 @@ export default function Complete({ toggleTab }) {
   return (
     <div className="w-full">
       {loading ? (
-        <div className="flex h-96 items-center justify-center">
-          <PropagateLoader color="#0f766e" />
-        </div>
+        <LoadingState />
       ) : confirmList.length === 0 ? (
-        <div className="flex h-96 flex-col items-center justify-center rounded-[3rem] border-2 border-dashed border-slate-200 bg-white/50  ">
-          <CheckCircle2 className="h-16 w-16 text-slate-200 " />
-          <h3 className="mt-6 text-xl font-bold text-slate-900 ">
-            No Completed Orders
-          </h3>
-          <p className="mt-2 text-slate-500">
-            Completed and confirmed orders will be archived here.
-          </p>
-        </div>
+        <EmptyState
+          icon={CheckCircle2}
+          title="No Completed Orders"
+          description="Orders the buyer has confirmed receipt of will be archived here."
+        />
       ) : (
         <>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">

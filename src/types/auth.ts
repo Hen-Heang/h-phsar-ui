@@ -35,10 +35,3 @@ export interface VerifyEmailRequest {
   email: string;
   otp: string;
 }
-
-// ── API result shape (from api-client) ────────────────────────────────────────
-export interface ApiResult<T = unknown> {
-  ok: boolean;
-  status: number;
-  data: T;
-}

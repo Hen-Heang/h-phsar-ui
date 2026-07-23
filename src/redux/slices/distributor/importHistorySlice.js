@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const importHistorySlice = createSlice({
   name: "importHistory",
   initialState: {
-    data: [],
+    data: /** @type {any[]} */ ([]),
     loading: false,
   },
   reducers: {

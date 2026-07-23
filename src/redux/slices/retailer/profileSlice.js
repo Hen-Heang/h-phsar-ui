@@ -3,8 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const profileSlice = createSlice({
   name: "profile",
   initialState: {
-    data: [],
-    dataStore: [],
+    data: /** @type {any[]} */ ([]),
+    dataStore: /** @type {any[]} */ ([]),
   },
   reducers: {
     getProfile: (state, action) => {

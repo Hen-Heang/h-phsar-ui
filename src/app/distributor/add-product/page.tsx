@@ -1,12 +1,5 @@
-"use client";
+import { redirect } from "next/navigation";
 
-import dynamic from "next/dynamic";
-
-const AddProductDistributorPage = dynamic(
-  () => import("@/pages/distributor/AddProductDistributor"),
-  { ssr: false },
-);
-
-export default function DistributorAddProductPage() {
-  return <AddProductDistributorPage />;
+export default function RedirectUdistributoraddproductPage() {
+  redirect("/supplier/add-product");
 }

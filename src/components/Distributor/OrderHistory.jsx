@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState, useEffect, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch as useDispatch, useAppSelector as useSelector } from "@/redux/hooks";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   History, 
@@ -22,8 +22,7 @@ import {
   RefreshCcw,
   ClipboardList,
   Truck,
-  Clock,
-  Hourglass
+  Clock
 } from "lucide-react";
 import ReactPaginate from "react-paginate";
 import { useReactToPrint } from "react-to-print";
@@ -125,9 +124,7 @@ export default function OrderHistory() {
     switch (status?.toUpperCase()) {
       case "PENDING": return { color: "text-orange-600", bg: "bg-orange-50", icon: ClipboardList, label: "Pending" };
       case "PROCESSING": return { color: "text-blue-600", bg: "bg-blue-50", icon: Package, label: "Preparing" };
-      case "CONFIRMED": return { color: "text-purple-600", bg: "bg-purple-50", icon: Truck, label: "Dispatching" };
-      case "SHIPPING": return { color: "text-amber-600", bg: "bg-amber-50", icon: Hourglass, label: "Confirming" };
-      case "DELIVERED":
+      case "DISPATCHED": return { color: "text-purple-600", bg: "bg-purple-50", icon: Truck, label: "Dispatched" };
       case "COMPLETED": return { color: "text-emerald-600", bg: "bg-emerald-50", icon: CheckCircle2, label: "Completed" };
       case "CANCELLED":
       case "REJECTED": return { color: "text-rose-600", bg: "bg-rose-50", icon: XCircle, label: "Declined" };
@@ -273,7 +270,7 @@ export default function OrderHistory() {
 
                           {/* Actions */}
                           <div className="col-span-1 lg:col-span-3 flex justify-end gap-2">
-                            {(item.order.status === "COMPLETED" || item.order.status === "DELIVERED") ? (
+                            {item.order.status === "COMPLETED" ? (
                               <Button 
                                 onClick={() => GetInvoice(item.order.id)}
                                 className="h-10 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-black text-[10px] uppercase tracking-widest gap-2 flex-1 lg:flex-none px-6 shadow-lg shadow-teal-600/10 active:scale-[0.98] transition-all"

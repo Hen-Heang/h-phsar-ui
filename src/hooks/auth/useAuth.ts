@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useDispatch } from "react-redux";
+import { useAppDispatch as useDispatch } from "@/redux/hooks";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 
@@ -14,6 +14,8 @@ import {
   resendVerificationCode,
 } from "@/lib/auth/auth.service";
 import { setDataLogin } from "@/redux/slices/auth/authSlice";
+import { roleIdToRole } from "@/config/roles";
+import { ROLE_HOME_ROUTE } from "@/config/routes";
 import type {
   LoginCredentials,
   LoginData,
@@ -84,10 +86,11 @@ export function useLoginMutation({ onEmailNotVerified }: UseLoginOptions = {}) {
           showConfirmButton: false,
         });
 
-        if (Number(loginData.roleId) === 1) {
-          router.push("/distributor/home");
-        } else {
-          router.push("/retailer/home");
+        try {
+          const role = roleIdToRole(Number(loginData.roleId));
+          router.push(ROLE_HOME_ROUTE[role]);
+        } catch {
+          toast.error("Login failed: unsupported account role.");
         }
       } else if (response.status === 409) {
         onEmailNotVerified?.(variables.email);

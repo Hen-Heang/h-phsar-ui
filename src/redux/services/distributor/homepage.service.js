@@ -1,5 +1,5 @@
-import { apiGet } from "@/lib/http/api-client";
+import { apiGet } from "@/utils/api";
 
 export const get_all_activity = async () => {
-  return apiGet("/api/v1/distributor/order_activities");
+  return apiGet("/api/v1/suppliers/order_activities");
 };

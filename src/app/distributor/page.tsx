@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
 export default function DistributorRoot() {
-  redirect("/distributor/home");
+  redirect("/supplier/dashboard");
 }

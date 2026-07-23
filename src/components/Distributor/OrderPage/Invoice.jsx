@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch as useDispatch, useAppSelector as useSelector } from "@/redux/hooks";
 import { PropagateLoader } from "react-spinners";
 export default function Invoice(props) {
   const invoiceList = useSelector((state) => state.invoiceDis.data);

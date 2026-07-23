@@ -7,6 +7,6 @@ const DistributorShell = dynamic(
   { ssr: false },
 );
 
-export default function DistributorLayout({ children }) {
+export default function DistributorLayout({ children }: { children: React.ReactNode }) {
   return <DistributorShell>{children}</DistributorShell>;
 }

@@ -3,7 +3,8 @@
 import React from "react";
 import noImage from "@/assets/images/no_image.jpg";
 
-interface SafeImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+interface SafeImageProps
+  extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, "src"> {
   src?: string | null;
   fallback?: any;
 }

@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useAppSelector as useSelector } from "@/redux/hooks";
 import { api } from "../../../utils/api";
 import { store } from "../../store";
 import {
@@ -14,7 +14,7 @@ import { setLoadingCategory } from "../../slices/distributor/categorySlice";
 export const get_all_highest_rate = async (sort, pageNumber, pageSize) => {
   try {
     const response = await api.get(
-      `/retailer/stores/sort/rated?sort=desc&pageNumber=1&pageSize=100`,
+      `/buyers/stores/sort/rated?sort=desc&pageNumber=1&pageSize=100`,
     );
     // console.log("hahaha : " ,response.data.data);
     return response;
@@ -25,7 +25,7 @@ export const get_all_highest_rate = async (sort, pageNumber, pageSize) => {
 
 export const get_all_store = async () => {
   try {
-    const response = await api.get("/retailer/stores/");
+    const response = await api.get("/buyers/stores/");
     // console.log("response : ",response);
     return response;
   } catch (e) {
@@ -36,7 +36,7 @@ export const get_all_store = async () => {
 export const get_all_new_store = async (sort, pageNumber, pageSize) => {
   try {
     const response = await api.get(
-      `/retailer/stores/sort/date?sort=desc&pageNumber=1&pageSize=100`,
+      `/buyers/stores/sort/date?sort=desc&pageNumber=1&pageSize=100`,
     );
     // console.log("fetchg get_all_new_store : ",response);
     return response;
@@ -48,7 +48,7 @@ export const get_all_new_store = async (sort, pageNumber, pageSize) => {
 export const get_all_orders = async (sort, pageNumber, pageSize) => {
   try {
     const response = await api.get(
-      "/retailer/orders?sort=desc&pageNumber=1&pageSize=100",
+      "/buyers/orders?sort=desc&pageNumber=1&pageSize=100",
     );
     // console.log(" response : ", response);
     return response;
@@ -60,7 +60,7 @@ export const get_all_orders = async (sort, pageNumber, pageSize) => {
 export const get_all_favorite = async (pageNumber, pageSize) => {
   try {
     const response = await api.get(
-      `/retailer/stores/bookmark?pageNumber=1&pageSize=1000`,
+      `/buyers/stores/bookmark?pageNumber=1&pageSize=1000`,
     );
     // console.log(" response : ", response);
     return response;
@@ -72,7 +72,7 @@ export const get_all_favorite = async (pageNumber, pageSize) => {
 export const get_all_order_history = async (sort, pageNumber, pageSize) => {
   try {
     const response = await api.get(
-      `/retailer/history/order?sort=desc&pageNumber=1&pageSize=1000`,
+      `/buyers/history/order?sort=desc&pageNumber=1&pageSize=1000`,
     );
     // console.log(response);
     return response;
@@ -84,7 +84,7 @@ export const get_all_order_history = async (sort, pageNumber, pageSize) => {
 export const get_all_order_draft = async (sort, pageNumber, pageSize) => {
   try {
     const response = await api.get(
-      `/retailer/history/draft?sort=desc&pageNumber=1&pageSize=1000`,
+      `/buyers/history/draft?sort=desc&pageNumber=1&pageSize=1000`,
     );
     // console.log("response : ", response);
     return response;
@@ -101,7 +101,7 @@ export const get_all_order_draft = async (sort, pageNumber, pageSize) => {
 export const get_store_by_id = async (storeId, dispatch) => {
   dispatch(setLoadingStore(true));
   try {
-    const response = await api.get(`/retailer/stores/${storeId}`);
+    const response = await api.get(`/buyers/stores/${storeId}`);
     // console.log("response get_store_by_id : ", response);
     return response;
   } catch (e) {
@@ -114,7 +114,7 @@ export const get_all_product_by_storeId = async (storeId, dispatch) => {
   dispatch(setLoadingCard(true));
   try {
     const response = await api.get(
-      `/retailer/stores/${storeId}/products?sort=desc&by=created_date`,
+      `/buyers/stores/${storeId}/products?sort=desc&by=created_date`,
     );
     // console.log("response get_all_product_by_storeId : ", response);
     return response;
@@ -127,7 +127,7 @@ export const get_all_product_by_storeId = async (storeId, dispatch) => {
 export const get_all_category_by_storeId = async (storeId, dispatch) => {
   dispatch(setLoadingCategoryByShop(true));
   try {
-    const response = await api.get(`/retailer/stores/${storeId}/category`);
+    const response = await api.get(`/buyers/stores/${storeId}/category`);
     // console.log("response get_all_category_by_storeId : ", response);
     return response;
   } catch (e) {
@@ -143,7 +143,7 @@ export const get_all_product_sort_by_created_date = async (
   dispatch(setLoadingAdd(true));
   try {
     const response = await api.get(
-      `/retailer/stores/${storeId}/products?sort=asc&by=created_date`,
+      `/buyers/stores/${storeId}/products?sort=asc&by=created_date`,
     );
     // console.log("get_all_product_in_cart : " ,response);
     return response;
@@ -157,7 +157,7 @@ export const get_all_product_sort_by_price = async (storeId, dispatch) => {
   dispatch(setLoadingPrice(true));
   try {
     const response = await api.get(
-      `/retailer/stores/${storeId}/products?sort=asc&by=price`,
+      `/buyers/stores/${storeId}/products?sort=asc&by=price`,
     );
     // console.log("get_all_product_in_cart gagagaga : " ,response);
     return response;
@@ -170,7 +170,7 @@ export const get_all_product_sort_by_price = async (storeId, dispatch) => {
 export const get_all_product_by_category = async (storeId, categoryId) => {
   try {
     const response = await api.get(
-      `/retailer/stores/${storeId}/products/category?categoryId=${categoryId}`,
+      `/buyers/stores/${storeId}/products/category?categoryId=${categoryId}`,
     );
     // console.log("get_all_product_by_category dwdww: ", response);
     return response;
@@ -182,7 +182,7 @@ export const get_all_product_by_category = async (storeId, categoryId) => {
 export const add_product_to_cart = async (storeId, productId, qty) => {
   try {
     const response = await api.post(
-      `/retailer/orders/cart?storeId=${storeId}`,
+      `/buyers/orders/cart?storeId=${storeId}`,
       [
         {
           productId: productId,
@@ -201,7 +201,7 @@ export const add_product_to_cart = async (storeId, productId, qty) => {
 export const view_product_in_cart = async (storeId) => {
   try {
     const response = await api.get(
-      `/retailer/orders/cart/details?pageNumber=1&pageSize=1000&${storeId}`,
+      `/buyers/orders/cart/details?pageNumber=1&pageSize=1000&${storeId}`,
     );
     // console.log("view_product_in_cart : " ,response);
     return response;
@@ -212,7 +212,7 @@ export const view_product_in_cart = async (storeId) => {
 
 export const get_all_product_in_cart = async () => {
   try {
-    const response = await api.get("retailer/orders/carts");
+    const response = await api.get("buyers/orders/carts");
     return response;
   } catch (e) {
     return e;
@@ -222,7 +222,7 @@ export const get_all_product_in_cart = async () => {
 export const delete_product_in_cart = async (productId) => {
   try {
     const response = await api.delete(
-      `/retailer/orders/cart/product?productId=${productId}`,
+      `/buyers/orders/cart/product?productId=${productId}`,
     );
     // console.log("get_all_product_in_cart : " ,response);
     return response;
@@ -233,7 +233,7 @@ export const delete_product_in_cart = async (productId) => {
 
 export const confirm_order_from_cart = async () => {
   try {
-    const response = await api.put(`retailer/orders/confirm`, null, {
+    const response = await api.put(`buyers/orders/confirm`, null, {
       skipAuthRedirect: true,
     });
     return response;
@@ -244,7 +244,7 @@ export const confirm_order_from_cart = async () => {
 
 export const cancel_order_from_cart = async () => {
   try {
-    const response = await api.delete(`retailer/orders/cart/cancel`);
+    const response = await api.delete(`buyers/orders/cart/cancel`);
     // console.log("cancel_order_from_cart : " ,response);
     return response;
   } catch (e) {
@@ -254,7 +254,7 @@ export const cancel_order_from_cart = async () => {
 
 export const bookmark_store = async (storeId) => {
   try {
-    const response = await api.post(`retailer/stores/${storeId}/bookmark/`);
+    const response = await api.post(`buyers/stores/${storeId}/bookmark/`);
     return response;
   } catch (e) {
     return e;
@@ -264,7 +264,7 @@ export const bookmark_store = async (storeId) => {
 export const get_all_bookmark_store = async () => {
   try {
     const response = await api.get(
-      `retailer/stores/bookmark?pageNumber=1&pageSize=1000`,
+      `buyers/stores/bookmark?pageNumber=1&pageSize=1000`,
     );
     // console.log("gagag",response)
     return response;
@@ -276,7 +276,7 @@ export const get_all_bookmark_store = async () => {
 export const remove_bookmark_store = async (storeId) => {
   try {
     const response = await api.delete(
-      `retailer/stores/${storeId}/bookmark/remove`,
+      `buyers/stores/${storeId}/bookmark/remove`,
     );
     return response;
   } catch (e) {
@@ -286,7 +286,7 @@ export const remove_bookmark_store = async (storeId) => {
 
 export const save_to_draft = async () => {
   try {
-    const response = await api.put(`retailer/orders/cart/draft`);
+    const response = await api.put(`buyers/orders/cart/draft`);
     return response;
   } catch (e) {
     return e;
@@ -295,7 +295,7 @@ export const save_to_draft = async () => {
 
 export const get_all_cart = async () => {
   try {
-    const response = await api.get(`retailer/orders/carts`);
+    const response = await api.get(`buyers/orders/carts`);
     return response;
   } catch (e) {
     return e;
@@ -304,7 +304,7 @@ export const get_all_cart = async () => {
 
 // export const remove_bookmark_store=async(storeId)=>{
 //   try{
-//     const response = await api.delete(`retailer/stores/${storeId}/bookmark/remove`)
+//     const response = await api.delete(`buyers/stores/${storeId}/bookmark/remove`)
 //     return response ;
 
 //   }catch(e){
