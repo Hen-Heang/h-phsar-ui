@@ -51,7 +51,7 @@ export default function SignInPage() {
   const resendOtpMutation = useResendOtpMutation();
 
   const titles: Record<AuthView, string> = {
-    signin: "Sign in to StockFlow",
+    signin: "Sign in to H-Phsar",
     "forgot-password": "Reset Password",
     "verify-email": "Verify your email",
   };

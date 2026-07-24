@@ -1,6 +1,6 @@
 "use client";
 
-import OrderPage from "@/components/retailler/OrderPage";
+import OrderPage from "@/components/Buyer/OrderPage";
 
 export const dynamic = "force-dynamic";
 

@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ROLES, roleIdToRole } from "@/config/roles";
 
-// No backend support for ADMIN exists yet (no roleId maps to it, no
-// /api/v1/admin/** routes) — this guard will always redirect today. That's
-// correct: there is no way to reach this shell with a real account until the
-// backend adds admin support. See the migration audit's Admin findings.
+// Backend has ADMIN login support (roleId 3, /api/v1/admin/** reserved in
+// SecurityConfig) but no admin-only business endpoints yet — an admin account
+// created via the manual DB seed (see h-phsar-api-full DatabaseInitializer)
+// can log in and reach this shell; there's just nothing behind it yet.
 export default function AdminShell({ children }) {
   const router = useRouter();
   const [isAuthorized, setIsAuthorized] = useState(false);

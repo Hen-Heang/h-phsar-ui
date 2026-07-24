@@ -1,6 +1,6 @@
 "use client";
 
-import UpdateProductDistributorPage from "@/screens/distributor/UpdateProductDistributor";
+import UpdateProductDistributorPage from "@/screens/supplier/UpdateProductDistributor";
 
 export const dynamic = "force-dynamic";
 

@@ -168,6 +168,13 @@ export function apiPut<T = unknown>(
   return apiRequest<T>(path, { ...options, method: "PUT" });
 }
 
+export function apiPatch<T = unknown>(
+  path: string,
+  options: Omit<ApiRequestOptions, "method"> = {},
+): Promise<ApiResult<T>> {
+  return apiRequest<T>(path, { ...options, method: "PATCH" });
+}
+
 export function apiDelete<T = unknown>(
   path: string,
   options: Omit<ApiRequestOptions, "method"> = {},

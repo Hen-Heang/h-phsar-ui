@@ -1,6 +1,6 @@
 "use client";
 
-import ReportDistributor from "@/screens/distributor/ReportDistributor";
+import ReportDistributor from "@/screens/supplier/ReportDistributor";
 
 export const dynamic = "force-dynamic";
 

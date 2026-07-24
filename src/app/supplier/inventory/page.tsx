@@ -1,6 +1,6 @@
 "use client";
 
-import NewImport from "@/components/Distributor/NewImport";
+import NewImport from "@/components/Supplier/NewImport";
 
 export const dynamic = "force-dynamic";
 

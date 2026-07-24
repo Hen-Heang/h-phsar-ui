@@ -1,6 +1,6 @@
 "use client";
 
-import StorePage from "@/screens/distributor/StorePage";
+import StorePage from "@/screens/supplier/StorePage";
 
 export const dynamic = "force-dynamic";
 

@@ -94,7 +94,7 @@ export default function Landing() {
               </h1>
 
               <p className="mx-auto mt-5 max-w-2xl text-base text-slate-600  md:text-lg">
-                StockFlow is a platform that connects Products with Distributors
+                H-Phsar is a platform that connects Products with Distributors
                 and Retailers in their target market and helps find new and
                 innovative products.
               </p>
@@ -159,7 +159,7 @@ export default function Landing() {
                   How Does This Work?
                 </h2>
                 <p className="text-slate-600  mb-8 text-lg">
-                  StockFlow streamlines your entire supply chain process from
+                  H-Phsar streamlines your entire supply chain process from
                   onboarding to purchasing.
                 </p>
 
@@ -208,11 +208,11 @@ export default function Landing() {
           <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
             <div className="space-y-6">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-600/20">
-                  <Package className="h-6 w-6" />
+                <div className="flex h-10 w-10 items-center justify-center">
+                  <img src="/logo/icon.png" alt="H-Phsar" className="h-full w-full object-contain" />
                 </div>
                 <span className="text-xl font-black tracking-tight text-white ">
-                  StockFlow
+                  H-Phsar
                 </span>
               </div>
               <p className="text-sm leading-relaxed text-slate-400 ">
@@ -289,7 +289,7 @@ export default function Landing() {
 
           <div className="mt-16 border-t border-slate-900 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs font-medium text-slate-500 ">
-              © {new Date().getFullYear()} StockFlow Commerce. All Rights
+              © {new Date().getFullYear()} H-Phsar Commerce. All Rights
               Reserved.
             </p>
             <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest text-slate-600">

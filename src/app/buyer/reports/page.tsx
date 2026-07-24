@@ -1,6 +1,6 @@
 "use client";
 
-import ReportPageRetailer from "@/screens/retailer/ReportPageRetailer";
+import ReportPageRetailer from "@/screens/buyer/ReportPageRetailer";
 
 export const dynamic = "force-dynamic";
 

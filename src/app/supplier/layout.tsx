@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 
 const SupplierShell = dynamic(
-  () => import("@/components/Distributor/DistributorShell"),
+  () => import("@/components/Supplier/DistributorShell"),
   { ssr: false },
 );
 

@@ -10,10 +10,11 @@ describe("roleIdToRole", () => {
     expect(roleIdToRole(2)).toBe(ROLES.BUYER);
   });
 
-  it("throws for any roleId the backend doesn't support (e.g. 3/ADMIN)", () => {
-    // Verified against h-phsar-api-full: AppUser.getAuthorities() only
-    // branches on 1 and 2 — no roleId maps to ADMIN yet.
-    expect(() => roleIdToRole(3)).toThrow();
+  it("maps roleId 3 to ADMIN", () => {
+    expect(roleIdToRole(3)).toBe(ROLES.ADMIN);
+  });
+
+  it("throws for any roleId the backend doesn't support", () => {
     expect(() => roleIdToRole(0)).toThrow();
     expect(() => roleIdToRole(NaN)).toThrow();
   });

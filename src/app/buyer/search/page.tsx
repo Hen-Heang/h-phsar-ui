@@ -1,6 +1,6 @@
 "use client";
 
-import SearchingRetailer from "@/components/retailler/SearchingRetailer";
+import SearchingRetailer from "@/components/Buyer/SearchingRetailer";
 
 export const dynamic = "force-dynamic";
 

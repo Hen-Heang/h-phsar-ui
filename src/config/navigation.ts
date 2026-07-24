@@ -30,10 +30,9 @@ export const BUYER_NAV: NavItem[] = [
   { label: "Profile", href: "/buyer/profile" },
 ];
 
-// No backend support exists for any of these yet — see the migration audit's
-// Admin findings. Kept here only so a future AdminLayout shell has one place
-// to read a placeholder nav from; do not wire these to real pages until the
-// backend contract exists.
+// Suppliers/Buyers are wired to real pages + backend endpoints (AdminAccountController
+// in h-phsar-api-full). Dashboard/Users/Stores/Orders/Reports/Audit Logs/Settings are
+// still placeholders — see AdminDashboard.tsx's "future scope" list.
 export const ADMIN_NAV: NavItem[] = [
   { label: "Dashboard", href: "/admin/dashboard" },
   { label: "Users", href: "/admin/users" },

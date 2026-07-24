@@ -42,7 +42,7 @@ export default function SignUpPage() {
   };
 
   const getDescription = () => {
-    if (view === "choose-role") return "Select how you want to use StockFlow.";
+    if (view === "choose-role") return "Select how you want to use H-Phsar.";
     if (view === "verify-email") return "We've sent a code to your email.";
     return "Join our platform to start managing your business.";
   };

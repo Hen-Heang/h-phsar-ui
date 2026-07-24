@@ -15,14 +15,14 @@ interface RoleSelectionProps {
 const ROLES = [
   {
     id: 1,
-    label: "Distributor",
-    description: "Manage products, inventory, and fulfill retailer orders.",
+    label: "Supplier",
+    description: "Manage products, inventory, and fulfill buyer orders.",
     icon: Truck,
   },
   {
     id: 2,
-    label: "Retailer",
-    description: "Browse distributors and place orders for your store.",
+    label: "Buyer",
+    description: "Browse suppliers and place orders for your store.",
     icon: Store,
   },
 ] as const;

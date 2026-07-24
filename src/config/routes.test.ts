@@ -14,7 +14,7 @@ describe("ROLE_HOME_ROUTE", () => {
     expect(ROLE_HOME_ROUTE[ROLES.BUYER]).toBe("/buyer/home");
   });
 
-  it("does not send ADMIN anywhere but sign-in (no admin account can exist yet)", () => {
-    expect(ROLE_HOME_ROUTE[ROLES.ADMIN]).toBe("/sign-in");
+  it("sends ADMIN to the admin dashboard", () => {
+    expect(ROLE_HOME_ROUTE[ROLES.ADMIN]).toBe("/admin/dashboard");
   });
 });

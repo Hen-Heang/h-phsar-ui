@@ -1,6 +1,6 @@
 "use client";
 
-import HomeComponent from "@/screens/retailer/homepage/HomeComponent";
+import HomeComponent from "@/screens/buyer/homepage/HomeComponent";
 
 export const dynamic = "force-dynamic";
 

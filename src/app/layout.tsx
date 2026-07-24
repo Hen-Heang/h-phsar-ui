@@ -5,9 +5,9 @@ import "react-toastify/dist/ReactToastify.css";
 import Providers from "./providers";
 
 export const metadata = {
-  title: "StockFlow Commerce",
+  title: "H-Phsar Commerce",
   description:
-    "StockFlow Commerce platform for distributor and retailer operations.",
+    "H-Phsar Commerce platform for supplier and buyer operations.",
 };
 
 // The whole app is auth-gated client-side (localStorage) and Redux-backed —

@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "standalone",
   images: {
     // Keep migration stable while legacy APIs return mixed image hosts.
     unoptimized: true,

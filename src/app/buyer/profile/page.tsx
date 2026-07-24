@@ -1,6 +1,6 @@
 "use client";
 
-import AccountRetailer from "@/screens/retailer/AccountRetailer";
+import AccountRetailer from "@/screens/buyer/AccountRetailer";
 
 export const dynamic = "force-dynamic";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import CategoryBeverages from "@/screens/retailer/CategoryBeverages";
+import CategoryBeverages from "@/screens/buyer/CategoryBeverages";
 
 export const dynamic = "force-dynamic";
 

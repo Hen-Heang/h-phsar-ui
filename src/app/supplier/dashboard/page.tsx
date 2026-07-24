@@ -1,6 +1,6 @@
 "use client";
 
-import HomeDistributorPage from "@/screens/distributor/HomeDistributor";
+import HomeDistributorPage from "@/screens/supplier/HomeDistributor";
 
 export const dynamic = "force-dynamic";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import DraftHistory from "@/components/retailler/DraftHistory";
+import DraftHistory from "@/components/Buyer/DraftHistory";
 
 export const dynamic = "force-dynamic";
 

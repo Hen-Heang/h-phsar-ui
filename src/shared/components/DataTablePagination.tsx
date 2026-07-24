@@ -10,6 +10,8 @@ interface DataTablePaginationProps {
   onPageChange: (selectedItem: { selected: number }) => void;
   theme?: "blue" | "orange";
   className?: string;
+  /** Zero-indexed current page, for callers that reset pageNumber externally (e.g. on search change). */
+  forcePage?: number;
 }
 
 /**
@@ -21,6 +23,7 @@ const DataTablePagination: React.FC<DataTablePaginationProps> = ({
   onPageChange,
   theme = "blue",
   className = "",
+  forcePage,
 }) => {
   if (pageCount <= 1) return null;
 
@@ -37,6 +40,7 @@ const DataTablePagination: React.FC<DataTablePaginationProps> = ({
         <ReactPaginate
           pageCount={pageCount}
           onPageChange={onPageChange}
+          forcePage={forcePage}
           previousLabel={
             isBlue ? (
               <Plus className="h-4 w-4 rotate-90" />

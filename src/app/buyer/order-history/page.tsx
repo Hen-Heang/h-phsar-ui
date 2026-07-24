@@ -1,6 +1,6 @@
 "use client";
 
-import OrderHistoryRetail from "@/components/retailler/OrderHistoryRetail";
+import OrderHistoryRetail from "@/components/Buyer/OrderHistoryRetail";
 
 export const dynamic = "force-dynamic";
 

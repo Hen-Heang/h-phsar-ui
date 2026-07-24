@@ -1,6 +1,6 @@
 "use client";
 
-import History from "@/components/Distributor/History";
+import History from "@/components/Supplier/History";
 
 export const dynamic = "force-dynamic";
 

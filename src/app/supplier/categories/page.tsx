@@ -1,6 +1,6 @@
 "use client";
 
-import CategoryDistributor from "@/screens/distributor/CategoryDistributor";
+import CategoryDistributor from "@/screens/supplier/CategoryDistributor";
 
 export const dynamic = "force-dynamic";
 

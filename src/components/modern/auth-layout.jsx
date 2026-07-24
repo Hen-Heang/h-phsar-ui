@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Package, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
 
@@ -17,16 +17,16 @@ export function AuthLayout({
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(20,184,166,0.15),transparent_40%),radial-gradient(circle_at_80%_30%,rgba(14,165,233,0.12),transparent_35%)]" />
 
         <div className="relative z-10 flex items-center gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 shadow-lg shadow-blue-600/20">
-            <Package className="h-6 w-6 text-white" />
+          <div className="flex h-10 w-10 items-center justify-center">
+            <img src="/logo/icon.png" alt="H-Phsar" className="h-full w-full object-contain" />
           </div>
-          <span className="text-2xl font-black tracking-tight">StockFlow</span>
+          <span className="text-2xl font-black tracking-tight">H-Phsar</span>
         </div>
 
         <div className="relative z-10">
           <blockquote className="space-y-4">
             <p className="text-lg font-medium leading-relaxed">
-              "StockFlow has transformed how we manage our inventory and connect
+              "H-Phsar has transformed how we manage our inventory and connect
               with our distributors. The platform is intuitive, fast, and
               reliable."
             </p>
@@ -38,7 +38,7 @@ export function AuthLayout({
         </div>
 
         <div className="relative z-10 text-xs text-slate-500">
-          © {new Date().getFullYear()} StockFlow Commerce. All Rights Reserved.
+          © {new Date().getFullYear()} H-Phsar Commerce. All Rights Reserved.
         </div>
       </div>
 

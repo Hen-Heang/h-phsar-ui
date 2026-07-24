@@ -14,9 +14,10 @@ export function ModernNavbar() {
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6">
         <a
           href="/"
-          className="text-lg font-bold tracking-tight text-slate-900 "
+          className="flex items-center gap-2 text-lg font-bold tracking-tight text-slate-900 "
         >
-          StockFlow 2026
+          <img src="/logo/icon.png" alt="" className="h-8 w-8 object-contain" />
+          H-Phsar 2026
         </a>
 
         <ul className="hidden items-center gap-7 md:flex">

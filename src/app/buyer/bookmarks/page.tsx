@@ -1,6 +1,6 @@
 "use client";
 
-import FavoriteProduct from "@/screens/retailer/FavoriteProduct";
+import FavoriteProduct from "@/screens/buyer/FavoriteProduct";
 
 export const dynamic = "force-dynamic";
 

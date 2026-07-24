@@ -85,12 +85,8 @@ export default function useWebSocket(
             client.subscribe(topic, (payload) => {
               if (!onMessage) return;
               // The backend sends a plain string body (e.g. "NEW_NOTIFICATION"),
-              // not JSON — only fall back to the raw string, never throw.
-              try {
-                onMessage(JSON.parse(payload.body));
-              } catch {
-                onMessage(payload.body);
-              }
+              // never JSON — pass it through as-is.
+              onMessage(payload.body);
             });
           }
         },
