@@ -59,7 +59,7 @@ const CategoryCarousel = () => {
               Find things you'll love. Support independent distributors.
             </h3>
             <p className="text-[16px] text-[#777]">Only on Warehouse master</p>
-            <h2 className="text-xl font-bold text-orange-500">
+            <h2 className="text-xl font-bold text-indigo-500">
               Top highest Rate Shops
             </h2>{" "}
             <br />
@@ -93,7 +93,7 @@ const CategoryCarousel = () => {
                       <div className="w-14 h-5 flex items-center  ">
                         <p className="text-white text-sm text-cent ">
                           <svg
-                            className="w-3 ml-2 fill-orange-500 "
+                            className="w-3 ml-2 fill-indigo-500 "
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 576 512"
                           >

@@ -39,16 +39,16 @@ export default function Home() {
           animate={{ opacity: 1, scale: 1 }}
           className="relative overflow-hidden rounded-[3rem] bg-slate-900 px-8 py-20 text-white shadow-2xl mb-12"
         >
-          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-orange-500/20 blur-3xl" />
+          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-indigo-500/20 blur-3xl" />
           <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl" />
 
           <div className="relative z-10 max-w-2xl">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1 text-xs font-black uppercase tracking-widest backdrop-blur-md">
-              <Zap className="h-3 w-3 text-orange-400" />
+              <Zap className="h-3 w-3 text-indigo-400" />
               Next-Gen Procurement
             </div>
             <h1 className="text-4xl font-black tracking-tight sm:text-6xl mb-6">
-              Manage Your <span className="text-orange-500">Marketplace</span>{" "}
+              Manage Your <span className="text-indigo-500">Marketplace</span>{" "}
               with Precision.
             </h1>
             <p className="text-lg text-slate-400 font-medium mb-10 leading-relaxed">
@@ -57,7 +57,7 @@ export default function Home() {
               inventory synchronization.
             </p>
             <div className="flex flex-wrap gap-4">
-              <Button className="h-14 rounded-2xl bg-orange-500 px-8 font-black text-xs uppercase tracking-widest hover:bg-orange-600 shadow-lg shadow-orange-500/20 active:scale-[0.98] transition-all">
+              <Button className="h-14 rounded-2xl bg-indigo-500 px-8 font-black text-xs uppercase tracking-widest hover:bg-indigo-600 shadow-lg shadow-indigo-500/20 active:scale-[0.98] transition-all">
                 Enter Marketplace
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -104,8 +104,8 @@ export default function Home() {
               label: "Instant Stock",
               desc: "Rapid procurement workflow",
               icon: Package,
-              color: "text-orange-600",
-              bg: "bg-orange-50",
+              color: "text-indigo-600",
+              bg: "bg-indigo-50",
             },
           ].map((item, i) => (
             <motion.div key={i} variants={itemVariants}>
@@ -139,7 +139,7 @@ export default function Home() {
           viewport={{ once: true }}
           className="mt-20 text-center"
         >
-          <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-orange-50 text-orange-500 mb-6">
+          <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-500 mb-6">
             <Sparkles className="h-8 w-8" />
           </div>
           <h2 className="text-3xl font-black text-slate-900 mb-4">

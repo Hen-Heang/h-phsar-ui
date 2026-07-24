@@ -8,6 +8,7 @@ import OrderNotification from "./notification/OrderNotification";
 import RestockNotification from "./notification/RestockNotification";
 import noImage from "../../assets/images/supplier/account.png";
 import { applyImageFallback, getSafeImageSrc } from "@/lib/images";
+import { performLogout } from "@/lib/auth/auth.service";
 import { useAppDispatch as useDispatch, useAppSelector as useSelector } from "@/redux/hooks";
 import { toast } from "react-toastify";
 import {
@@ -82,7 +83,7 @@ import {
   XCircle,
   Package,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { ThemeToggle } from "../modern/theme-toggle";
 import {
   DropdownMenu,
@@ -162,6 +163,7 @@ export default function NavBarRetailerComponent() {
 
   const router = useRouter();
   const pathname = usePathname();
+  const shouldReduceMotion = useReducedMotion();
   const [toggleState, setToggleState] = useState(1);
   const toggleTab = (index) => {
     setToggleState(index);
@@ -182,7 +184,8 @@ export default function NavBarRetailerComponent() {
     toggleTab(5);
   };
 
-  const onSignOut = () => {
+  const onSignOut = async () => {
+    await performLogout();
     localStorage.clear();
     router.push("/");
   };
@@ -821,7 +824,7 @@ export default function NavBarRetailerComponent() {
           onClick={handleClearSearch}
           className="flex items-center gap-3 transition-opacity hover:opacity-90"
         >
-          <div className="relative h-10 w-10 overflow-hidden rounded-xl bg-orange-100 p-0.5  sm:h-12 sm:w-12">
+          <div className="relative h-10 w-10 overflow-hidden rounded-xl bg-indigo-100 p-0.5  sm:h-12 sm:w-12">
             <img
               src="/logo/icon.png"
               alt="H-Phsar Logo"
@@ -842,12 +845,12 @@ export default function NavBarRetailerComponent() {
               onChange={handleFormChange}
               onKeyDown={(event) => event.key === "Enter" && searchProductByStore()}
               value={onChangeSearch}
-              className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 py-2.5 pl-11 pr-24 text-sm transition-all focus:border-orange-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-orange-500/10     "
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50/50 py-2.5 pl-11 pr-24 text-sm transition-all focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10     "
               placeholder="Search products, stores..."
             />
             <button
               onClick={searchProductByStore}
-              className="absolute right-1.5 rounded-xl bg-orange-500 px-4 py-1.5 text-xs font-bold text-white transition-all hover:bg-orange-600 active:scale-95"
+              className="absolute right-1.5 rounded-xl bg-indigo-500 px-4 py-1.5 text-xs font-bold text-white transition-all hover:bg-indigo-600 active:scale-95"
             >
               Search
             </button>
@@ -861,10 +864,10 @@ export default function NavBarRetailerComponent() {
           {/* Notifications */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 transition-all hover:bg-slate-50 hover:text-orange-500    ">
+              <button className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 transition-all hover:bg-slate-50 hover:text-indigo-500    ">
                 <Bell className="h-5 w-5" />
                 {countAllNotificationUnseen > 0 && (
-                  <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-[10px] font-bold text-white ring-2 ring-white ">
+                  <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-indigo-500 text-[10px] font-bold text-white ring-2 ring-white ">
                     {countAllNotificationUnseen > 99 ? "99+" : countAllNotificationUnseen}
                   </span>
                 )}
@@ -875,7 +878,7 @@ export default function NavBarRetailerComponent() {
                 <h3 className="text-sm font-bold text-slate-900 ">Notifications</h3>
                 <button
                   onClick={handleReadAllNotifications}
-                  className="text-xs font-semibold text-orange-500 transition hover:text-orange-600"
+                  className="text-xs font-semibold text-indigo-500 transition hover:text-indigo-600"
                 >
                   Mark all read
                 </button>
@@ -895,13 +898,13 @@ export default function NavBarRetailerComponent() {
                       onClick={() => toggleTab(tab.id)}
                       className={`relative flex items-center gap-2 whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
                         toggleState === tab.id
-                          ? "bg-orange-50 text-orange-600  "
+                          ? "bg-indigo-50 text-indigo-600  "
                           : "text-slate-500 hover:bg-slate-50 hover:text-slate-700   "
                       }`}
                     >
                       {tab.label}
                       {tab.count > 0 && (
-                        <span className={`h-1.5 w-1.5 rounded-full ${toggleState === tab.id ? "bg-orange-500" : "bg-slate-300 "}`} />
+                        <span className={`h-1.5 w-1.5 rounded-full ${toggleState === tab.id ? "bg-indigo-500" : "bg-slate-300 "}`} />
                       )}
                     </button>
                   ))}
@@ -931,10 +934,10 @@ export default function NavBarRetailerComponent() {
           {/* Shopping Cart */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 transition-all hover:bg-slate-50 hover:text-orange-500    ">
+              <button className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 transition-all hover:bg-slate-50 hover:text-indigo-500    ">
                 <ShoppingBag className="h-5 w-5" />
                 {productInCartData.length > 0 && (
-                  <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-[10px] font-bold text-white ring-2 ring-white ">
+                  <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-indigo-500 text-[10px] font-bold text-white ring-2 ring-white ">
                     {productInCartData.reduce((sum, item) => sum + item.qty, 0)}
                   </span>
                 )}
@@ -946,14 +949,14 @@ export default function NavBarRetailerComponent() {
                   <h3 className="text-sm font-bold text-slate-900 ">Your Cart</h3>
                   {productInCartData.length > 0 && (
                     <p className="text-[10px] font-medium text-slate-500">
-                      Order from <span className="text-orange-500">{localStoreName}</span>
+                      Order from <span className="text-indigo-500">{localStoreName}</span>
                     </p>
                   )}
                 </div>
                 {productInCartData.length > 0 && (
                   <button
                     onClick={() => setSuccess2(!success2)}
-                    className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[10px] font-bold text-slate-600 transition hover:border-orange-200 hover:text-orange-500   "
+                    className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[10px] font-bold text-slate-600 transition hover:border-indigo-200 hover:text-indigo-500   "
                   >
                     <Package className="h-3 w-3" />
                     Save Draft
@@ -985,10 +988,10 @@ export default function NavBarRetailerComponent() {
                             <div className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white p-1  ">
                               <button
                                 onClick={() => handleDecrement(item.productId)}
-                                className="flex h-6 w-6 items-center justify-center rounded-md text-slate-400 transition hover:bg-slate-50 hover:text-orange-500 "
+                                className="flex h-6 w-6 items-center justify-center rounded-md text-slate-400 transition hover:bg-slate-50 hover:text-indigo-500 "
                               >
                                 {loadingProducts2.has(item.productId) ? (
-                                  <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} className="h-3 w-3 border-2 border-orange-500 border-t-transparent rounded-full" />
+                                  <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} className="h-3 w-3 border-2 border-indigo-500 border-t-transparent rounded-full" />
                                 ) : (
                                   <Minus className="h-3 w-3" />
                                 )}
@@ -1001,10 +1004,10 @@ export default function NavBarRetailerComponent() {
                               />
                               <button
                                 onClick={() => handleIncrement(item.productId)}
-                                className="flex h-6 w-6 items-center justify-center rounded-md text-slate-400 transition hover:bg-slate-50 hover:text-orange-500 "
+                                className="flex h-6 w-6 items-center justify-center rounded-md text-slate-400 transition hover:bg-slate-50 hover:text-indigo-500 "
                               >
                                 {loadingProducts.has(item.productId) ? (
-                                  <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} className="h-3 w-3 border-2 border-orange-500 border-t-transparent rounded-full" />
+                                  <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} className="h-3 w-3 border-2 border-indigo-500 border-t-transparent rounded-full" />
                                 ) : (
                                   <Plus className="h-3 w-3" />
                                 )}
@@ -1048,7 +1051,7 @@ export default function NavBarRetailerComponent() {
                   <div className="grid grid-cols-2 gap-3">
                     <Button
                       onClick={() => setSuccess(!success)}
-                      className="flex-1 h-11 rounded-xl bg-orange-500 font-bold text-white shadow-lg shadow-orange-500/20 hover:bg-orange-600 active:scale-[0.98]"
+                      className="flex-1 h-11 rounded-xl bg-indigo-500 font-bold text-white shadow-lg shadow-indigo-500/20 hover:bg-indigo-600 active:scale-[0.98]"
                     >
                       Checkout
                     </Button>
@@ -1091,7 +1094,7 @@ export default function NavBarRetailerComponent() {
                   <Link
                     href="/buyer/profile"
                     onClick={handleClearSearch}
-                    className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-orange-500 focus:bg-slate-50 focus:text-orange-500   "
+                    className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-indigo-500 focus:bg-slate-50 focus:text-indigo-500   "
                   >
                     <User className="h-4 w-4" />
                     My Profile
@@ -1129,17 +1132,31 @@ export default function NavBarRetailerComponent() {
                 key={link.href}
                 href={link.href}
                 onClick={handleClearSearch}
-                className={`group relative text-sm font-bold transition-colors ${
-                  isActive ? "text-orange-500" : "text-slate-500 hover:text-slate-900  "
+                aria-current={isActive ? "page" : undefined}
+                className={`group relative px-1 text-sm font-bold transition-colors ${
+                  isActive ? "text-indigo-500" : "text-slate-500 hover:text-slate-900  "
                 }`}
               >
-                {link.label}
                 {isActive && (
-                  <motion.div
-                    layoutId="nav-active-retailer"
-                    className="absolute -bottom-[17px] left-0 h-0.5 w-full bg-orange-500"
+                  <motion.span
+                    layoutId="buyer-desktop-active-tab"
+                    className="absolute -inset-x-3 -inset-y-2 rounded-xl bg-indigo-50"
+                    transition={
+                      shouldReduceMotion
+                        ? { duration: 0 }
+                        : { type: "spring", stiffness: 420, damping: 34 }
+                    }
                   />
                 )}
+                <motion.span
+                  className="relative z-10 block"
+                  animate={{ y: isActive && !shouldReduceMotion ? -1 : 0 }}
+                  whileHover={shouldReduceMotion ? undefined : { y: -2 }}
+                  whileTap={shouldReduceMotion ? undefined : { scale: 0.94 }}
+                  transition={{ duration: 0.18 }}
+                >
+                  {link.label}
+                </motion.span>
               </Link>
             );
           })}
@@ -1191,23 +1208,50 @@ export default function NavBarRetailerComponent() {
                 </div>
 
                 <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
-                  {RETAILER_NAV_LINKS.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      onClick={() => {
-                        handleClearSearch();
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className={`flex items-center rounded-xl px-4 py-3 text-sm font-bold transition-all ${
-                        pathname === link.href
-                          ? "bg-orange-50 text-orange-600  "
-                          : "text-slate-600 hover:bg-slate-50  "
-                      }`}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
+                  {RETAILER_NAV_LINKS.map((link, index) => {
+                    const isActive = pathname === link.href;
+                    return (
+                      <motion.div
+                        key={link.href}
+                        initial={shouldReduceMotion ? false : { opacity: 0, x: 18 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: shouldReduceMotion ? 0 : index * 0.045 }}
+                      >
+                        <Link
+                          href={link.href}
+                          onClick={() => {
+                            handleClearSearch();
+                            setIsMobileMenuOpen(false);
+                          }}
+                          aria-current={isActive ? "page" : undefined}
+                          className={`relative flex min-h-11 items-center overflow-hidden rounded-xl px-4 py-3 text-sm font-bold ${
+                            isActive
+                              ? "text-indigo-600"
+                              : "text-slate-600 hover:bg-slate-50"
+                          }`}
+                        >
+                          {isActive && (
+                            <motion.span
+                              layoutId="buyer-mobile-active-tab"
+                              className="absolute inset-0 rounded-xl bg-indigo-50"
+                              transition={
+                                shouldReduceMotion
+                                  ? { duration: 0 }
+                                  : { type: "spring", stiffness: 420, damping: 34 }
+                              }
+                            />
+                          )}
+                          <motion.span
+                            className="relative z-10"
+                            whileHover={shouldReduceMotion ? undefined : { x: 4 }}
+                            whileTap={shouldReduceMotion ? undefined : { scale: 0.97 }}
+                          >
+                            {link.label}
+                          </motion.span>
+                        </Link>
+                      </motion.div>
+                    );
+                  })}
                 </nav>
 
                 <div className="p-6 border-t border-slate-100 ">
@@ -1262,7 +1306,7 @@ export default function NavBarRetailerComponent() {
             </div>
             <DialogTitle className="text-xl font-bold text-slate-900 ">Confirm Order</DialogTitle>
             <p className="mt-2 text-sm text-slate-500">
-              Ready to place your order with <span className="text-orange-500 font-bold">{localStoreName}</span>?
+              Ready to place your order with <span className="text-indigo-500 font-bold">{localStoreName}</span>?
             </p>
             <div className="mt-8 flex gap-3">
               <button
@@ -1285,7 +1329,7 @@ export default function NavBarRetailerComponent() {
       <Dialog open={success2} onOpenChange={(open) => !open && setSuccess2(!success2)}>
         <DialogContent className="max-w-md rounded-2xl p-0 overflow-hidden">
           <div className="p-8 text-center">
-            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-orange-50 text-orange-500 ">
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-indigo-50 text-indigo-500 ">
               <Package className="h-10 w-10" />
             </div>
             <DialogTitle className="text-xl font-bold text-slate-900 ">Save as Draft</DialogTitle>
@@ -1295,7 +1339,7 @@ export default function NavBarRetailerComponent() {
             <div className="mt-8 flex gap-3">
               <button
                 onClick={() => draftStore("yes")}
-                className="flex-1 rounded-xl bg-orange-500 py-3 text-sm font-bold text-white transition hover:bg-orange-600 active:scale-[0.98]"
+                className="flex-1 rounded-xl bg-indigo-500 py-3 text-sm font-bold text-white transition hover:bg-indigo-600 active:scale-[0.98]"
               >
                 Yes, Save Draft
               </button>

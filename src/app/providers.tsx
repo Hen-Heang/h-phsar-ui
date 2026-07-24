@@ -23,6 +23,7 @@ const muiTheme = createTheme({
 
 import { ThemeProvider as ModernThemeProvider } from "../components/modern/theme-provider";
 import ToastProvider from "../components/ToastProvider";
+import AuthInitializer from "@/lib/auth/AuthInitializer";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -44,6 +45,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         <CssBaseline />
         <QueryClientProvider client={queryClient}>
           <Provider store={store}>
+            <AuthInitializer />
             {children}
             <ToastProvider />
           </Provider>

@@ -156,7 +156,7 @@ export default function DraftHistory() {
             className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/20 backdrop-blur-sm"
           >
             <div className="bg-white p-8 rounded-[2rem] shadow-2xl flex flex-col items-center gap-4">
-              <Loader2 className="h-10 w-10 animate-spin text-orange-500" />
+              <Loader2 className="h-10 w-10 animate-spin text-indigo-500" />
               <p className="text-sm font-black uppercase tracking-widest text-slate-900">
                 {isProcessing ? "Processing Request..." : "Discarding Draft..."}
               </p>
@@ -169,7 +169,7 @@ export default function DraftHistory() {
         {/* Header */}
         <header className="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <div className="mb-2 flex items-center gap-2 text-orange-500">
+            <div className="mb-2 flex items-center gap-2 text-indigo-500">
               <Clock className="h-5 w-5" />
               <span className="text-xs font-black uppercase tracking-[0.2em]">Pending Operations</span>
             </div>
@@ -181,14 +181,14 @@ export default function DraftHistory() {
             </p>
           </div>
           <div className="bg-white px-6 py-3 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
-            <Info className="h-4 w-4 text-orange-500" />
+            <Info className="h-4 w-4 text-indigo-500" />
             <span className="text-xs font-bold text-slate-600">You have {draftHistoryList.length} items in waiting</span>
           </div>
         </header>
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-40 gap-4">
-            <PropagateLoader color="#f97316" size={12} />
+            <PropagateLoader color="#4f46e5" size={12} />
             <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mt-4">Syncing Drafts...</p>
           </div>
         ) : currentDrafts.length === 0 ? (
@@ -242,7 +242,7 @@ export default function DraftHistory() {
                             />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h3 className="font-black text-lg text-slate-900 line-clamp-1 group-hover:text-orange-500 transition-colors">
+                            <h3 className="font-black text-lg text-slate-900 line-clamp-1 group-hover:text-indigo-500 transition-colors">
                               {item.order.name}
                             </h3>
                             <div className="flex items-center gap-1 text-slate-400 mt-0.5">
@@ -260,16 +260,16 @@ export default function DraftHistory() {
                             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Total Items</span>
                             <span className="text-lg font-black text-slate-900">{item.products?.length || 0}</span>
                           </div>
-                          <div className="bg-orange-50 p-4 rounded-2xl border border-orange-100">
-                            <span className="text-[10px] font-black text-orange-400 uppercase tracking-widest block mb-1">Total Value</span>
-                            <span className="text-lg font-black text-orange-600">${item.order.total.toFixed(2)}</span>
+                          <div className="bg-indigo-50 p-4 rounded-2xl border border-indigo-100">
+                            <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest block mb-1">Total Value</span>
+                            <span className="text-lg font-black text-indigo-600">${item.order.total.toFixed(2)}</span>
                           </div>
                         </div>
 
                         {/* Actions */}
                         <div className="flex items-center gap-3">
                           <Button 
-                            className="flex-1 h-12 rounded-2xl bg-orange-500 font-black text-xs uppercase tracking-widest text-white shadow-lg shadow-orange-500/20 hover:bg-orange-600 active:scale-[0.98] transition-all"
+                            className="flex-1 h-12 rounded-2xl bg-indigo-500 font-black text-xs uppercase tracking-widest text-white shadow-lg shadow-indigo-500/20 hover:bg-indigo-600 active:scale-[0.98] transition-all"
                             onClick={() => {
                               setProducts(item.products);
                               setSelectedDraft(item.order);
@@ -305,9 +305,9 @@ export default function DraftHistory() {
                 nextLabel={<ChevronRight className="h-5 w-5" />}
                 className="flex items-center gap-2"
                 pageLinkClassName="h-10 w-10 flex items-center justify-center rounded-xl text-sm font-black transition-all hover:bg-slate-50 text-slate-400"
-                activeLinkClassName="!bg-orange-500 !text-white shadow-lg shadow-orange-500/20"
-                previousLinkClassName="h-10 w-10 flex items-center justify-center rounded-xl text-slate-400 hover:text-orange-500 transition-all"
-                nextLinkClassName="h-10 w-10 flex items-center justify-center rounded-xl text-slate-400 hover:text-orange-500 transition-all"
+                activeLinkClassName="!bg-indigo-500 !text-white shadow-lg shadow-indigo-500/20"
+                previousLinkClassName="h-10 w-10 flex items-center justify-center rounded-xl text-slate-400 hover:text-indigo-500 transition-all"
+                nextLinkClassName="h-10 w-10 flex items-center justify-center rounded-xl text-slate-400 hover:text-indigo-500 transition-all"
                 disabledClassName="opacity-30 cursor-not-allowed"
                 breakLabel="..."
               />
@@ -319,12 +319,12 @@ export default function DraftHistory() {
       {/* Review Modal */}
       <Dialog open={isOpen} onOpenChange={setOpen}>
         <DialogContent className="max-w-4xl overflow-hidden rounded-[3rem] p-0 border-none shadow-2xl">
-          <div className="bg-orange-500 px-10 py-12 text-white relative">
+          <div className="bg-indigo-500 px-10 py-12 text-white relative">
             <div className="absolute right-10 top-12 opacity-20">
               <ShoppingCart className="h-24 w-24" />
             </div>
             <DialogTitle className="text-3xl font-black tracking-tight">Review Procurement</DialogTitle>
-            <p className="mt-2 text-orange-100 font-medium">Verify your items before sending the request to <span className="font-bold border-b-2 border-white/30">{selectedDraft?.name}</span>.</p>
+            <p className="mt-2 text-indigo-100 font-medium">Verify your items before sending the request to <span className="font-bold border-b-2 border-white/30">{selectedDraft?.name}</span>.</p>
           </div>
           
           <div className="p-10">
@@ -383,7 +383,7 @@ export default function DraftHistory() {
                   Edit Further
                 </Button>
                 <Button 
-                  className="h-14 px-10 rounded-2xl bg-orange-500 font-black text-sm uppercase tracking-widest text-white shadow-lg shadow-orange-500/20 hover:bg-orange-600 active:scale-[0.98] transition-all"
+                  className="h-14 px-10 rounded-2xl bg-indigo-500 font-black text-sm uppercase tracking-widest text-white shadow-lg shadow-indigo-500/20 hover:bg-indigo-600 active:scale-[0.98] transition-all"
                   onClick={handleCheckout}
                   disabled={isProcessing}
                 >

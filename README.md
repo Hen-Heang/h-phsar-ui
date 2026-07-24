@@ -1,56 +1,67 @@
-# Getting Started with H-Phsar Commerce
+# H-Phsar Commerce
 
-H-Phsar Commerce is currently running on Next.js (App Router shell) with a legacy React Router app mounted inside.
+H-Phsar is one B2B marketplace with three role-specific experiences:
 
-## Introduction of H-Phsar Commerce
-H-Phsar Commerce is a stock and order management platform for distributors and retailers.
+- Buyer: marketplace discovery, drafts, ordering, and receipt confirmation
+- Supplier: products, inventory, order fulfilment, and reporting
+- Admin: Supplier and Buyer account management
 
-## Technologies
-- [Next.js](https://nextjs.org/)
-- [Tailwind CSS](https://tailwindcss.com/docs/installation)
-- [React Redux](https://redux.js.org/)
-- [React Router DOM](https://reactrouter.com/) (legacy in-app routing during migration)
+The roles share one brand, semantic design system, API client, authentication
+foundation, and exact backend order workflow while retaining separate layouts
+and navigation.
 
-## Run Locally
+## Stack
+
+- Next.js 16 App Router
+- React and TypeScript with legacy JavaScript during incremental migration
+- Tailwind CSS and shadcn-style/Radix primitives
+- Redux Toolkit and TanStack Query
+- Axios through `src/utils/api.ts`
+- Vitest and Testing Library
+
+## Local development
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open `http://localhost:3000` (or the next available port shown in terminal).
+Open `http://localhost:3000`.
 
-## Build
+## Verification
 
 ```bash
+npm test
 npm run build
-npm run start
+git diff --check
 ```
 
-## Features
-H-Phsar Commerce has two main account roles: Distributor and Retailer.
+## App Router areas
 
-- Authentication: users can register and log in using email verification/OTP flow.
+- `/buyer/**`
+- `/supplier/**`
+- `/admin/**`
+- `/sign-in`
+- `/sign-up`
 
-### Distributor features
-- Search distributors and products, and manage stock efficiently.
-- Create/update store profile.
-- Create categories and products.
-- Import product quantities.
-- Manage order lifecycle (accept/reject, preparing, dispatching, confirmation).
-- Update/delete/list products.
+Legacy `/retailer/**` and `/distributor/**` routes remain temporarily while
+screens are migrated. New work must use Buyer and Supplier terminology.
 
-### Retailer features
-- Browse distributors and products.
-- Bookmark products and stores.
-- Create draft carts and checkout later.
-- Track order status and order history.
+## Shared foundations
 
-## Pending tasks
-- Implement real-time notifications.
+- API helpers: `src/utils/api.ts`
+- Roles and home routes: `src/config/roles.ts`, `src/config/routes.ts`
+- Navigation: `src/config/navigation.ts`
+- Order status UX: `src/config/order-status.ts`
+- Brand logo: `src/components/brand/HPhsarLogo.tsx`
+- Role access state: `src/components/auth/RoleGuard.tsx`
+- Global tokens: `src/index.css`
 
-## Branch strategy
-- Main branch: `main`
+## Backend order statuses
 
-## Notes
-This project originated as a collaborative team project and is now maintained and extended as **H-Phsar Commerce**.
+`CART`, `DRAFT`, `PENDING`, `PROCESSING`, `DISPATCHED`, `COMPLETED`,
+`REJECTED`, and `CANCELLED` are the only internal status values.
+
+Suppliers accept or reject `PENDING` orders and dispatch `PROCESSING` orders.
+Only Buyers confirm receipt, and only from `DISPATCHED`. The UI must never
+auto-complete an order.

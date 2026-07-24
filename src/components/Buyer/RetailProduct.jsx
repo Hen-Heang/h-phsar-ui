@@ -98,7 +98,7 @@ export default function RetailProduct(props) {
                     <hr className="border-dashed rounded-full w-24 left-16 border-2 absolute border-retailerPrimary top-9" />
                     <hr className="border-dashed rounded-full w-24 right-20 border-2 absolute border-newGray top-9" />
                     <div className="flex flex-col p-4 w-32 items-center">
-                      <div className="w-12 h-12 border-4 border-orange-200  rounded-full bg-retailerPrimary mr-5">
+                      <div className="w-12 h-12 border-4 border-indigo-200  rounded-full bg-retailerPrimary mr-5">
                         <svg
                           className="fill-white absolute w-6 ml-2 mt-2"
                           xmlns="http://www.w3.org/2000/svg"

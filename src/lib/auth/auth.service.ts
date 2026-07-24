@@ -1,8 +1,10 @@
 import { apiPost, apiPut, type ApiResult } from "@/utils/api";
+import { clearAuthToken } from "@/lib/auth/authStore";
 import type {
   BackendResponse,
   LoginCredentials,
   LoginData,
+  RefreshTokenData,
   RegisterRequest,
   ResetPasswordRequest,
 } from "@/types/auth";
@@ -26,6 +28,13 @@ export const loginService = (
 ): Promise<LoginApiResponse> =>
   apiPost<BackendResponse<LoginData>>("/authorization/login", {
     auth: false,
+    // Required for the browser to actually store the backend's Set-Cookie
+    // (refresh token) response header — for a cross-origin request, a
+    // server's Access-Control-Allow-Credentials only permits the cookie;
+    // the browser still silently drops it unless THIS request opted into
+    // credentials mode too. Without this, login "succeeds" but the refresh
+    // cookie is never stored and /refresh always fails later.
+    withCredentials: true,
     body: credentials,
   });
 
@@ -65,3 +74,38 @@ export const resendVerificationCode = (email: string): Promise<ApiResult> =>
     auth: false,
     query: { email },
   });
+
+// Silent refresh: the backend reads the httpOnly refresh-token cookie (sent
+// automatically because withCredentials is set) and returns a fresh access
+// token. auth:false is required, not optional — if the caller's current
+// access token happens to be expired (the normal reason to call this), the
+// request interceptor would otherwise treat this call itself as
+// unauthenticated. Called both from AuthInitializer (on app load) and from
+// api.ts's response interceptor (on a 401 from any protected call).
+export const refreshAccessToken = (): Promise<
+  ApiResult<BackendResponse<RefreshTokenData>>
+> =>
+  apiPost<BackendResponse<RefreshTokenData>>("/authorization/refresh", {
+    auth: false,
+    withCredentials: true,
+  });
+
+// Revokes the refresh-token cookie server-side and clears it.
+export const logoutService = (): Promise<ApiResult> =>
+  apiPost("/authorization/logout", {
+    auth: false,
+    withCredentials: true,
+  });
+
+// Shared by every sign-out entry point (supplier navbar/sidebar, buyer navbar).
+// Best-effort on the network call: a failure (offline, backend down, token
+// already invalid) must never trap the user in a signed-in-looking UI with no
+// way out, so local auth state is always cleared regardless of the outcome.
+export const performLogout = async (): Promise<void> => {
+  try {
+    await logoutService();
+  } catch {
+    // Ignored — see comment above.
+  }
+  clearAuthToken();
+};

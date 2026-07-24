@@ -131,7 +131,7 @@ export default function CompleteOrder(props) {
                 <div className="w-96 flex justify-center mx-auto relative -mt-6">
                   <hr className="border-dashed rounded-full w-64 border-2 absolute border-retailerPrimary top-9" />
                   <div className="flex flex-col p-4 w-32 items-center">
-                    <div className="w-12 h-12 border-4 border-orange-200  rounded-full bg-retailerPrimary mr-5">
+                    <div className="w-12 h-12 border-4 border-indigo-200  rounded-full bg-retailerPrimary mr-5">
                       <svg
                         className="fill-white absolute w-6 ml-2 mt-2"
                         xmlns="http://www.w3.org/2000/svg"
@@ -143,7 +143,7 @@ export default function CompleteOrder(props) {
                     <p className="text-xs mt-3">Preparing</p>
                   </div>
                   <div className="flex flex-col p-4 w-32 items-center">
-                    <div className="w-12 h-12 border-4 border-orange-200 rounded-full bg-retailerPrimary mr-5">
+                    <div className="w-12 h-12 border-4 border-indigo-200 rounded-full bg-retailerPrimary mr-5">
                       <svg
                         className="fill-white w-7 mt-2 ml-1.5 absolute"
                         xmlns="http://www.w3.org/2000/svg"
@@ -155,7 +155,7 @@ export default function CompleteOrder(props) {
                     <p className="text-xs mt-3">Shipping</p>
                   </div>
                   <div className="flex flex-col p-4 w-32 items-center">
-                    <div className="w-12 h-12 border-4 border-orange-200  text-center rounded-full bg-retailerPrimary mr-5">
+                    <div className="w-12 h-12 border-4 border-indigo-200  text-center rounded-full bg-retailerPrimary mr-5">
                       <svg
                         className="fill-white w-6 mt-2 ml-2 absolute bg-retailerPrimary"
                         xmlns="http://www.w3.org/2000/svg"

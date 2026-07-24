@@ -34,7 +34,7 @@ export default function SearchingRetailer() {
   if (loadingSearch)
     return (
       <div className="flex min-h-[70vh] flex-col items-center justify-center gap-6">
-        <PropagateLoader color="#f97316" size={15} />
+        <PropagateLoader color="#4f46e5" size={15} />
         <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">
           Searching Marketplace...
         </p>
@@ -69,7 +69,7 @@ export default function SearchingRetailer() {
         ) : (
           <>
             <header className="mb-10">
-              <div className="mb-2 flex items-center gap-2 text-orange-500">
+              <div className="mb-2 flex items-center gap-2 text-indigo-500">
                 <Sparkles className="h-5 w-5" />
                 <span className="text-xs font-black uppercase tracking-[0.2em]">
                   Search Results
@@ -88,7 +88,7 @@ export default function SearchingRetailer() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.05 }}
                   onClick={() => onClickGetDataShop(item.id, item.name)}
-                  className="group cursor-pointer overflow-hidden rounded-[2.5rem] border border-slate-200 bg-white shadow-lg shadow-slate-200/50 transition-all hover:-translate-y-1 hover:border-orange-200 hover:shadow-2xl hover:shadow-orange-500/10   "
+                  className="group cursor-pointer overflow-hidden rounded-[2.5rem] border border-slate-200 bg-white shadow-lg shadow-slate-200/50 transition-all hover:-translate-y-1 hover:border-indigo-200 hover:shadow-2xl hover:shadow-indigo-500/10   "
                 >
                   {/* Banner Image */}
                   <div className="relative h-48 w-full overflow-hidden">
@@ -100,7 +100,7 @@ export default function SearchingRetailer() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
 
-                    <div className="absolute left-6 top-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/90 text-orange-600 shadow-xl backdrop-blur-md ">
+                    <div className="absolute left-6 top-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/90 text-indigo-600 shadow-xl backdrop-blur-md ">
                       <Store className="h-6 w-6" />
                     </div>
                   </div>
@@ -111,7 +111,7 @@ export default function SearchingRetailer() {
                       <h3 className="line-clamp-1 text-xl font-black text-slate-900 ">
                         {item.name}
                       </h3>
-                      <div className="flex items-center gap-1.5 rounded-full bg-orange-50 px-2.5 py-1 text-orange-600  ">
+                      <div className="flex items-center gap-1.5 rounded-full bg-indigo-50 px-2.5 py-1 text-indigo-600  ">
                         <Star className="h-3.5 w-3.5 fill-current" />
                         <span className="text-[10px] font-black">
                           {parseFloat(item.rating || 0).toFixed(1)}
@@ -120,7 +120,7 @@ export default function SearchingRetailer() {
                     </div>
 
                     <div className="mt-4 flex items-start gap-2 text-slate-500">
-                      <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-orange-500" />
+                      <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-indigo-500" />
                       <p className="line-clamp-2 text-sm font-medium leading-relaxed">
                         {item.address}
                       </p>
@@ -155,7 +155,7 @@ export default function SearchingRetailer() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-10 rounded-xl font-bold text-orange-500 hover:bg-orange-50 group-hover:bg-orange-50"
+                        className="h-10 rounded-xl font-bold text-indigo-500 hover:bg-indigo-50 group-hover:bg-indigo-50"
                       >
                         View Store
                         <ChevronRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />

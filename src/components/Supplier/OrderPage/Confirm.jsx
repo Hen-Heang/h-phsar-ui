@@ -76,7 +76,7 @@ export default function Confirm({ toggleTab5 }) {
                   key={item.id}
                   index={idx}
                   item={item}
-                  status="Confirming"
+                  status="DISPATCHED"
                   onViewDetails={onViewDetails}
                 />
               ))}

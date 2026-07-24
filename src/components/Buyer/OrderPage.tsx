@@ -5,24 +5,13 @@ import ReactPaginate from "react-paginate";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Package, 
-  Clock, 
-  CheckCircle2, 
-  Truck, 
-  XCircle, 
-  MoreHorizontal, 
   Star, 
-  MapPin,
   AlertTriangle,
-  History,
   Trash2,
   ChevronLeft,
   ChevronRight,
-  ClipboardList,
-  Store,
   Calendar,
   DollarSign,
-  ArrowRight,
-  ExternalLink,
   Loader2,
   Activity,
   RefreshCcw
@@ -49,13 +38,26 @@ import {
 } from "../../redux/slices/buyer/orderDetailSlice";
 import { rating_star } from "../../redux/services/buyer/rating.service";
 import ProductDetail from "./ProductDetail";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import noImage from "../../assets/images/buyer/No_image_available.png";
 import { applyImageFallback, getSafeImageSrc } from "@/lib/images";
 import { sendOneSignalNotification } from "@/lib/notifications/send-onesignal-client";
 import { cn } from "@/lib/cn";
+import { StatusBadge } from "@/components/shared/StatusBadge";
+import {
+  getOrderStatusMeta,
+  isBuyerActionAllowed,
+} from "@/config/order-status";
+
+const STATUS_SURFACE_CLASSES = {
+  neutral: "border-border bg-muted",
+  info: "border-blue-100 bg-blue-50",
+  warning: "border-amber-100 bg-amber-50",
+  success: "border-emerald-100 bg-emerald-50",
+  danger: "border-red-100 bg-red-50",
+};
 
 export default function OrderPage() {
   const dispatch = useDispatch();
@@ -151,69 +153,13 @@ export default function OrderPage() {
   const pageCount = Math.ceil(orderList.length / itemsPerPage);
   const currentOrders = orderList.slice(itemOffset, itemOffset + itemsPerPage);
 
-  const getStatusConfig = (status) => {
-    switch (status) {
-      case "CART":
-      case "DRAFT":
-      case "PENDING": return {
-        color: "text-orange-600",
-        bg: "bg-orange-50",
-        border: "border-orange-100",
-        icon: ClipboardList,
-        label: "Pending",
-        progress: 20
-      };
-      case "PROCESSING": return {
-        color: "text-blue-600",
-        bg: "bg-blue-50",
-        border: "border-blue-100",
-        icon: Package,
-        label: "Preparing",
-        progress: 45
-      };
-      case "DISPATCHED": return {
-        color: "text-purple-600",
-        bg: "bg-purple-50",
-        border: "border-purple-100",
-        icon: Truck,
-        label: "Dispatched",
-        progress: 75
-      };
-      case "COMPLETED": return {
-        color: "text-emerald-600",
-        bg: "bg-emerald-50",
-        border: "border-emerald-100",
-        icon: CheckCircle2,
-        label: "Completed",
-        progress: 100
-      };
-      case "REJECTED":
-      case "CANCELLED": return {
-        color: "text-rose-600",
-        bg: "bg-rose-50",
-        border: "border-rose-100",
-        icon: XCircle,
-        label: status === "REJECTED" ? "Declined" : "Cancelled",
-        progress: 0
-      };
-      default: return {
-        color: "text-slate-600",
-        bg: "bg-slate-50",
-        border: "border-slate-100",
-        icon: History,
-        label: status,
-        progress: 0
-      };
-    }
-  };
-
   return (
     <div className="min-h-screen bg-slate-50/50 pb-20 font-family-retailer">
       <div className="mx-auto w-[90%] max-w-7xl pt-12">
         {/* Header */}
         <header className="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <div className="mb-2 flex items-center gap-2 text-orange-500">
+            <div className="mb-2 flex items-center gap-2 text-indigo-500">
               <Activity className="h-5 w-5" />
               <span className="text-xs font-black uppercase tracking-[0.2em]">Order Lifecycle</span>
             </div>
@@ -221,7 +167,7 @@ export default function OrderPage() {
               Tracking & Activity
             </h1>
             <p className="mt-2 text-slate-500 max-w-xl">
-              Real-time monitoring of your procurement requests and delivery status from distributors.
+              Monitor your orders and delivery status from H-Phsar suppliers.
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -239,7 +185,7 @@ export default function OrderPage() {
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-40 gap-4">
-            <PropagateLoader color="#f97316" size={12} />
+            <PropagateLoader color="#4f46e5" size={12} />
             <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mt-4 animate-pulse">Establishing Connection...</p>
           </div>
         ) : currentOrders.length === 0 ? (
@@ -258,8 +204,7 @@ export default function OrderPage() {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             <AnimatePresence mode="popLayout">
               {currentOrders.map((item, idx) => {
-                const config = getStatusConfig(item.status);
-                const StatusIcon = config.icon;
+                const config = getOrderStatusMeta(item.status);
                 return (
                   <motion.div
                     key={item.id}
@@ -272,11 +217,8 @@ export default function OrderPage() {
                     <Card className="group relative overflow-hidden border-none rounded-[2.5rem] shadow-sm hover:shadow-xl transition-all duration-300 bg-white">
                       <CardContent className="p-0">
                         {/* Status Header */}
-                        <div className={cn("flex items-center justify-between px-8 py-5 border-b", config.bg, config.border)}>
-                          <div className={cn("flex items-center gap-2 font-black text-[10px] uppercase tracking-widest", config.color)}>
-                            <StatusIcon className="h-4 w-4" />
-                            {config.label || item.status}
-                          </div>
+                        <div className={cn("flex items-center justify-between border-b px-8 py-5", STATUS_SURFACE_CLASSES[config.tone])}>
+                          <StatusBadge status={item.status} />
                           <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">#{String(item.id).slice(-8).toUpperCase()}</span>
                         </div>
 
@@ -285,7 +227,7 @@ export default function OrderPage() {
                           <motion.div 
                             initial={{ width: 0 }}
                             animate={{ width: `${config.progress}%` }}
-                            className={cn("h-full transition-all duration-1000", config.progress === 100 ? "bg-emerald-500" : "bg-orange-500")}
+                            className={cn("h-full transition-all duration-1000", config.progress === 100 ? "bg-emerald-500" : "bg-indigo-500")}
                           />
                         </div>
 
@@ -297,6 +239,7 @@ export default function OrderPage() {
                                 <img 
                                   src={getSafeImageSrc(item.storeImage, noImage)} 
                                   className="h-full w-full object-cover rounded-xl"
+                                  alt={`${item.storeName || "Supplier"} store`}
                                   onError={(e) => applyImageFallback(e, noImage)}
                                 />
                               </div>
@@ -311,7 +254,7 @@ export default function OrderPage() {
                               </div>
                             </div>
                             <div className="text-right">
-                              <div className="flex items-center justify-end text-orange-600 font-black text-lg">
+                              <div className="flex items-center justify-end text-indigo-600 font-black text-lg">
                                 <DollarSign className="h-4 w-4" />
                                 {item.total?.toFixed(2)}
                               </div>
@@ -336,7 +279,7 @@ export default function OrderPage() {
                                       <Star className={cn(
                                         "h-5 w-5 transition-colors",
                                         (hoverMap[item.id] || ratingMap[item.id] || 0) >= star
-                                          ? "fill-orange-500 text-orange-500"
+                                          ? "fill-indigo-500 text-indigo-500"
                                           : "text-slate-200"
                                       )} />
                                     </button>
@@ -348,7 +291,7 @@ export default function OrderPage() {
                             <div className="flex items-center gap-3">
                               <Button
                                 variant="outline"
-                                className="flex-1 h-12 rounded-2xl border-slate-100 bg-slate-50 text-slate-600 font-black text-xs uppercase tracking-widest hover:bg-white hover:border-orange-200 hover:text-orange-500 active:scale-[0.98] transition-all"
+                                className="flex-1 h-12 rounded-2xl border-slate-100 bg-slate-50 text-slate-600 font-black text-xs uppercase tracking-widest hover:bg-white hover:border-indigo-200 hover:text-indigo-500 active:scale-[0.98] transition-all"
                                 onClick={() => {
                                   setOpen(true);
                                   handleProductById(item.id);
@@ -357,7 +300,7 @@ export default function OrderPage() {
                                 View Receipt
                               </Button>
 
-                              {item.status === "DISPATCHED" && (
+                              {isBuyerActionAllowed(item.status, "CONFIRM_RECEIPT") && (
                                 <Button
                                   className="h-12 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase tracking-widest active:scale-[0.98] transition-all"
                                   disabled={confirmingId === item.id}
@@ -371,13 +314,14 @@ export default function OrderPage() {
                                 </Button>
                               )}
 
-                              {item.status === "PENDING" && (
+                              {isBuyerActionAllowed(item.status, "CANCEL_REQUEST") && (
                                 <button
                                   onClick={() => {
                                     setDataRequest(item);
                                     setRequestModal(true);
                                   }}
                                   className="h-12 w-12 flex items-center justify-center rounded-2xl bg-rose-50 text-rose-500 hover:bg-rose-100 active:scale-[0.95] transition-all"
+                                  aria-label={`Cancel order ${item.id}`}
                                 >
                                   <Trash2 className="h-5 w-5" />
                                 </button>
@@ -408,9 +352,9 @@ export default function OrderPage() {
                 nextLabel={<ChevronRight className="h-5 w-5" />}
                 className="flex items-center gap-2"
                 pageLinkClassName="h-10 w-10 flex items-center justify-center rounded-xl text-sm font-black transition-all hover:bg-slate-50 text-slate-400"
-                activeLinkClassName="!bg-orange-500 !text-white shadow-lg shadow-orange-500/20"
-                previousLinkClassName="h-10 w-10 flex items-center justify-center rounded-xl text-slate-400 hover:text-orange-500 transition-all"
-                nextLinkClassName="h-10 w-10 flex items-center justify-center rounded-xl text-slate-400 hover:text-orange-500 transition-all"
+                activeLinkClassName="!bg-indigo-500 !text-white shadow-lg shadow-indigo-500/20"
+                previousLinkClassName="h-10 w-10 flex items-center justify-center rounded-xl text-slate-400 hover:text-indigo-500 transition-all"
+                nextLinkClassName="h-10 w-10 flex items-center justify-center rounded-xl text-slate-400 hover:text-indigo-500 transition-all"
                 disabledClassName="opacity-30 cursor-not-allowed"
                 breakLabel="..."
               />
@@ -427,7 +371,7 @@ export default function OrderPage() {
           </div>
           <DialogTitle className="text-2xl font-black tracking-tight text-slate-900 ">Withdraw Request?</DialogTitle>
           <p className="mt-4 text-slate-500 leading-relaxed font-medium">
-            Are you sure you want to cancel your order from <span className="font-bold text-orange-500">{dataRequest?.storeName}</span>?
+            Are you sure you want to cancel your order from <span className="font-bold text-indigo-500">{dataRequest?.storeName}</span>?
             This can't be undone — you'll need to place a new order if you change your mind.
           </p>
           <div className="mt-10 flex gap-4">

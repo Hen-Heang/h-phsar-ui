@@ -154,12 +154,12 @@ export default function ReportPageRetailer() {
         {
           label: "Monthly Expense ($)",
           data: reportRetailer.totalExpenseInEachMonth || [],
-          borderColor: "#f97316",
+          borderColor: "#4f46e5",
           backgroundColor: "rgba(249, 115, 22, 0.1)",
           fill: true,
           tension: 0.4,
           pointRadius: 4,
-          pointBackgroundColor: "#f97316",
+          pointBackgroundColor: "#4f46e5",
           pointBorderColor: "#ffffff",
           pointBorderWidth: 2,
         },
@@ -210,7 +210,7 @@ export default function ReportPageRetailer() {
         {/* Header */}
         <header className="mb-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <div className="mb-2 flex items-center gap-2 text-orange-500">
+            <div className="mb-2 flex items-center gap-2 text-indigo-500">
               <BarChart3 className="h-5 w-5" />
               <span className="text-xs font-black uppercase tracking-[0.2em]">
                 Business Intelligence
@@ -232,7 +232,7 @@ export default function ReportPageRetailer() {
                 value={dateRange}
                 onChange={handleDateChange}
                 showShortcuts={true}
-                inputClassName="w-full h-10 px-4 rounded-xl border-slate-200 bg-slate-50 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all"
+                inputClassName="w-full h-10 px-4 rounded-xl border-slate-200 bg-slate-50 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
                 containerClassName="relative"
                 popoverDirection="down"
               />
@@ -241,7 +241,7 @@ export default function ReportPageRetailer() {
             <Button
               onClick={handleRefresh}
               disabled={loading || isRefreshing}
-              className="rounded-xl bg-orange-500 hover:bg-orange-600 font-bold gap-2 h-10 px-6"
+              className="rounded-xl bg-indigo-500 hover:bg-indigo-600 font-bold gap-2 h-10 px-6"
             >
               {isRefreshing ? (
                 <RefreshCcw className="h-4 w-4 animate-spin" />
@@ -255,7 +255,7 @@ export default function ReportPageRetailer() {
 
         {loading && !isRefreshing ? (
           <div className="flex flex-col items-center justify-center py-40 gap-4">
-            <PropagateLoader color="#f97316" />
+            <PropagateLoader color="#4f46e5" />
             <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mt-4">
               Generating Insights...
             </p>
@@ -290,8 +290,8 @@ export default function ReportPageRetailer() {
                   title: "Shops Visited",
                   value: reportRetailer.totalPurchasedShop || "0",
                   icon: Store,
-                  color: "text-orange-600",
-                  bg: "bg-orange-50",
+                  color: "text-indigo-600",
+                  bg: "bg-indigo-50",
                   desc: "Unique distributors",
                 },
                 {
@@ -341,7 +341,7 @@ export default function ReportPageRetailer() {
                   <Card className="border-none shadow-sm rounded-[2.5rem] overflow-hidden">
                     <CardHeader className="border-b border-slate-50 p-6">
                       <div className="flex items-center gap-3">
-                        <div className="p-2 bg-orange-100 text-orange-600 rounded-lg">
+                        <div className="p-2 bg-indigo-100 text-indigo-600 rounded-lg">
                           <ShoppingBag className="h-4 w-4" />
                         </div>
                         <CardTitle className="text-lg font-black text-slate-900">

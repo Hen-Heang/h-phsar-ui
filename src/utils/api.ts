@@ -1,4 +1,5 @@
 import axios, { type AxiosError } from "axios";
+import { getAuthToken, setAuthToken, clearAuthToken } from "@/lib/auth/authStore";
 
 declare module "axios" {
   export interface AxiosRequestConfig {
@@ -6,6 +7,8 @@ declare module "axios" {
     skipAuthHeader?: boolean;
     /** Skip the 401 sign-out redirect (e.g. a login attempt is expected to 401 on bad credentials). */
     skipAuthRedirect?: boolean;
+    /** Internal: set after one refresh-and-retry attempt, to bound retries to a single attempt. */
+    _retriedAfterRefresh?: boolean;
   }
 }
 
@@ -28,7 +31,7 @@ function redirectToSignIn() {
   if (isRedirectingToSignIn || window.location.pathname.startsWith("/sign-in"))
     return;
   isRedirectingToSignIn = true;
-  localStorage.removeItem("token");
+  clearAuthToken();
   localStorage.removeItem("role");
   localStorage.removeItem("userId");
   window.location.href = "/sign-in";
@@ -43,16 +46,17 @@ export const api = axios.create({
   },
 });
 
-// Attach token from localStorage on every request
+// Attach token from the in-memory auth store on every request. A known-expired
+// (or missing) token is simply omitted rather than triggering a client-side
+// redirect here — with a short-lived access token, that would fire constantly
+// and would never give the response interceptor's refresh-and-retry below a
+// chance to run. Letting the request go out unauthenticated means the backend
+// 401s it, which IS the trigger for the refresh-and-retry flow.
 api.interceptors.request.use((config) => {
   if (typeof window === "undefined" || config.skipAuthHeader) return config;
 
-  const token = localStorage.getItem("token");
-  if (token) {
-    if (isTokenExpired(token)) {
-      redirectToSignIn();
-      return Promise.reject(new axios.Cancel("Token expired"));
-    }
+  const token = getAuthToken();
+  if (token && !isTokenExpired(token)) {
     config.headers.Authorization = `Bearer ${token}`;
   } else {
     delete config.headers.Authorization;
@@ -60,16 +64,58 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Single-flight refresh: if several requests 401 around the same moment
+// (e.g. several widgets fetch on page load right as the access token expires),
+// they must all await the SAME refresh call rather than each rotating the
+// refresh-token cookie themselves — only one rotation can succeed per cookie
+// (see RefreshTokenServiceImpl on the backend), so a second concurrent
+// attempt would just fail against an already-rotated token.
+let refreshPromise: Promise<string | null> | null = null;
+
+function requestNewAccessToken(): Promise<string | null> {
+  if (!refreshPromise) {
+    // Dynamic import (not a static one) to avoid a circular import: auth.service.ts
+    // imports apiPost from this file, so this file can't statically import back
+    // from auth.service.ts. By the time this actually runs, both modules are
+    // fully initialized, so this is safe.
+    refreshPromise = import("@/lib/auth/auth.service")
+      .then(({ refreshAccessToken }) => refreshAccessToken())
+      .then((res) => (res.ok ? (res.data?.data?.token ?? null) : null))
+      .catch(() => null)
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+  return refreshPromise;
+}
+
 api.interceptors.response.use(
   (response) => response,
-  (error: AxiosError) => {
-    if (typeof window !== "undefined" && !error.config?.skipAuthRedirect) {
-      if (error.response?.status === 401) {
-        redirectToSignIn();
-      } else if (error.response?.status === 403) {
-        console.warn("Forbidden: insufficient permissions for this request.");
-      }
+  async (error: AxiosError) => {
+    const config = error.config;
+
+    if (typeof window === "undefined" || config?.skipAuthRedirect) {
+      return Promise.reject(error);
     }
+
+    if (error.response?.status === 401 && !config?._retriedAfterRefresh) {
+      const newToken = await requestNewAccessToken();
+      if (newToken && config) {
+        setAuthToken(newToken);
+        return api.request({
+          ...config,
+          _retriedAfterRefresh: true,
+          headers: { ...config.headers, Authorization: `Bearer ${newToken}` },
+        });
+      }
+      redirectToSignIn();
+      return Promise.reject(error);
+    }
+
+    if (error.response?.status === 403) {
+      console.warn("Forbidden: insufficient permissions for this request.");
+    }
+
     return Promise.reject(error);
   },
 );
@@ -102,13 +148,22 @@ export interface ApiRequestOptions {
   query?: QueryParams;
   /** Defaults to true. Set false for public endpoints (register/login/OTP/etc). */
   auth?: boolean;
+  /** Send/receive cookies on this request (e.g. the httpOnly refresh-token cookie). Defaults to false. */
+  withCredentials?: boolean;
 }
 
 export async function apiRequest<T = unknown>(
   path: string,
   options: ApiRequestOptions = {},
 ): Promise<ApiResult<T>> {
-  const { method = "GET", body, headers = {}, query, auth = true } = options;
+  const {
+    method = "GET",
+    body,
+    headers = {},
+    query,
+    auth = true,
+    withCredentials = false,
+  } = options;
   const isFormData =
     typeof FormData !== "undefined" && body instanceof FormData;
 
@@ -125,6 +180,7 @@ export async function apiRequest<T = unknown>(
       },
       skipAuthHeader: !auth,
       skipAuthRedirect: !auth,
+      withCredentials,
     });
 
     return { ok: true, status: response.status, data: response.data };

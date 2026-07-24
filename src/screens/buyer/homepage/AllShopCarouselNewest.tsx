@@ -104,7 +104,7 @@ const AllShopCarouselNewest = () => {
             >
               {item.isBookmarked ? (
                 <svg
-                  className="fill-orange-500 w-5 ml-[6px] mt-[1px]"
+                  className="fill-indigo-500 w-5 ml-[6px] mt-[1px]"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 512 512"
                 >
@@ -113,7 +113,7 @@ const AllShopCarouselNewest = () => {
               ) : (
                 <>
                   <svg
-                    className="fill-orange-500 w-6 h-6 ml-1"
+                    className="fill-indigo-500 w-6 h-6 ml-1"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 512 512"
                   >
@@ -137,7 +137,7 @@ const AllShopCarouselNewest = () => {
               <p className="flex sm:mt-2 lg:mt-0 text-[16px] items-center gap-2">
                 Rating :
                 <span>
-                  <Star className="w-4 h-4 fill-orange-500 text-orange-500" />
+                  <Star className="w-4 h-4 fill-indigo-500 text-indigo-500" />
                 </span>
                 {parseFloat(item.rating).toFixed(2)}
               </p>

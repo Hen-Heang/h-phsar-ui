@@ -132,7 +132,7 @@ export default function OrderHistoryRetail() {
         {/* Header Section */}
         <header className="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <div className="mb-2 flex items-center gap-2 text-orange-500">
+            <div className="mb-2 flex items-center gap-2 text-indigo-500">
               <History className="h-5 w-5" />
               <span className="text-xs font-black uppercase tracking-[0.2em]">Transaction Archive</span>
             </div>
@@ -146,13 +146,13 @@ export default function OrderHistoryRetail() {
 
           <div className="flex flex-col sm:flex-row items-center gap-4">
             <div className="relative group w-full sm:w-72">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-orange-500 transition-colors" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
               <input 
                 type="text"
                 placeholder="Search history..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-12 pl-11 pr-4 rounded-2xl border-none bg-white shadow-sm focus:ring-2 focus:ring-orange-500/20 transition-all font-medium text-sm"
+                className="w-full h-12 pl-11 pr-4 rounded-2xl border-none bg-white shadow-sm focus:ring-2 focus:ring-indigo-500/20 transition-all font-medium text-sm"
               />
             </div>
             <Button 
@@ -167,7 +167,7 @@ export default function OrderHistoryRetail() {
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-40 gap-4">
-            <PropagateLoader color="#f97316" size={12} />
+            <PropagateLoader color="#4f46e5" size={12} />
             <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mt-4 animate-pulse">Retrieving Archives...</p>
           </div>
         ) : currentOrderHistory.length === 0 ? (
@@ -225,7 +225,7 @@ export default function OrderHistoryRetail() {
                               />
                             </div>
                             <div className="min-w-0">
-                              <h3 className="font-bold text-slate-900 truncate group-hover:text-orange-500 transition-colors">
+                              <h3 className="font-bold text-slate-900 truncate group-hover:text-indigo-500 transition-colors">
                                 {item.order.name}
                               </h3>
                               <span className="lg:hidden block text-[10px] font-bold text-slate-400 uppercase tracking-wider">
@@ -267,7 +267,7 @@ export default function OrderHistoryRetail() {
                               <Button 
                                 variant="outline"
                                 onClick={() => handleProductById(item.order.id)}
-                                className="h-10 rounded-xl border-slate-100 bg-slate-50 text-slate-600 font-black text-[10px] uppercase tracking-widest gap-2 flex-1 lg:flex-none px-6 hover:bg-white hover:border-orange-200 hover:text-orange-500"
+                                className="h-10 rounded-xl border-slate-100 bg-slate-50 text-slate-600 font-black text-[10px] uppercase tracking-widest gap-2 flex-1 lg:flex-none px-6 hover:bg-white hover:border-indigo-200 hover:text-indigo-500"
                               >
                                 <Package className="h-3.5 w-3.5" />
                                 Details
@@ -295,9 +295,9 @@ export default function OrderHistoryRetail() {
                 nextLabel={<ChevronRight className="h-5 w-5" />}
                 className="flex items-center gap-2"
                 pageLinkClassName="h-10 w-10 flex items-center justify-center rounded-xl text-sm font-black transition-all hover:bg-slate-50 text-slate-400"
-                activeLinkClassName="!bg-orange-500 !text-white shadow-lg shadow-orange-500/20"
-                previousLinkClassName="h-10 w-10 flex items-center justify-center rounded-xl text-slate-400 hover:text-orange-500 transition-all"
-                nextLinkClassName="h-10 w-10 flex items-center justify-center rounded-xl text-slate-400 hover:text-orange-500 transition-all"
+                activeLinkClassName="!bg-indigo-500 !text-white shadow-lg shadow-indigo-500/20"
+                previousLinkClassName="h-10 w-10 flex items-center justify-center rounded-xl text-slate-400 hover:text-indigo-500 transition-all"
+                nextLinkClassName="h-10 w-10 flex items-center justify-center rounded-xl text-slate-400 hover:text-indigo-500 transition-all"
                 disabledClassName="opacity-30 cursor-not-allowed"
                 breakLabel="..."
               />

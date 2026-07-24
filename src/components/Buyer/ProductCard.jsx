@@ -24,7 +24,7 @@ export default function ProductCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -5 }}
-      className={`group relative flex flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white transition-all hover:border-orange-200 hover:shadow-xl hover:shadow-orange-500/10   ${
+      className={`group relative flex flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white transition-all hover:border-indigo-200 hover:shadow-xl hover:shadow-indigo-500/10   ${
         isUnavailable ? "opacity-75 grayscale-[0.5]" : ""
       }`}
     >
@@ -51,7 +51,7 @@ export default function ProductCard({
           <div className="absolute inset-0 flex items-center justify-center bg-slate-900/0 opacity-0 transition-all group-hover:bg-slate-900/5 group-hover:opacity-100">
             <button
               onClick={() => onIncrement(product.id)}
-              className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-500 text-white shadow-xl transition hover:bg-orange-600 active:scale-90"
+              className="flex h-12 w-12 items-center justify-center rounded-full bg-indigo-500 text-white shadow-xl transition hover:bg-indigo-600 active:scale-90"
             >
               <Plus className="h-6 w-6" />
             </button>
@@ -66,7 +66,7 @@ export default function ProductCard({
             {product.name}
           </h3>
           <div className="mt-1 flex items-center gap-2">
-            <span className="text-lg font-black text-orange-500">
+            <span className="text-lg font-black text-indigo-500">
               ${product.price}
             </span>
             <span className="text-[10px] font-medium text-slate-400">
@@ -97,13 +97,13 @@ export default function ProductCard({
               <button
                 disabled={disabled || isLoadingDecrement}
                 onClick={() => onDecrement(product.id)}
-                className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-slate-400 shadow-sm transition hover:text-orange-500 disabled:opacity-50 "
+                className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-slate-400 shadow-sm transition hover:text-indigo-500 disabled:opacity-50 "
               >
                 {isLoadingDecrement ? (
                   <motion.div
                     animate={{ rotate: 360 }}
                     transition={{ repeat: Infinity, duration: 1 }}
-                    className="h-4 w-4 border-2 border-orange-500 border-t-transparent rounded-full"
+                    className="h-4 w-4 border-2 border-indigo-500 border-t-transparent rounded-full"
                   />
                 ) : (
                   <Minus className="h-4 w-4" />
@@ -124,7 +124,7 @@ export default function ProductCard({
                     <motion.div
                       animate={{ rotate: 360 }}
                       transition={{ repeat: Infinity, duration: 1 }}
-                      className="h-3 w-3 border-2 border-orange-500 border-t-transparent rounded-full"
+                      className="h-3 w-3 border-2 border-indigo-500 border-t-transparent rounded-full"
                     />
                   </div>
                 )}
@@ -133,13 +133,13 @@ export default function ProductCard({
               <button
                 disabled={disabled || isLoadingIncrement}
                 onClick={() => onIncrement(product.id)}
-                className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-slate-400 shadow-sm transition hover:text-orange-500 disabled:opacity-50 "
+                className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-slate-400 shadow-sm transition hover:text-indigo-500 disabled:opacity-50 "
               >
                 {isLoadingIncrement ? (
                   <motion.div
                     animate={{ rotate: 360 }}
                     transition={{ repeat: Infinity, duration: 1 }}
-                    className="h-4 w-4 border-2 border-orange-500 border-t-transparent rounded-full"
+                    className="h-4 w-4 border-2 border-indigo-500 border-t-transparent rounded-full"
                   />
                 ) : (
                   <Plus className="h-4 w-4" />
@@ -153,7 +153,7 @@ export default function ProductCard({
               className={`h-12 w-full rounded-2xl font-bold transition-all active:scale-[0.98] ${
                 isUnavailable
                   ? "bg-slate-200 text-slate-400  "
-                  : "bg-slate-900 text-white hover:bg-orange-500  "
+                  : "bg-slate-900 text-white hover:bg-indigo-500  "
               }`}
             >
               {isLoadingIncrement ? (

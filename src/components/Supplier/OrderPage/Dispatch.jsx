@@ -76,7 +76,7 @@ export default function Dispatch({ toggleTab4 }) {
                   key={item.id}
                   index={idx}
                   item={item}
-                  status="Dispatch"
+                  status="DISPATCHED"
                   onViewDetails={onViewDetails}
                 />
               ))}

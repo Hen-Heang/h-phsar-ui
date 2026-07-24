@@ -16,6 +16,11 @@ export interface BackendResponse<T> {
   message?: string;
 }
 
+// ── Refresh ────────────────────────────────────────────────────────────────────
+export interface RefreshTokenData {
+  token: string;
+}
+
 // ── Forgot / Reset password ───────────────────────────────────────────────────
 export interface ResetPasswordRequest {
   email: string;

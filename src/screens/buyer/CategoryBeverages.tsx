@@ -29,7 +29,7 @@ export default function CategoryBeverages() {
       <div className="border-2  mt-7 mb-8 rounded-xl">
         <div className="space-x-6 py-3 text-black ml-7 text-base font-bold inline-flex items-center hover:text-black ">
           <svg
-            className="w-3 mr-4 fill-orange-500"
+            className="w-3 mr-4 fill-indigo-500"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 320 512"
           >
@@ -46,10 +46,10 @@ export default function CategoryBeverages() {
           rows={3}
           loop
           arrowLeft={
-            <ChevronLeft className="absolute z-50 top-80 -left-9 cursor-pointer w-8 h-8 text-gray-600 hover:text-orange-500" />
+            <ChevronLeft className="absolute z-50 top-80 -left-9 cursor-pointer w-8 h-8 text-gray-600 hover:text-indigo-500" />
           }
           arrowRight={
-            <ChevronRight className="absolute z-50 top-80 right-2 cursor-pointer w-8 h-8 text-gray-600 hover:text-orange-500" />
+            <ChevronRight className="absolute z-50 top-80 right-2 cursor-pointer w-8 h-8 text-gray-600 hover:text-indigo-500" />
           }
         >
           {getAllProduct.map((item) => (
@@ -72,7 +72,7 @@ export default function CategoryBeverages() {
                   <div className=" w-1/2 p-9 ">
                     <p className="text-xl font-semibold">Chanpich ...</p>
                     <p className="font-medium">Carlsberg</p>
-                    <p className=" text-orange-500 font-medium">$ 33.65/pack</p>
+                    <p className=" text-indigo-500 font-medium">$ 33.65/pack</p>
                     <p className="text-gray-500 font-medium ">
                       3 left in stock
                     </p>

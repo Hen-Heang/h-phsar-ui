@@ -103,7 +103,7 @@ export default function Complete({ toggleTab }) {
                   key={item.id}
                   index={idx}
                   item={item}
-                  status="Completed"
+                  status="COMPLETED"
                   actionLabel="Invoice"
                   actionIcon={FileText}
                   actionVariant="outline"

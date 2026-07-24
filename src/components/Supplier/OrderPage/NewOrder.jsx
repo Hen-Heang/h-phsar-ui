@@ -132,13 +132,14 @@ export default function NewOrder({ toggleTab2 }) {
                   key={item.id}
                   index={idx}
                   item={item}
-                  status="Pending"
+                  status="PENDING"
+                  actionType="ACCEPT"
                   actionLabel="Accept"
                   actionIcon={Check}
                   onAction={onAccept}
                   onViewDetails={onViewDetails}
                   isLoading={loadingAccept}
-                  onDecline={(id) => {
+                  onReject={() => {
                     setTargetOrder(item);
                     setShowDecline(true);
                   }}

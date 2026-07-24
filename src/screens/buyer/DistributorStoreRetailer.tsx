@@ -175,7 +175,7 @@ export default function DistributorStoreRetailer() {
           <div className="flex flex-col items-start justify-between gap-8 lg:flex-row lg:items-center">
             <div className="flex flex-1 flex-col gap-4">
               <div className="flex items-center gap-3">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-100 text-orange-600 ">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-600 ">
                   <Store className="h-8 w-8" />
                 </div>
                 <div>
@@ -190,7 +190,7 @@ export default function DistributorStoreRetailer() {
 
               <div className="flex flex-wrap gap-6 mt-2">
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-0.5 text-orange-500">
+                  <div className="flex items-center gap-0.5 text-indigo-500">
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
@@ -204,14 +204,14 @@ export default function DistributorStoreRetailer() {
                 </div>
 
                 <div className="flex items-center gap-2 text-slate-500">
-                  <MapPin className="h-4 w-4 text-orange-500" />
+                  <MapPin className="h-4 w-4 text-indigo-500" />
                   <span className="text-sm font-medium">
                     {oneShopData.address}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-2 text-slate-500">
-                  <Phone className="h-4 w-4 text-orange-500" />
+                  <Phone className="h-4 w-4 text-indigo-500" />
                   <span className="text-sm font-medium">
                     {oneShopData.primaryPhone}{" "}
                     {oneShopData.additionalPhone
@@ -252,7 +252,7 @@ export default function DistributorStoreRetailer() {
               onClick={() => toggleTab(0)}
               className={`whitespace-nowrap rounded-xl px-6 py-2.5 text-sm font-bold transition-all ${
                 toggleState === 0
-                  ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
+                  ? "bg-indigo-500 text-white shadow-lg shadow-indigo-500/20"
                   : "text-slate-500 hover:bg-slate-50 hover:text-slate-900   "
               }`}
             >
@@ -264,7 +264,7 @@ export default function DistributorStoreRetailer() {
                 onClick={() => toggleTab(cat.id)}
                 className={`whitespace-nowrap rounded-xl px-6 py-2.5 text-sm font-bold transition-all ${
                   toggleState === cat.id
-                    ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
+                    ? "bg-indigo-500 text-white shadow-lg shadow-indigo-500/20"
                     : "text-slate-500 hover:bg-slate-50 hover:text-slate-900   "
                 }`}
               >
@@ -282,7 +282,7 @@ export default function DistributorStoreRetailer() {
                   className="h-12 min-w-[200px] justify-between rounded-2xl border-slate-200 "
                 >
                   <div className="flex items-center gap-2">
-                    <TrendingUp className="h-4 w-4 text-orange-500" />
+                    <TrendingUp className="h-4 w-4 text-indigo-500" />
                     <span className="text-sm font-bold text-slate-700 ">
                       Sort:{" "}
                       {selectedOption === "all"

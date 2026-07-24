@@ -103,7 +103,8 @@ export default function Preparing({ toggleTab3 }) {
                   key={item.id}
                   index={idx}
                   item={item}
-                  status="Preparing"
+                  status="PROCESSING"
+                  actionType="DISPATCH"
                   actionLabel="Dispatch"
                   actionIcon={Truck}
                   onAction={onDispatch}

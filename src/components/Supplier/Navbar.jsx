@@ -8,6 +8,7 @@ import React, {
   useState,
 } from "react";
 import { useAppDispatch as useDispatch, useAppSelector as useSelector } from "@/redux/hooks";
+import { performLogout } from "@/lib/auth/auth.service";
 import { useRouter } from "next/navigation";
 import {
   Bell,
@@ -146,7 +147,8 @@ const Navbar = () => {
       .finally(() => setLoadingReadAll(false));
   };
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
+    await performLogout();
     localStorage.clear();
     router.push("/");
   };

@@ -108,7 +108,7 @@ const AllShopCarousel = () => {
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.2, delay: (idx % 3) * 0.05 }}
               onClick={() => onClickGetDataShop(item.id, item.name)}
-              className="group relative cursor-pointer overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-4 transition-all hover:border-orange-200 hover:shadow-xl hover:shadow-orange-500/5  "
+              className="group relative cursor-pointer overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-4 transition-all hover:border-indigo-200 hover:shadow-xl hover:shadow-indigo-500/5  "
             >
               {/* Card Image Wrapper */}
               <div className="relative aspect-[16/10] overflow-hidden rounded-2xl bg-slate-50 ">
@@ -141,7 +141,7 @@ const AllShopCarousel = () => {
                   <h3 className="line-clamp-1 text-lg font-black text-slate-900 ">
                     {item.name}
                   </h3>
-                  <div className="flex items-center gap-1 text-orange-500">
+                  <div className="flex items-center gap-1 text-indigo-500">
                     <Star className="h-3.5 w-3.5 fill-current" />
                     <span className="text-xs font-black">
                       {parseFloat(item.rating || 0).toFixed(1)}
@@ -150,7 +150,7 @@ const AllShopCarousel = () => {
                 </div>
 
                 <div className="mt-2 flex items-center gap-1.5 text-slate-500 ">
-                  <MapPin className="h-3.5 w-3.5 text-orange-500" />
+                  <MapPin className="h-3.5 w-3.5 text-indigo-500" />
                   <span className="line-clamp-1 text-xs font-medium">
                     {item.address}
                   </span>
@@ -175,7 +175,7 @@ const AllShopCarousel = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-8 rounded-lg text-[11px] font-black uppercase tracking-wider text-orange-500 hover:bg-orange-50"
+                    className="h-8 rounded-lg text-[11px] font-black uppercase tracking-wider text-indigo-500 hover:bg-indigo-50"
                   >
                     View Detail
                     <ChevronRight className="ml-1 h-3 w-3" />
@@ -197,7 +197,7 @@ const AllShopCarousel = () => {
             nextLabel={<ChevronRight className="h-5 w-5" />}
             className="flex items-center gap-2"
             pageClassName="h-10 w-10 flex items-center justify-center rounded-xl text-sm font-bold transition hover:bg-slate-100  text-slate-500"
-            activeClassName="!bg-orange-500 !text-white shadow-lg shadow-orange-500/20"
+            activeClassName="!bg-indigo-500 !text-white shadow-lg shadow-indigo-500/20"
             previousClassName="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-200 text-slate-400 hover:bg-white  "
             nextClassName="h-10 w-10 flex items-center justify-center rounded-xl border border-slate-200 text-slate-400 hover:bg-white  "
             breakLabel="..."

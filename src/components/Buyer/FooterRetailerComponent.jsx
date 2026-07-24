@@ -39,9 +39,9 @@ export default function FooterRetailerComponent() {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="h-12 w-full rounded-xl border border-slate-800 bg-slate-900 px-4 text-sm text-white placeholder:text-slate-500 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 transition-all"
+                className="h-12 w-full rounded-xl border border-slate-800 bg-slate-900 px-4 text-sm text-white placeholder:text-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all"
               />
-              <Button className="h-12 rounded-xl bg-orange-500 px-8 font-bold text-white hover:bg-orange-600 transition-all active:scale-[0.98]">
+              <Button className="h-12 rounded-xl bg-indigo-500 px-8 font-bold text-white hover:bg-indigo-600 transition-all active:scale-[0.98]">
                 Subscribe
               </Button>
             </div>
@@ -54,7 +54,7 @@ export default function FooterRetailerComponent() {
           {/* Brand Column */}
           <div className="lg:col-span-4">
             <Link href="/buyer/home" className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-500 text-white shadow-lg shadow-orange-500/20">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-500 text-white shadow-lg shadow-indigo-500/20">
                 <Package className="h-7 w-7" />
               </div>
               <span className="text-2xl font-black tracking-tighter text-white">
@@ -76,7 +76,7 @@ export default function FooterRetailerComponent() {
                 <a
                   key={social.label}
                   href={social.href}
-                  className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 border border-slate-800 text-slate-400 transition-all hover:bg-orange-500 hover:text-white hover:border-orange-500 hover:shadow-lg hover:shadow-orange-500/20"
+                  className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 border border-slate-800 text-slate-400 transition-all hover:bg-indigo-500 hover:text-white hover:border-indigo-500 hover:shadow-lg hover:shadow-indigo-500/20"
                   aria-label={social.label}
                 >
                   <social.icon className="h-5 w-5" />
@@ -103,7 +103,7 @@ export default function FooterRetailerComponent() {
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="group flex items-center text-sm font-medium text-slate-400 transition hover:text-orange-500"
+                      className="group flex items-center text-sm font-medium text-slate-400 transition hover:text-indigo-500"
                     >
                       <ArrowRight className="mr-2 h-3 w-3 -translate-x-2 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
                       {link.label}
@@ -129,7 +129,7 @@ export default function FooterRetailerComponent() {
                   <li key={link.label}>
                     <a
                       href={link.href}
-                      className="group flex items-center text-sm font-medium text-slate-400 transition hover:text-orange-500"
+                      className="group flex items-center text-sm font-medium text-slate-400 transition hover:text-indigo-500"
                     >
                       <ArrowRight className="mr-2 h-3 w-3 -translate-x-2 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
                       {link.label}
@@ -146,7 +146,7 @@ export default function FooterRetailerComponent() {
               </h4>
               <ul className="mt-6 space-y-5">
                 <li className="flex items-start gap-3">
-                  <Phone className="mt-0.5 h-4 w-4 text-orange-500" />
+                  <Phone className="mt-0.5 h-4 w-4 text-indigo-500" />
                   <div className="text-sm font-medium">
                     <p className="text-slate-200">+855 12 850 001</p>
                     <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">
@@ -155,7 +155,7 @@ export default function FooterRetailerComponent() {
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
-                  <Mail className="mt-0.5 h-4 w-4 text-orange-500" />
+                  <Mail className="mt-0.5 h-4 w-4 text-indigo-500" />
                   <div className="text-sm font-medium">
                     <p className="text-slate-200">support@stockflow.com</p>
                     <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">
@@ -164,7 +164,7 @@ export default function FooterRetailerComponent() {
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
-                  <MapPin className="mt-0.5 h-4 w-4 text-orange-500" />
+                  <MapPin className="mt-0.5 h-4 w-4 text-indigo-500" />
                   <div className="text-sm font-medium">
                     <p className="text-slate-200">Phnom Penh, Cambodia</p>
                     <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">

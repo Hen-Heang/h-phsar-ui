@@ -89,7 +89,7 @@ const NewShopCarousel = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.1 }}
             onClick={() => onClickGetDataShop(item.id, item.name)}
-            className="group relative cursor-pointer overflow-hidden rounded-[2.5rem] border border-slate-200 bg-white shadow-xl shadow-slate-200/50 transition-all hover:-translate-y-1 hover:border-orange-200 hover:shadow-2xl hover:shadow-orange-500/10   "
+            className="group relative cursor-pointer overflow-hidden rounded-[2.5rem] border border-slate-200 bg-white shadow-xl shadow-slate-200/50 transition-all hover:-translate-y-1 hover:border-indigo-200 hover:shadow-2xl hover:shadow-indigo-500/10   "
           >
             {/* Store Banner */}
             <div className="relative h-56 w-full overflow-hidden">
@@ -102,7 +102,7 @@ const NewShopCarousel = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" />
 
               {/* Badge */}
-              <div className="absolute left-6 top-6 flex items-center gap-2 rounded-xl bg-orange-500 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-white shadow-lg shadow-orange-500/30">
+              <div className="absolute left-6 top-6 flex items-center gap-2 rounded-xl bg-indigo-500 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-white shadow-lg shadow-indigo-500/30">
                 <Sparkles className="h-3 w-3" />
                 New Distributor
               </div>
@@ -124,7 +124,7 @@ const NewShopCarousel = () => {
               {/* Quick Info Overlay */}
               <div className="absolute bottom-6 left-6 right-6">
                 <div className="flex items-center gap-2 text-white/80">
-                  <Star className="h-3.5 w-3.5 fill-orange-400 text-orange-400" />
+                  <Star className="h-3.5 w-3.5 fill-indigo-400 text-indigo-400" />
                   <span className="text-xs font-bold">
                     {parseFloat(item.rating || 0).toFixed(1)} Distributor Rating
                   </span>
@@ -139,27 +139,27 @@ const NewShopCarousel = () => {
             <div className="p-8">
               <div className="space-y-4">
                 <div className="flex items-start gap-3 text-slate-500">
-                  <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-orange-500" />
+                  <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-indigo-500" />
                   <p className="line-clamp-1 text-sm font-medium leading-relaxed ">
                     {item.address}
                   </p>
                 </div>
                 <div className="flex items-center gap-3 text-slate-500">
-                  <Phone className="h-4 w-4 shrink-0 text-orange-500" />
+                  <Phone className="h-4 w-4 shrink-0 text-indigo-500" />
                   <p className="text-sm font-medium ">{item.primaryPhone}</p>
                 </div>
               </div>
 
               <div className="mt-8 flex items-center justify-between border-t border-slate-50 pt-6 ">
                 <div className="flex -space-x-2">
-                  <div className="h-8 w-8 rounded-lg border-2 border-white bg-orange-100 " />
+                  <div className="h-8 w-8 rounded-lg border-2 border-white bg-indigo-100 " />
                   <div className="h-8 w-8 rounded-lg border-2 border-white bg-blue-100 " />
                   <div className="h-8 w-8 rounded-lg border-2 border-white bg-slate-100 " />
                 </div>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-10 rounded-xl font-bold text-orange-500 hover:bg-orange-50 group-hover:bg-orange-50"
+                  className="h-10 rounded-xl font-bold text-indigo-500 hover:bg-indigo-50 group-hover:bg-indigo-50"
                 >
                   Visit Store
                   <ChevronRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />

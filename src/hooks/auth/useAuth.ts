@@ -14,6 +14,7 @@ import {
   resendVerificationCode,
 } from "@/lib/auth/auth.service";
 import { setDataLogin } from "@/redux/slices/auth/authSlice";
+import { setAuthToken } from "@/lib/auth/authStore";
 import { roleIdToRole } from "@/config/roles";
 import { ROLE_HOME_ROUTE } from "@/config/routes";
 import type {
@@ -73,7 +74,7 @@ export function useLoginMutation({ onEmailNotVerified }: UseLoginOptions = {}) {
         }
 
         dispatch(setDataLogin(loginData));
-        localStorage.setItem("token", loginData.token);
+        setAuthToken(loginData.token);
         localStorage.setItem("role", String(loginData.roleId));
         localStorage.setItem("email", variables.email);
         localStorage.setItem("userId", String(loginData.userId));

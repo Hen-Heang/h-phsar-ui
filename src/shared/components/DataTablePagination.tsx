@@ -8,7 +8,7 @@ import { cn } from "@/lib/cn";
 interface DataTablePaginationProps {
   pageCount: number;
   onPageChange: (selectedItem: { selected: number }) => void;
-  theme?: "blue" | "orange";
+  theme?: "blue" | "orange" | "admin";
   className?: string;
   /** Zero-indexed current page, for callers that reset pageNumber externally (e.g. on search change). */
   forcePage?: number;
@@ -28,11 +28,19 @@ const DataTablePagination: React.FC<DataTablePaginationProps> = ({
   if (pageCount <= 1) return null;
 
   const isBlue = theme === "blue";
-  const activeClass = isBlue
-    ? "!bg-blue-600 !text-white shadow-lg shadow-blue-600/20"
-    : "!bg-orange-500 !text-white shadow-lg shadow-orange-500/20";
+  const activeClass =
+    theme === "admin"
+      ? "!bg-[var(--admin-accent)] !text-white shadow-lg shadow-slate-900/15"
+      : isBlue
+        ? "!bg-blue-600 !text-white shadow-lg shadow-blue-600/20"
+        : "!bg-orange-500 !text-white shadow-lg shadow-orange-500/20";
 
-  const hoverClass = isBlue ? "hover:text-blue-500" : "hover:text-orange-500";
+  const hoverClass =
+    theme === "admin"
+      ? "hover:text-admin"
+      : isBlue
+        ? "hover:text-blue-500"
+        : "hover:text-orange-500";
 
   return (
     <div className={cn("mt-12 flex justify-center", className)}>

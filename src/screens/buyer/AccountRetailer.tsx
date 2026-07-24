@@ -189,7 +189,7 @@ export default function AccountRetailer() {
         {/* Header Section */}
         <header className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
-            <div className="mb-2 flex items-center gap-2 text-orange-500">
+            <div className="mb-2 flex items-center gap-2 text-indigo-500">
               <ShieldCheck className="h-5 w-5" />
               <span className="text-xs font-black uppercase tracking-[0.2em]">
                 Authorized Access
@@ -229,7 +229,7 @@ export default function AccountRetailer() {
                 </Button>
                 <Button
                   onClick={() => validate() && setShowSaveConfirm(true)}
-                  className="h-12 px-8 rounded-2xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs uppercase tracking-widest gap-2 shadow-lg shadow-orange-500/20 active:scale-[0.98] transition-all"
+                  className="h-12 px-8 rounded-2xl bg-indigo-500 hover:bg-indigo-600 text-white font-black text-xs uppercase tracking-widest gap-2 shadow-lg shadow-indigo-500/20 active:scale-[0.98] transition-all"
                 >
                   <Save className="h-4 w-4" />
                   Save Changes
@@ -280,8 +280,8 @@ export default function AccountRetailer() {
                       ? `${profile.firstName} ${profile.lastName}`
                       : "Authenticated User"}
                   </h2>
-                  <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-50 text-orange-600 text-[10px] font-black uppercase tracking-wider">
-                    <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
+                  <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase tracking-wider">
+                    <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
                     Verified Retailer
                   </div>
 
@@ -331,7 +331,7 @@ export default function AccountRetailer() {
                   {/* Identity Group */}
                   <section>
                     <div className="flex items-center gap-3 mb-8">
-                      <div className="h-8 w-1 bg-orange-500 rounded-full" />
+                      <div className="h-8 w-1 bg-indigo-500 rounded-full" />
                       <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">
                         Personal Identity
                       </h3>
@@ -353,7 +353,7 @@ export default function AccountRetailer() {
                             "w-full h-14 px-6 rounded-2xl border transition-all font-bold text-sm",
                             !isEditing
                               ? "bg-slate-50 border-slate-100 text-slate-500 cursor-not-allowed"
-                              : "bg-white border-slate-200 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 text-slate-900",
+                              : "bg-white border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 text-slate-900",
                             validationErrors.firstName &&
                               "border-rose-500 ring-4 ring-rose-500/10",
                           )}
@@ -379,7 +379,7 @@ export default function AccountRetailer() {
                             "w-full h-14 px-6 rounded-2xl border transition-all font-bold text-sm",
                             !isEditing
                               ? "bg-slate-50 border-slate-100 text-slate-500 cursor-not-allowed"
-                              : "bg-white border-slate-200 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 text-slate-900",
+                              : "bg-white border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 text-slate-900",
                             validationErrors.lastName &&
                               "border-rose-500 ring-4 ring-rose-500/10",
                           )}
@@ -496,9 +496,9 @@ export default function AccountRetailer() {
         <DialogContent className="max-w-md p-10 rounded-[3rem] border-none shadow-2xl overflow-hidden">
           <DialogTitle className="sr-only">Save Confirmation</DialogTitle>
           <div className="text-center relative">
-            <div className="absolute -top-20 -right-20 w-40 h-40 bg-orange-500/10 rounded-full blur-3xl" />
+            <div className="absolute -top-20 -right-20 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl" />
 
-            <div className="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-orange-50 text-orange-500 ">
+            <div className="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-indigo-50 text-indigo-500 ">
               <AnimatePresence mode="wait">
                 {isSubmitting ? (
                   <motion.div
@@ -534,7 +534,7 @@ export default function AccountRetailer() {
               <Button
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="h-16 rounded-[1.5rem] bg-orange-500 font-black text-sm uppercase tracking-widest text-white shadow-xl shadow-orange-500/20 hover:bg-orange-600 active:scale-[0.98] transition-all"
+                className="h-16 rounded-[1.5rem] bg-indigo-500 font-black text-sm uppercase tracking-widest text-white shadow-xl shadow-indigo-500/20 hover:bg-indigo-600 active:scale-[0.98] transition-all"
               >
                 {isSubmitting ? "Uploading Data..." : "Confirm & Update"}
               </Button>

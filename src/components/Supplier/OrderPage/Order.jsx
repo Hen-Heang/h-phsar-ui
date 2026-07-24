@@ -64,8 +64,8 @@ export default function Order() {
   const tabs = [
     { id: 1, label: "Pending",    icon: <ShoppingBag className="w-4 h-4" />, component: <NewOrder toggleTab2={() => setActiveTab(2)} /> },
     { id: 2, label: "Preparing",  icon: <Package className="w-4 h-4" />,     component: <Preparing toggleTab3={() => setActiveTab(3)} /> },
-    { id: 3, label: "Dispatching",icon: <Truck className="w-4 h-4" />,       component: <Dispatch toggleTab4={() => setActiveTab(4)} /> },
-    { id: 4, label: "Delivered",   icon: <CheckCircle2 className="w-4 h-4" />, component: <Confirm toggleTab5={() => setActiveTab(5)} /> },
+    { id: 3, label: "Dispatched", icon: <Truck className="w-4 h-4" />, component: <Dispatch toggleTab4={() => setActiveTab(4)} /> },
+    { id: 4, label: "Awaiting receipt", icon: <CheckCircle2 className="w-4 h-4" />, component: <Confirm toggleTab5={() => setActiveTab(5)} /> },
     { id: 5, label: "Completed",  icon: <CheckCircle2 className="w-4 h-4" />,component: <Complete /> },
     { id: 6, label: "All Orders", icon: <LayoutList className="w-4 h-4" />,  component: <AllOrders /> },
   ];
@@ -80,7 +80,7 @@ export default function Order() {
         <div className="p-6 md:p-8">
           <div className="mb-8">
             <h1 className="text-3xl font-black text-slate-900 ">Order Activity</h1>
-            <p className="text-slate-500 mt-1">Monitor and manage your incoming retailer orders.</p>
+            <p className="text-slate-500 mt-1">Monitor and manage incoming Buyer orders.</p>
           </div>
 
           <div className="border-b border-slate-100  mb-6">
@@ -135,4 +135,3 @@ export default function Order() {
     </motion.div>
   );
 }
-

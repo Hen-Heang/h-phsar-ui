@@ -101,8 +101,8 @@ export default function FavoriteProduct() {
         {/* Header */}
         <header className="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <div className="mb-2 flex items-center gap-2 text-orange-500">
-              <Heart className="h-5 w-5 fill-orange-500" />
+            <div className="mb-2 flex items-center gap-2 text-indigo-500">
+              <Heart className="h-5 w-5 fill-indigo-500" />
               <span className="text-xs font-black uppercase tracking-[0.2em]">
                 Curated Collection
               </span>
@@ -117,20 +117,20 @@ export default function FavoriteProduct() {
           </div>
 
           <div className="relative group w-full lg:w-80">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-orange-500 transition-colors" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
             <input
               type="text"
               placeholder="Filter favorites..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-12 pl-11 pr-4 rounded-2xl border-none bg-white shadow-sm focus:ring-2 focus:ring-orange-500/20 transition-all font-medium text-sm"
+              className="w-full h-12 pl-11 pr-4 rounded-2xl border-none bg-white shadow-sm focus:ring-2 focus:ring-indigo-500/20 transition-all font-medium text-sm"
             />
           </div>
         </header>
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-40 gap-4">
-            <PropagateLoader color="#f97316" size={12} />
+            <PropagateLoader color="#4f46e5" size={12} />
             <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mt-4 animate-pulse">
               Syncing Favorites...
             </p>
@@ -141,8 +141,8 @@ export default function FavoriteProduct() {
             animate={{ opacity: 1, y: 0 }}
             className="flex flex-col items-center justify-center py-32 bg-white rounded-[3rem] border border-slate-100 shadow-sm text-center px-6"
           >
-            <div className="rounded-full bg-orange-50 p-8 mb-6">
-              <Store className="h-16 w-16 text-orange-200" />
+            <div className="rounded-full bg-indigo-50 p-8 mb-6">
+              <Store className="h-16 w-16 text-indigo-200" />
             </div>
             <h3 className="text-2xl font-black text-slate-900">
               {searchQuery ? "No matches found" : "Your collection is empty"}
@@ -155,7 +155,7 @@ export default function FavoriteProduct() {
             {!searchQuery && (
               <Button
                 onClick={() => router.push("/buyer/home")}
-                className="mt-8 h-12 px-8 rounded-xl bg-orange-500 hover:bg-orange-600 font-bold gap-2"
+                className="mt-8 h-12 px-8 rounded-xl bg-indigo-500 hover:bg-indigo-600 font-bold gap-2"
               >
                 Explore Shops
                 <ArrowRight className="h-4 w-4" />
@@ -193,7 +193,7 @@ export default function FavoriteProduct() {
 
                         {/* Rating Badge */}
                         <div className="absolute top-4 left-4 flex items-center gap-1.5 rounded-full bg-white/90 backdrop-blur-md px-3 py-1.5 shadow-lg">
-                          <Star className="h-3.5 w-3.5 fill-orange-500 text-orange-500" />
+                          <Star className="h-3.5 w-3.5 fill-indigo-500 text-indigo-500" />
                           <span className="text-[11px] font-black text-slate-900">
                             {parseFloat(item.rating).toFixed(1)}
                           </span>
@@ -202,7 +202,7 @@ export default function FavoriteProduct() {
                         {/* Unfavorite Action */}
                         <button
                           onClick={(e) => handleDeleteBookmark(e, item.id)}
-                          className="absolute top-4 right-4 h-10 w-10 flex items-center justify-center rounded-full bg-white/90 backdrop-blur-md text-orange-500 shadow-lg hover:bg-orange-500 hover:text-white transition-all transform hover:rotate-12"
+                          className="absolute top-4 right-4 h-10 w-10 flex items-center justify-center rounded-full bg-white/90 backdrop-blur-md text-indigo-500 shadow-lg hover:bg-indigo-500 hover:text-white transition-all transform hover:rotate-12"
                         >
                           <Heart className="h-5 w-5 fill-current" />
                         </button>
@@ -211,7 +211,7 @@ export default function FavoriteProduct() {
                       {/* Content Section */}
                       <div className="p-8 flex flex-col flex-1">
                         <div className="mb-4">
-                          <h3 className="text-xl font-black text-slate-900 line-clamp-1 group-hover:text-orange-500 transition-colors">
+                          <h3 className="text-xl font-black text-slate-900 line-clamp-1 group-hover:text-indigo-500 transition-colors">
                             {item.name}
                           </h3>
                           <div className="mt-2 flex items-start gap-2 text-slate-400">
@@ -228,7 +228,7 @@ export default function FavoriteProduct() {
                             item.categories.slice(0, 3).map((cat, idx) => (
                               <span
                                 key={idx}
-                                className="px-3 py-1 rounded-lg bg-slate-50 text-[10px] font-black uppercase tracking-wider text-slate-500 group-hover:bg-orange-50 group-hover:text-orange-600 transition-colors"
+                                className="px-3 py-1 rounded-lg bg-slate-50 text-[10px] font-black uppercase tracking-wider text-slate-500 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors"
                               >
                                 {cat.name}
                               </span>
@@ -246,7 +246,7 @@ export default function FavoriteProduct() {
                         </div>
 
                         {/* Hover Action Link */}
-                        <div className="mt-6 flex items-center justify-between text-orange-500 font-black text-xs uppercase tracking-widest opacity-0 transform translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                        <div className="mt-6 flex items-center justify-between text-indigo-500 font-black text-xs uppercase tracking-widest opacity-0 transform translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
                           <span>Visit Store</span>
                           <ArrowRight className="h-4 w-4" />
                         </div>
