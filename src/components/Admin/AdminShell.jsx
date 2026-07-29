@@ -127,51 +127,45 @@ export default function AdminShell({ children }) {
               exit={{ opacity: 0 }}
               transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
             >
-              <motion.button
-                type="button"
-                className="absolute inset-0 bg-slate-950/50"
-                aria-label="Close admin navigation"
-                onClick={() => setMobileOpen(false)}
-              />
-              <motion.aside
-                role="dialog"
-                aria-modal="true"
-                aria-label="Admin navigation menu"
-                className="relative flex h-full w-[min(84vw,20rem)] flex-col bg-[var(--admin-accent)] p-5 text-white shadow-2xl"
-                initial={shouldReduceMotion ? false : { x: "-100%" }}
-                animate={{ x: 0 }}
-                exit={{ x: "-100%" }}
-                transition={{
-                  duration: shouldReduceMotion ? 0 : 0.24,
-                  ease: "easeOut",
-                }}
-              >
-                <div className="mb-8 flex items-center justify-between">
-                  <HPhsarLogo surface="dark" variant="compact" />
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-white hover:bg-white/10"
-                    aria-label="Close admin navigation"
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    <X className="h-5 w-5" aria-hidden="true" />
-                  </Button>
-                </div>
-                <div className="flex-1">{navigation}</div>
+            <motion.button
+              className="absolute inset-0 bg-slate-950/50"
+              aria-label="Close admin navigation"
+              onClick={() => setMobileOpen(false)}
+            />
+            <motion.aside
+              className="relative flex h-full w-[min(84vw,20rem)] flex-col bg-[var(--admin-accent)] p-5 text-white shadow-2xl"
+              initial={shouldReduceMotion ? false : { x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ duration: shouldReduceMotion ? 0 : 0.24, ease: "easeOut" }}
+            >
+              <div className="mb-8 flex items-center justify-between">
+                <HPhsarLogo surface="dark" variant="compact" />
                 <Button
                   variant="ghost"
-                  className="justify-start gap-3 text-slate-200 hover:bg-white/10 hover:text-white"
-                  onClick={() => {
-                    setMobileOpen(false);
-                    setConfirmSignOut(true);
-                  }}
+                  size="sm"
+                  className="text-white hover:bg-white/10"
+                  aria-label="Close admin navigation"
+                  onClick={() => setMobileOpen(false)}
                 >
-                  <LogOut className="h-5 w-5" aria-hidden="true" />
-                  Sign out
+                  
+                  <X className="h-5 w-5" aria-hidden="true" />
                 </Button>
-              </motion.aside>
-            </motion.div>
+              </div>
+              <div className="flex-1">{navigation}</div>
+              <Button
+                variant="ghost"
+                className="justify-start gap-3 text-slate-200 hover:bg-white/10 hover:text-white"
+                onClick={() => {
+                  setMobileOpen(false);
+                  setConfirmSignOut(true);
+                }}
+              >
+                <LogOut className="h-5 w-5" aria-hidden="true" />
+                Sign out
+              </Button>
+            </motion.aside>
+          </motion.div>
           )}
         </AnimatePresence>
 
