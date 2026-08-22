@@ -41,9 +41,6 @@ function redirectToSignIn() {
 // are relative to /api/v1. Kept as-is for existing callers across redux/services/**.
 export const api = axios.create({
   baseURL: `${API_ORIGIN}/api/v1`,
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
 // Attach token from the in-memory auth store on every request. A known-expired
@@ -53,6 +50,13 @@ export const api = axios.create({
 // chance to run. Letting the request go out unauthenticated means the backend
 // 401s it, which IS the trigger for the refresh-and-retry flow.
 api.interceptors.request.use((config) => {
+  // Never force a Content-Type for FormData. Axios/browser must generate the
+  // multipart boundary; sending FormData as application/json makes Spring
+  // reject it with "Current request is not a multipart request".
+  if (typeof FormData !== "undefined" && config.data instanceof FormData) {
+    config.headers.delete("Content-Type");
+  }
+
   if (typeof window === "undefined" || config.skipAuthHeader) return config;
 
   const token = getAuthToken();

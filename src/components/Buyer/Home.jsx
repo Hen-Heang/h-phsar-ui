@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/cn";
 
 export default function Home() {
   const containerVariants = {
@@ -117,7 +118,7 @@ export default function Home() {
                       item.bg,
                       item.color,
                     )}
-                  >
+                  >~
                     <item.icon className="h-6 w-6" />
                   </div>
                   <h3 className="text-xl font-black text-slate-900 mb-2">
