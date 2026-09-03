@@ -1,0 +1,38 @@
+# scope.example — 스코프 데이터 템플릿
+#
+# project.yaml `features.scope.enabled: true` 일 때만 사용.
+# 본 파일을 .claude/config/scope.yaml 로 복사 후 그룹·스코프를 교체한다.
+#
+# 프로젝트 정보는 project.yaml `projects[]` 가 truth source.
+# 본 파일 `project:` 필드는 project.yaml `projects[].name` 을 참조한다.
+#
+# 변수 참조: {baseNamespacePattern} → project.yaml `baseNamespacePattern`
+#
+# 필드:
+#   id            — 스코프 식별자 (/develop 인자)
+#   project       — project.yaml `projects[].name` 참조
+#   allowedPaths  — 메인 스코프 쓰기 허용 범위 (프로젝트 루트 기준)
+#   sharedModule  — 함께 허용되는 공통 모듈 (또는 null)
+#   subScope      — 선택, 하위 스코프(paramName/validatePath/allowedPaths/scanPaths/cacheFileSuffix)
+
+groups:
+
+  A:
+    name: <그룹 설명>
+    scopes:
+      - id: <scope-id-1>
+        project: <project-name>
+        allowedPaths: [<module>/]
+        sharedModule: <shared-module>/   # 없으면 null
+      - id: <scope-id-2>
+        project: <project-name>
+        allowedPaths: ["**"]
+        sharedModule: null
+        # subScope 예시 (모듈 단위 하위 스코프):
+        # subScope:
+        #   paramName: moduleName
+        #   validatePath: "<source-path>/{baseNamespacePattern}/<module>/{paramValue}/"
+        #   allowedPaths:
+        #     - "<source-path>/{baseNamespacePattern}/<module>/{paramValue}/"
+        #   scanPaths: "@inherit-shared"
+        #   cacheFileSuffix: "--{paramValue}"

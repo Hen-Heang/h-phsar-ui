@@ -1,0 +1,730 @@
+{
+  "modules": [
+    {
+      "module": "h-phsar-ui",
+      "path": "",
+      "slug": "h-phsar-ui",
+      "rows": [
+        {
+          "kind": "http",
+          "symbol": "/",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/page.tsx",
+            "line": 1,
+            "text": "import Landing from \"../screens/auth/Landing\";"
+          },
+          "key": "http /",
+          "route": "/"
+        },
+        {
+          "kind": "http",
+          "symbol": "/admin",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/admin/page.tsx",
+            "line": 1,
+            "text": "import { redirect } from \"next/navigation\";"
+          },
+          "key": "http /admin",
+          "route": "/admin"
+        },
+        {
+          "kind": "http",
+          "symbol": "/admin/buyers",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/admin/buyers/page.tsx",
+            "line": 1,
+            "text": "\"use client\";"
+          },
+          "key": "http /admin/buyers",
+          "route": "/admin/buyers"
+        },
+        {
+          "kind": "http",
+          "symbol": "/admin/dashboard",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/admin/dashboard/page.tsx",
+            "line": 1,
+            "text": "\"use client\";"
+          },
+          "key": "http /admin/dashboard",
+          "route": "/admin/dashboard"
+        },
+        {
+          "kind": "http",
+          "symbol": "/admin/suppliers",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/admin/suppliers/page.tsx",
+            "line": 1,
+            "text": "\"use client\";"
+          },
+          "key": "http /admin/suppliers",
+          "route": "/admin/suppliers"
+        },
+        {
+          "kind": "http",
+          "symbol": "/buyer",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/buyer/page.tsx",
+            "line": 1,
+            "text": "import { redirect } from \"next/navigation\";"
+          },
+          "key": "http /buyer",
+          "route": "/buyer"
+        },
+        {
+          "kind": "http",
+          "symbol": "/buyer/beverage",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/buyer/beverage/page.tsx",
+            "line": 1,
+            "text": "\"use client\";"
+          },
+          "key": "http /buyer/beverage",
+          "route": "/buyer/beverage"
+        },
+        {
+          "kind": "http",
+          "symbol": "/buyer/bookmarks",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/buyer/bookmarks/page.tsx",
+            "line": 1,
+            "text": "\"use client\";"
+          },
+          "key": "http /buyer/bookmarks",
+          "route": "/buyer/bookmarks"
+        },
+        {
+          "kind": "http",
+          "symbol": "/buyer/drafts",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/buyer/drafts/page.tsx",
+            "line": 1,
+            "text": "\"use client\";"
+          },
+          "key": "http /buyer/drafts",
+          "route": "/buyer/drafts"
+        },
+        {
+          "kind": "http",
+          "symbol": "/buyer/home",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/buyer/home/page.tsx",
+            "line": 1,
+            "text": "\"use client\";"
+          },
+          "key": "http /buyer/home",
+          "route": "/buyer/home"
+        },
+        {
+          "kind": "http",
+          "symbol": "/buyer/order-history",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/buyer/order-history/page.tsx",
+            "line": 1,
+            "text": "\"use client\";"
+          },
+          "key": "http /buyer/order-history",
+          "route": "/buyer/order-history"
+        },
+        {
+          "kind": "http",
+          "symbol": "/buyer/orders",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/buyer/orders/page.tsx",
+            "line": 1,
+            "text": "\"use client\";"
+          },
+          "key": "http /buyer/orders",
+          "route": "/buyer/orders"
+        },
+        {
+          "kind": "http",
+          "symbol": "/buyer/profile",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/buyer/profile/page.tsx",
+            "line": 1,
+            "text": "\"use client\";"
+          },
+          "key": "http /buyer/profile",
+          "route": "/buyer/profile"
+        },
+        {
+          "kind": "http",
+          "symbol": "/buyer/reports",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/buyer/reports/page.tsx",
+            "line": 1,
+            "text": "\"use client\";"
+          },
+          "key": "http /buyer/reports",
+          "route": "/buyer/reports"
+        },
+        {
+          "kind": "http",
+          "symbol": "/buyer/search",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/buyer/search/page.tsx",
+            "line": 1,
+            "text": "\"use client\";"
+          },
+          "key": "http /buyer/search",
+          "route": "/buyer/search"
+        },
+        {
+          "kind": "http",
+          "symbol": "/buyer/store",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/buyer/store/page.tsx",
+            "line": 1,
+            "text": "\"use client\";"
+          },
+          "key": "http /buyer/store",
+          "route": "/buyer/store"
+        },
+        {
+          "kind": "http",
+          "symbol": "/distributor",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/distributor/page.tsx",
+            "line": 1,
+            "text": "import { redirect } from \"next/navigation\";"
+          },
+          "key": "http /distributor",
+          "route": "/distributor"
+        },
+        {
+          "kind": "http",
+          "symbol": "/distributor/account",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/distributor/account/page.tsx",
+            "line": 1,
+            "text": "import { redirect } from \"next/navigation\";"
+          },
+          "key": "http /distributor/account",
+          "route": "/distributor/account"
+        },
+        {
+          "kind": "http",
+          "symbol": "/distributor/add-product",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/distributor/add-product/page.tsx",
+            "line": 1,
+            "text": "import { redirect } from \"next/navigation\";"
+          },
+          "key": "http /distributor/add-product",
+          "route": "/distributor/add-product"
+        },
+        {
+          "kind": "http",
+          "symbol": "/distributor/category",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/distributor/category/page.tsx",
+            "line": 1,
+            "text": "import { redirect } from \"next/navigation\";"
+          },
+          "key": "http /distributor/category",
+          "route": "/distributor/category"
+        },
+        {
+          "kind": "http",
+          "symbol": "/distributor/history",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/distributor/history/page.tsx",
+            "line": 1,
+            "text": "import { redirect } from \"next/navigation\";"
+          },
+          "key": "http /distributor/history",
+          "route": "/distributor/history"
+        },
+        {
+          "kind": "http",
+          "symbol": "/distributor/home",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/distributor/home/page.tsx",
+            "line": 1,
+            "text": "import { redirect } from \"next/navigation\";"
+          },
+          "key": "http /distributor/home",
+          "route": "/distributor/home"
+        },
+        {
+          "kind": "http",
+          "symbol": "/distributor/import-product",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/distributor/import-product/page.tsx",
+            "line": 1,
+            "text": "import { redirect } from \"next/navigation\";"
+          },
+          "key": "http /distributor/import-product",
+          "route": "/distributor/import-product"
+        },
+        {
+          "kind": "http",
+          "symbol": "/distributor/order",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/distributor/order/page.tsx",
+            "line": 1,
+            "text": "import { redirect } from \"next/navigation\";"
+          },
+          "key": "http /distributor/order",
+          "route": "/distributor/order"
+        },
+        {
+          "kind": "http",
+          "symbol": "/distributor/order-history",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/distributor/order-history/page.tsx",
+            "line": 1,
+            "text": "import { redirect } from \"next/navigation\";"
+          },
+          "key": "http /distributor/order-history",
+          "route": "/distributor/order-history"
+        },
+        {
+          "kind": "http",
+          "symbol": "/distributor/product",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/distributor/product/page.tsx",
+            "line": 1,
+            "text": "import { redirect } from \"next/navigation\";"
+          },
+          "key": "http /distributor/product",
+          "route": "/distributor/product"
+        },
+        {
+          "kind": "http",
+          "symbol": "/distributor/report",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/distributor/report/page.tsx",
+            "line": 1,
+            "text": "import { redirect } from \"next/navigation\";"
+          },
+          "key": "http /distributor/report",
+          "route": "/distributor/report"
+        },
+        {
+          "kind": "http",
+          "symbol": "/distributor/store",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/distributor/store/page.tsx",
+            "line": 1,
+            "text": "import { redirect } from \"next/navigation\";"
+          },
+          "key": "http /distributor/store",
+          "route": "/distributor/store"
+        },
+        {
+          "kind": "http",
+          "symbol": "/distributor/update-product",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/distributor/update-product/page.tsx",
+            "line": 1,
+            "text": "import { redirect } from \"next/navigation\";"
+          },
+          "key": "http /distributor/update-product",
+          "route": "/distributor/update-product"
+        },
+        {
+          "kind": "http",
+          "symbol": "/retailer",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/retailer/page.tsx",
+            "line": 1,
+            "text": "import { redirect } from \"next/navigation\";"
+          },
+          "key": "http /retailer",
+          "route": "/retailer"
+        },
+        {
+          "kind": "http",
+          "symbol": "/retailer/beverage",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/retailer/beverage/page.tsx",
+            "line": 1,
+            "text": "import { redirect } from \"next/navigation\";"
+          },
+          "key": "http /retailer/beverage",
+          "route": "/retailer/beverage"
+        },
+        {
+          "kind": "http",
+          "symbol": "/retailer/distributor-shop",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/retailer/distributor-shop/page.tsx",
+            "line": 1,
+            "text": "import { redirect } from \"next/navigation\";"
+          },
+          "key": "http /retailer/distributor-shop",
+          "route": "/retailer/distributor-shop"
+        },
+        {
+          "kind": "http",
+          "symbol": "/retailer/draft",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/retailer/draft/page.tsx",
+            "line": 1,
+            "text": "import { redirect } from \"next/navigation\";"
+          },
+          "key": "http /retailer/draft",
+          "route": "/retailer/draft"
+        },
+        {
+          "kind": "http",
+          "symbol": "/retailer/favorite",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/retailer/favorite/page.tsx",
+            "line": 1,
+            "text": "import { redirect } from \"next/navigation\";"
+          },
+          "key": "http /retailer/favorite",
+          "route": "/retailer/favorite"
+        },
+        {
+          "kind": "http",
+          "symbol": "/retailer/home",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/retailer/home/page.tsx",
+            "line": 1,
+            "text": "import { redirect } from \"next/navigation\";"
+          },
+          "key": "http /retailer/home",
+          "route": "/retailer/home"
+        },
+        {
+          "kind": "http",
+          "symbol": "/retailer/order",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/retailer/order/page.tsx",
+            "line": 1,
+            "text": "import { redirect } from \"next/navigation\";"
+          },
+          "key": "http /retailer/order",
+          "route": "/retailer/order"
+        },
+        {
+          "kind": "http",
+          "symbol": "/retailer/order-history",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/retailer/order-history/page.tsx",
+            "line": 1,
+            "text": "import { redirect } from \"next/navigation\";"
+          },
+          "key": "http /retailer/order-history",
+          "route": "/retailer/order-history"
+        },
+        {
+          "kind": "http",
+          "symbol": "/retailer/profile",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/retailer/profile/page.tsx",
+            "line": 1,
+            "text": "import { redirect } from \"next/navigation\";"
+          },
+          "key": "http /retailer/profile",
+          "route": "/retailer/profile"
+        },
+        {
+          "kind": "http",
+          "symbol": "/retailer/report",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/retailer/report/page.tsx",
+            "line": 1,
+            "text": "import { redirect } from \"next/navigation\";"
+          },
+          "key": "http /retailer/report",
+          "route": "/retailer/report"
+        },
+        {
+          "kind": "http",
+          "symbol": "/retailer/searching-shop",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/retailer/searching-shop/page.tsx",
+            "line": 1,
+            "text": "import { redirect } from \"next/navigation\";"
+          },
+          "key": "http /retailer/searching-shop",
+          "route": "/retailer/searching-shop"
+        },
+        {
+          "kind": "http",
+          "symbol": "/sign-in",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/sign-in/page.tsx",
+            "line": 1,
+            "text": "import SignInPage from \"../../screens/auth/SignInPage\";"
+          },
+          "key": "http /sign-in",
+          "route": "/sign-in"
+        },
+        {
+          "kind": "http",
+          "symbol": "/sign-up",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/sign-up/page.tsx",
+            "line": 1,
+            "text": "import SignUpPage from \"../../screens/auth/SignUpPage\";"
+          },
+          "key": "http /sign-up",
+          "route": "/sign-up"
+        },
+        {
+          "kind": "http",
+          "symbol": "/supplier",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/supplier/page.tsx",
+            "line": 1,
+            "text": "import { redirect } from \"next/navigation\";"
+          },
+          "key": "http /supplier",
+          "route": "/supplier"
+        },
+        {
+          "kind": "http",
+          "symbol": "/supplier/add-product",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/supplier/add-product/page.tsx",
+            "line": 1,
+            "text": "\"use client\";"
+          },
+          "key": "http /supplier/add-product",
+          "route": "/supplier/add-product"
+        },
+        {
+          "kind": "http",
+          "symbol": "/supplier/categories",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/supplier/categories/page.tsx",
+            "line": 1,
+            "text": "\"use client\";"
+          },
+          "key": "http /supplier/categories",
+          "route": "/supplier/categories"
+        },
+        {
+          "kind": "http",
+          "symbol": "/supplier/dashboard",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/supplier/dashboard/page.tsx",
+            "line": 1,
+            "text": "\"use client\";"
+          },
+          "key": "http /supplier/dashboard",
+          "route": "/supplier/dashboard"
+        },
+        {
+          "kind": "http",
+          "symbol": "/supplier/import-history",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/supplier/import-history/page.tsx",
+            "line": 1,
+            "text": "\"use client\";"
+          },
+          "key": "http /supplier/import-history",
+          "route": "/supplier/import-history"
+        },
+        {
+          "kind": "http",
+          "symbol": "/supplier/inventory",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/supplier/inventory/page.tsx",
+            "line": 1,
+            "text": "\"use client\";"
+          },
+          "key": "http /supplier/inventory",
+          "route": "/supplier/inventory"
+        },
+        {
+          "kind": "http",
+          "symbol": "/supplier/order-history",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/supplier/order-history/page.tsx",
+            "line": 1,
+            "text": "\"use client\";"
+          },
+          "key": "http /supplier/order-history",
+          "route": "/supplier/order-history"
+        },
+        {
+          "kind": "http",
+          "symbol": "/supplier/orders",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/supplier/orders/page.tsx",
+            "line": 1,
+            "text": "\"use client\";"
+          },
+          "key": "http /supplier/orders",
+          "route": "/supplier/orders"
+        },
+        {
+          "kind": "http",
+          "symbol": "/supplier/products",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/supplier/products/page.tsx",
+            "line": 1,
+            "text": "\"use client\";"
+          },
+          "key": "http /supplier/products",
+          "route": "/supplier/products"
+        },
+        {
+          "kind": "http",
+          "symbol": "/supplier/profile",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/supplier/profile/page.tsx",
+            "line": 1,
+            "text": "\"use client\";"
+          },
+          "key": "http /supplier/profile",
+          "route": "/supplier/profile"
+        },
+        {
+          "kind": "http",
+          "symbol": "/supplier/reports",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/supplier/reports/page.tsx",
+            "line": 1,
+            "text": "\"use client\";"
+          },
+          "key": "http /supplier/reports",
+          "route": "/supplier/reports"
+        },
+        {
+          "kind": "http",
+          "symbol": "/supplier/store",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/supplier/store/page.tsx",
+            "line": 1,
+            "text": "\"use client\";"
+          },
+          "key": "http /supplier/store",
+          "route": "/supplier/store"
+        },
+        {
+          "kind": "http",
+          "symbol": "/supplier/update-product",
+          "tables": [],
+          "ops": [],
+          "evidence": {
+            "file": "src/app/supplier/update-product/page.tsx",
+            "line": 1,
+            "text": "\"use client\";"
+          },
+          "key": "http /supplier/update-product",
+          "route": "/supplier/update-product"
+        }
+      ]
+    }
+  ],
+  "tables": [],
+  "candidates": [],
+  "recipe": true,
+  "entities": []
+}

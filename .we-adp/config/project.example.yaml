@@ -1,0 +1,105 @@
+# project.example — 프로젝트 메타 설정 템플릿
+#
+# 본 파일을 .claude/config/project.yaml 로 복사 후 값을 교체한다.
+# 본 파일은 참조용 scaffold 이며 값 치환 없이 그대로 복사된다.
+#
+# 함께 작성:
+#   system.example.yaml  → system.yaml  (비밀값 전용 — gitignore + Read deny 대상)
+#   project-meta.example.yaml → project-meta.yaml
+#   (스코프 사용 시) scope.example.yaml → scope.yaml
+#
+# 단일 출처(Single Source of Truth): skills·agents 가 본 파일을 Read 하여
+# {{config.*}} 치환 및 프로젝트 메타 결정에 사용한다.
+#
+# 동작 knob(codeReview.* · features.scope · reviewerAgent)도 여기 둔다 — system.yaml 은
+# settings.json `permissions.deny` 대상이라 스킬·에이전트가 열 수 없다(그쪽은 훅·스크립트만 읽는 비밀값 전용).
+
+# ---------------------------------------------------------------------------
+# 워크스페이스 메타
+# ---------------------------------------------------------------------------
+
+workspaceName: my-workspace           # 예시: my-workspace
+outputDir: target/works               # 영속 작업 산출물 루트: 브리프는 바로 아래, 계획서는 plans/{task}/
+tempDir: target/tmp                   # 선탐색 임시 (자동 .gitignore 권장)
+planSkill: dev-plan                   # 후속 스킬 키. 없으면 빈 문자열
+
+# ---------------------------------------------------------------------------
+# 패키지·아티팩트 명명
+# ---------------------------------------------------------------------------
+
+baseNamespacePattern: ""              # 예시: com.example / @my-org
+commonUtilsArtifact: ""               # 공통 유틸 아티팩트. 없으면 빈 문자열
+commonUtilsAutoInclude: ""            # security-auditor 자동 포함 대상. 없으면 빈 문자열
+
+# ---------------------------------------------------------------------------
+# 추적 (분산 추적 컨텍스트 키)
+# ---------------------------------------------------------------------------
+
+tracing:
+  mdcKey: x-request-id               # 예시: x-request-id / traceId — 모든 로그·비동기 전파 키
+
+# ---------------------------------------------------------------------------
+# 프로젝트 인벤토리 — 워크스페이스 전체의 단일 truth source
+#
+# 필드:
+#   name        — 프로젝트 고유 식별자
+#   shortName   — 단축 식별자 (git branch 접두사 등)
+#   multiModule — true 이면 모듈 하위 구조 보유
+#   role        — 한 줄 역할 설명
+#   guideline   — 가이드 파일 (backend 필수, frontend[] 선택)
+#                 실제 위치: .claude/docs/guideline/{filename}
+# ---------------------------------------------------------------------------
+
+projects:
+  - name: my-service                  # 예시: my-service
+    shortName: svc                    # 예시: svc
+    multiModule: false
+    role: 서비스 역할 설명             # 예시: REST API 서비스
+    guideline:
+      backend: guide-api.md           # 예시: guide-api.md
+
+# ---------------------------------------------------------------------------
+# 사용자 정의 문서 — 체크리스트 라우터 (Core 워크플로 STEP 0). 빈 값이면 STEP 0 skip.
+# ---------------------------------------------------------------------------
+
+customDocs:
+  antiPatterns: ""                    # 예시: docs/anti-patterns.md
+
+# ---------------------------------------------------------------------------
+# DB 메타
+#
+# vendor enum: postgres / mysql / oracle
+# ---------------------------------------------------------------------------
+
+db:
+  vendor: postgres                    # 예시: postgres / mysql / oracle
+  schema: my_schema                   # 예시: my_schema / my_db
+  searchPathEnabled: true
+  codePattern: '^([A-Z0-9]+)\s*[:：]\s*(.+)$'
+  codeSeparator: ","
+
+# ---------------------------------------------------------------------------
+# code-review 동작 설정 (순수 knob)
+#   소비처: /code-review · code-reviewer · mr-reviewer
+# ---------------------------------------------------------------------------
+
+codeReview:
+  defaultLang: ko                     # ko / en
+  defaultTarget: staged               # staged / unstaged / HEAD~N / branch
+  maxFiles: 30                        # 하드 커트오프 — 최대 분석 파일 수
+  maxLinesPerFile: 500                # 파일당 최대 분석 라인
+
+# ---------------------------------------------------------------------------
+# 기능 토글
+# ---------------------------------------------------------------------------
+
+features:
+  scope:
+    enabled: false                    # true -> 스코프 식별·allowedPaths 제한(scope.yaml 필요) / false -> 전체 소스 기준
+
+# ---------------------------------------------------------------------------
+# Stage 2 정성 검토자 (dev-interview 등 브리프 파이프라인)
+#   none -> Stage 2 skip / codex:rescue / claude-sonnet / 기타 subagent 위임
+# ---------------------------------------------------------------------------
+
+reviewerAgent: none

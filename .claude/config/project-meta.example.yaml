@@ -1,0 +1,52 @@
+# project-meta.example — 도메인 키워드 사전 템플릿
+#
+# 본 파일을 .claude/config/project-meta.yaml 로 복사 후 도메인 키워드를 교체한다.
+# 본 파일은 참조용 scaffold 이며 값 치환 없이 그대로 복사된다.
+#
+# 소비처:
+#   code-investigator  — keywordExpansion (topicHints 매칭·키워드 추출)
+#   security-auditor   — securityKeywords (취약점 패턴 검색)
+
+# ===========================================================================
+# keywordExpansion — 3관점 키워드 사전 (code-investigator)
+#   topicHints 매칭 카테고리에서 protocol/function/data 최소 6개 추출.
+# ===========================================================================
+
+keywordExpansion:
+  categories:
+    - name: 도메인-카테고리-1        # 예시: 사용자 인증
+      protocol: [AuthToken]          # 예시: OAuth2, JWT
+      function: [login, logout]      # 예시: authenticate, authorize
+      data: [userId, sessionId]      # 예시: username, token
+    - name: 도메인-카테고리-2        # 예시: 데이터 조회
+      protocol: [REST]               # 예시: GraphQL, gRPC
+      function: [search, list]       # 예시: findAll, query
+      data: [pageSize, cursor]       # 예시: offset, limit
+
+  koreanMap:                         # 한글 토픽 → 영문 키워드 매핑
+    도메인-한글: [domain-english]    # 예시:  조회: [search, list, query]
+
+  usageRules:
+    - "topicHints 각 항목을 카테고리에 매칭 (한글 우선, 영문 fallback)."
+    - "매칭 카테고리의 3관점에서 최소 2개씩 추출 (총 6+개)."
+    - "Grep -i 다중 패턴으로 controller·service·mapper 교차 검색."
+
+# ===========================================================================
+# securityKeywords — 보안 키워드 사전 (security-auditor)
+# ===========================================================================
+
+securityKeywords:
+  categories:
+    - name: 보안-카테고리-1          # 예시: 인증·인가
+      groups:
+        "인증":   [auth, token]      # 예시: login, credential
+        "인가":   [permission, role] # 예시: acl, policy
+
+  gapTriggers:                       # 코드에서 찾을 잠재 갭 트리거. 기획서 부재 여부는 호출자가 대조
+    - pattern: "코드 측 발견 패턴"   # 예시: "SSO 연동 클래스 또는 보안 헤더 처리"
+      label: "잠재 갭 라벨"          # 예시: "기존 SSO 통합 영향"
+
+  usageRules:
+    - "primary + 공통유틸 + related 디렉토리를 대상으로 다중 패턴 Grep 1회 교차."
+    - "evidence 는 file:line + 1줄 인용 + 카테고리 라벨."
+    - "결과 ≤15건."

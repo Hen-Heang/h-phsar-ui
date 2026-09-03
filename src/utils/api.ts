@@ -179,7 +179,13 @@ export async function apiRequest<T = unknown>(
       params: query,
       data: body,
       headers: {
-        ...(!isFormData ? { "Content-Type": "application/json" } : {}),
+        // FormData needs no explicit Content-Type — axios/the browser must set
+        // "multipart/form-data; boundary=...". The request interceptor above
+        // also strips this header for FormData bodies; this is just a
+        // belt-and-suspenders default at the call site.
+        ...(isFormData
+          ? { "Content-Type": undefined }
+          : { "Content-Type": "application/json" }),
         ...headers,
       },
       skipAuthHeader: !auth,

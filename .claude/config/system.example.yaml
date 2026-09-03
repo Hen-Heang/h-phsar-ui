@@ -1,0 +1,37 @@
+# system.example — 비밀값 전용 설정 템플릿
+#
+# 본 파일을 .claude/config/system.yaml 로 복사 후 값(gitlab.token / flow.*)을 채운다.
+# system.yaml 은 access_token + flow API key 를 포함하므로 .claude/.gitignore 로 커밋 제외되고,
+# settings.json `permissions.deny` 의 `Read(**/config/system.yaml)` 로 LLM 읽기도 차단된다.
+# (본 example 만 commit — secret 없음.)
+#
+# 읽는 주체는 훅·스크립트뿐이다(툴 호출이 아니라 permissions 검사를 지나지 않는다):
+#   skills/code-review/scripts/mr-fetch.mjs (gitlab.*) · hooks/mr-review/post-comment.sh (gitlab.*)
+#   hooks/mr-review/flow/notify.sh (gitlab.*·flow.*)
+#   skills/dev-autopilot/scripts/{preflight,mr-request,mr-deliver}.mjs (gitlab.*)
+#
+# 비밀이 아닌 동작 knob(codeReview.* · features.scope · reviewerAgent)은 project.yaml 에 둔다 —
+# 스킬·에이전트(LLM)가 읽어야 하는 값이라 여기 두면 deny 에 걸려 항상 기본값으로 떨어진다.
+
+# ---------------------------------------------------------------------------
+# GitLab 연동 (mr-reviewer / mr-review). 미사용 시 섹션 비움.
+# ---------------------------------------------------------------------------
+
+gitlab:
+  url: http://<gitlab-host>:<port>
+  token: glpat-REPLACE_ME            # Personal Access Token (api scope)
+  projects:                          # 프로젝트명 -> GitLab project_id
+    <project-1>: 0
+    <project-2>: 0
+
+# ---------------------------------------------------------------------------
+# Flow 알림 (flow.team). mr-review 완료 후 MR 작성자 + 담당자(assignees) + 리뷰어(reviewers) 알림. 미사용 시 값 비움 -> skip.
+#   소비처: .claude/hooks/mr-review/flow/notify.sh
+#   수신자(작성자·담당자·리뷰어) username 은 GitLab MR 에서 동적 추출 (Flow ID = GitLab username 가정).
+#   담당자·리뷰어는 합집합(중복 제거) + 작성자 제외 후 발송.
+#   주의: 실제 system.yaml 에서는 키 값 뒤 인라인 주석 금지 (정규식 추출).
+# ---------------------------------------------------------------------------
+
+flow:
+  apiKey: <x-flow-api-key>   # Flow API 인증 키
+  botId: <bot-id>            # 알림 발송 봇 ID

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 2,
+  "steps": [
+    { "id": "brief", "skill": "dev-interview", "mode": "autopilot-orchestrated", "proof": "verdict", "requiredFor": ["BRIEF_APPROVAL"] },
+    { "id": "prepare", "skill": "dev-prepare", "mode": "autopilot-orchestrated", "requiredFor": ["PLAN"] },
+    { "id": "plan", "skill": "dev-plan", "mode": "autopilot-orchestrated", "proof": "file", "requiredFor": ["PROJECTS"] },
+    { "id": "develop", "skill": "develop", "mode": "caller-owned", "proof": "file", "perPhase": true, "requiredFor": ["CODE_REVIEW"] },
+    { "id": "qa", "skill": "qa-test", "mode": "autopilot-orchestrated", "proof": "verdict", "requiredFor": ["CODE_REVIEW"], "freshnessAfter": "develop" },
+    { "id": "code-review", "skill": "code-review", "mode": "autopilot-orchestrated", "requiredFor": ["COMMIT"], "exemptWhen": "reviewAcceptedExisting" }
+  ]
+}

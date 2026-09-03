@@ -18,7 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 import noImage from "../../assets/images/no_image.jpg";
-import { uploadImage } from "@/lib/uploadImage";
+import { uploadImage, ACCEPTED_IMAGE_TYPES } from "@/lib/uploadImage";
 import {
   add_new_account,
   get_account_distributor,
@@ -29,6 +29,7 @@ import { get_store_distributor_profile } from "../../redux/services/supplier/sto
 import { PulseLoader, RingLoader } from "react-spinners";
 import AccountProfileSkeleton from "@/shared/components/skeletons/AccountProfileSkeleton";
 import { ImagePlus } from "lucide-react";
+import { toast } from "react-toastify";
 
 export default function Account() {
   const [email, setEmail] = useState("");
@@ -138,6 +139,7 @@ export default function Account() {
       if (noDataAccount) {
         if (targetImage === null || targetImage === "") {
           const res = await add_new_account(newAccount);
+          if (!res.ok) throw new Error(res.data?.message || "Failed to create profile");
           dispatch(addNewAccount(res.data.data));
           setSetLoadingConfirm(false);
           setEdit(true);
@@ -149,6 +151,7 @@ export default function Account() {
           const downloadURL = await uploadImage(targetImage);
           const updatedFields = { ...newAccount, profileImage: downloadURL };
           const res = await add_new_account(updatedFields);
+          if (!res.ok) throw new Error(res.data?.message || "Failed to create profile");
           dispatch(addNewAccount(res.data.data));
           setEdit(true);
           setIsDisabled(true);
@@ -160,6 +163,7 @@ export default function Account() {
       } else {
         if (targetImage === null || targetImage === "") {
           const res = await update_account(newAccount);
+          if (!res.ok) throw new Error(res.data?.message || "Failed to update profile");
           dispatch(addNewAccount(res.data.data));
           setEdit(true);
           setIsDisabled(true);
@@ -171,6 +175,7 @@ export default function Account() {
           const downloadURL = await uploadImage(targetImage);
           const updatedFields = { ...newAccount, profileImage: downloadURL };
           const res = await update_account(updatedFields);
+          if (!res.ok) throw new Error(res.data?.message || "Failed to update profile");
           dispatch(addNewAccount(res.data.data));
           setEdit(true);
           setIsDisabled(true);
@@ -181,6 +186,7 @@ export default function Account() {
         }
       }
     } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to save profile");
       setSetLoadingConfirm(false);
     }
   };
@@ -398,6 +404,7 @@ export default function Account() {
                       <input
                         id="dropzone-file"
                         type="file"
+                        accept={ACCEPTED_IMAGE_TYPES}
                         className="hidden"
                         onChange={handleChangeImage}
                         disabled={isDisabled}

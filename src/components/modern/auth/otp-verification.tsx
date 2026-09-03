@@ -16,6 +16,11 @@ interface OTPVerificationProps {
   isResending?: boolean;
 }
 
+// Must match the backend's code length: OtpServiceImplV1.generateOtp() issues a
+// 4-digit code (1000-9999). Keep the input count, the copy below, and the submit
+// guard in step through this one constant.
+const OTP_LENGTH = 4;
+
 export function OTPVerification({
   email,
   onVerify,
@@ -29,7 +34,7 @@ export function OTPVerification({
     <div className="space-y-6">
       <div className="text-center space-y-2">
         <p className="text-sm text-slate-500">
-          We&apos;ve sent a 6-digit verification code to{" "}
+          We&apos;ve sent a 4-digit verification code to{" "}
           <span className="font-semibold text-slate-900">{email}</span>.
         </p>
       </div>
@@ -38,7 +43,7 @@ export function OTPVerification({
         <OTPInput
           value={otp}
           onChange={setOtp}
-          numInputs={4}
+          numInputs={OTP_LENGTH}
           renderSeparator={<span className="mx-1 text-slate-300">-</span>}
           renderInput={(props: React.InputHTMLAttributes<HTMLInputElement>) => (
             <input
@@ -55,9 +60,9 @@ export function OTPVerification({
       </div>
 
       <Button
-        onClick={() => otp.length === 4 && onVerify(otp)}
+        onClick={() => otp.length === OTP_LENGTH && onVerify(otp)}
         className="w-full"
-        disabled={isLoading || otp.length !== 4}
+        disabled={isLoading || otp.length !== OTP_LENGTH}
       >
         {isLoading ? (
           <>

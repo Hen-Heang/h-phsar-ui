@@ -1,0 +1,24 @@
+이 워크스페이스는 H-Phsar의 B2B 도매 마켓플레이스 프론트엔드입니다.
+
+- 프로젝트 1개 (h-phsar-ui) — Next.js App Router 애플리케이션
+- 기술 스택: TypeScript / Next.js / React 18 / Redux Toolkit + TanStack Query / MUI + Tailwind(shadcn 스타일) / Vitest
+- 역할별 화면: BUYER / SUPPLIER / ADMIN — 하나의 브랜드·디자인 시스템·인증 기반을 공유하며 레이아웃만 분리
+- 백엔드(`h-phsar-api`, 별도 저장소)가 역할·엔드포인트·페이로드·페이지네이션·주문 상태·전이 규칙의 단일 출처입니다. 엔드포인트·지표·상태를 프론트에서 임의로 지어내지 않습니다.
+
+## 이 프로젝트의 관행 (감지 기반)
+
+**명명**: 역할별 화면은 `src/screens/{buyer|supplier|admin|auth}/`에 위치. 역할·네비게이션·라우트·주문상태 매핑은 `src/config/{navigation,roles,routes,order-status}.ts`에 중앙화되어 있고 각각 대응하는 `*.test.ts`가 함께 있습니다(예: `order-status.ts` + `order-status.test.ts`).
+
+**API 통신**: 단일 Axios 인스턴스(`src/utils/api.ts`)의 `apiGet/apiPost/apiPut/apiPatch/apiDelete` 헬퍼만 사용합니다 — 새 Axios 인스턴스나 별도 fetch 래퍼를 추가하지 않습니다.
+
+**상태관리**: Redux Toolkit(전역) + TanStack Query(서버 상태, 일부 기능)를 병행합니다. 전면 재작성 없이 기존 패턴을 따릅니다.
+
+**타입 계약**: 백엔드 주문 상태(`CART/DRAFT/PENDING/PROCESSING/DISPATCHED/COMPLETED/REJECTED/CANCELLED`)를 `BackendOrderStatus` 타입(`src/types/order`)과 `ORDER_STATUS_META`(`src/config/order-status.ts`)로 그대로 미러링합니다 — 백엔드 상태 이름과 프론트 타입이 어긋나면 안 됩니다.
+
+**권한 가드**: 역할 네비게이션 가드는 UX 경계일 뿐 보안 경계가 아닙니다(실제 인가는 백엔드가 책임). 로딩 중에는 접근 가능한 상태를 보여주지 않습니다.
+
+**테스트**: Vitest + Testing Library. 설정 로직(`config/*.ts`)은 동일 폴더의 `*.test.ts`로 유닛 테스트됩니다.
+
+**디자인**: 반복되는 raw color 대신 semantic 토큰 사용, 공통 버튼/입력/카드/다이얼로그/테이블/배지/로딩/빈 상태/에러/확인 상태를 역할 간 공유합니다. 접근성: 시맨틱 랜드마크, `h1` 1개, 포커스 표시, 라벨, 키보드 접근성, 44×44px 터치 타깃, reduced-motion, 360px 이상 반응형.
+
+이 프로젝트의 도메인 페이지: `.claude/docs/domain/modules/h-phsar-ui.md`. 공통 관행: `.claude/docs/domain/common.md`. 전체 색인: `.claude/docs/domain/index.md`.

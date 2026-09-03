@@ -1,0 +1,8 @@
+# secrets — 절대 커밋 금지
+config/system.yaml
+config/*.local.yaml
+config/*.secret.json
+settings.local.json
+
+# 스크래치 — 훅·스크립트 임시 산출물(조립 끝에 비워진다)
+tmp/

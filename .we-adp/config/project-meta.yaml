@@ -1,0 +1,64 @@
+# project-meta — H-Phsar UI 도메인 키워드 사전
+#
+# 소비처:
+#   code-investigator  — keywordExpansion (topicHints 매칭·키워드 추출)
+#   security-auditor   — securityKeywords (취약점 패턴 검색)
+
+keywordExpansion:
+  categories:
+    - name: 인증-관리자
+      protocol: [JWT, OTP, RoleGuard]
+      function: [signIn, signUp, roleSelection, verifyEmail, adminAccountToggle]
+      data: [email, password, roleId, token, role]
+    - name: 구매자-쇼핑발주
+      protocol: [REST]
+      function: [addProductToCart, confirmOrderFromCart, saveToDraft, draftToRequest, confirmTransaction, bookmarkStore]
+      data: [cartId, orderId, storeId, draftId, BackendOrderStatus]
+    - name: 공급자-카탈로그재고주문
+      protocol: [REST]
+      function: [addNewProduct, publishProduct, importProduct, acceptOrder, rejectOrder, dispatchOrder]
+      data: [productId, storeId, orderId, qty, price]
+    - name: 레거시-네이밍
+      protocol: []
+      function: [AccountRetailer, DistributorStoreRetailer, DistributorAddProductPage]
+      data: [distributorOrder, accountRetailerSlice, retailerHomepageService]
+
+  koreanMap:
+    인증: [auth, login, signIn, signUp, jwt, otp]
+    역할: [role, roleId, roleGuard]
+    주문: [order, cart, draft]
+    상품: [product]
+    재고: [inventory, import]
+    스토어: [store]
+    구매자: [buyer]
+    공급자: [supplier]
+    레거시: [retailer, distributor]
+
+  usageRules:
+    - "topicHints 각 항목을 카테고리에 매칭 (한글 우선, 영문 fallback)."
+    - "매칭 카테고리의 3관점에서 최소 2개씩 추출 (총 6+개)."
+    - "Grep -i 다중 패턴으로 screens·components·redux/services 교차 검색."
+
+securityKeywords:
+  categories:
+    - name: 인증·인가
+      groups:
+        "인증": [token, localStorage, roleGuard]
+        "인가": [role, requiredRole, RoleGuard]
+    - name: API계약
+      groups:
+        "단일축": [apiGet, apiPost, apiPut, apiPatch, apiDelete, "src/utils/api.ts"]
+        "충돌처리": ["status === 409", ConflictException]
+
+  gapTriggers:
+    - pattern: "/retailer/** 및 /distributor/** 는 redirect() shim이지만 내부 컴포넌트/서비스/Redux 슬라이스명이 여전히 구용어 사용"
+      label: "레거시 네이밍 기술부채 — 신규 코드에서 Distributor/Retailer 용어 재사용 금지"
+    - pattern: "/supplier/update-product 는 submit 핸들러 없는 미완성 스텁"
+      label: "미완성 화면 — 실제 사용 전 확인 필요"
+    - pattern: "/supplier/inventory 는 NewImport에 필수 props 누락"
+      label: "결함 화면 — 실제 사용 전 확인 필요"
+
+  usageRules:
+    - "primary + 공통 hooks/services + related 디렉토리를 대상으로 다중 패턴 Grep 1회 교차."
+    - "evidence 는 file:line + 1줄 인용 + 카테고리 라벨."
+    - "결과 ≤15건."

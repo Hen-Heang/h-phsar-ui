@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { v4 } from "uuid";
-import { uploadImage } from "@/lib/uploadImage";
+import { uploadImage, ACCEPTED_IMAGE_TYPES } from "@/lib/uploadImage";
 import {
   add_new_product_distributor,
   get_all_product_distributor,
@@ -15,7 +15,10 @@ import {
   addNewProduct,
   getAllProduct,
 } from "../../redux/slices/supplier/productSlice";
-import { useAppDispatch as useDispatch, useAppSelector as useSelector } from "@/redux/hooks";
+import {
+  useAppDispatch as useDispatch,
+  useAppSelector as useSelector,
+} from "@/redux/hooks";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -177,6 +180,7 @@ const AddProductDistributor = () => {
                   )}
                   <input
                     type="file"
+                    accept={ACCEPTED_IMAGE_TYPES}
                     onChange={handleImageChange}
                     className="absolute inset-0 opacity-0 cursor-pointer"
                   />

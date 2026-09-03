@@ -3,7 +3,10 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { useAppDispatch as useDispatch, useAppSelector as useSelector } from "@/redux/hooks";
+import {
+  useAppDispatch as useDispatch,
+  useAppSelector as useSelector,
+} from "@/redux/hooks";
 import {
   add_new_store,
   get_store_distributor_profile,
@@ -18,7 +21,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import noImage from "@/assets/images/no_image.jpg";
-import { uploadImage } from "@/lib/uploadImage";
+import { uploadImage, ACCEPTED_IMAGE_TYPES } from "@/lib/uploadImage";
 import { PulseLoader } from "react-spinners";
 import StoreSkeleton from "@/shared/components/skeletons/StoreSkeleton";
 import { ImagePlus } from "lucide-react";
@@ -197,6 +200,7 @@ export default function StorePage() {
                 <span className="font-bold">Change Banner Photo</span>
                 <input
                   type="file"
+                  accept={ACCEPTED_IMAGE_TYPES}
                   className="hidden"
                   onChange={handleChangeImage}
                 />

@@ -1,0 +1,4 @@
+lang: lang-typescript
+domain: none
+frameworks: [fw-nextjs, fw-react]
+testRunner: vitest

@@ -15,7 +15,7 @@ const emailSchema = z.object({
 });
 
 const resetPasswordSchema = z.object({
-  otp: z.string().length(6, "OTP must be 6 digits."),
+  otp: z.string().length(4, "OTP must be 4 digits."),
   password: z.string().min(8, "Password must be at least 8 characters."),
 });
 
@@ -113,7 +113,7 @@ export function ForgotPassword({
       <div className="space-y-2">
         <h2 className="text-xl font-semibold text-slate-900">Reset password</h2>
         <p className="text-sm text-slate-500">
-          Enter the 6-digit code sent to{" "}
+          Enter the 4-digit code sent to{" "}
           <span className="font-semibold">{email}</span> and your new password.
         </p>
       </div>
@@ -125,7 +125,7 @@ export function ForgotPassword({
             <KeyRound className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
             <Input
               id="otp"
-              placeholder="123456"
+              placeholder="1234"
               className={cn("pl-10", resetErrors.otp && "border-red-500")}
               {...regReset("otp")}
               disabled={isLoading}

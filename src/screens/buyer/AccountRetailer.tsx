@@ -2,8 +2,11 @@
 "use client";
 
 import React, { useEffect, useState, useMemo } from "react";
-import { useAppDispatch as useDispatch, useAppSelector as useSelector } from "@/redux/hooks";
-import { uploadImage } from "@/lib/uploadImage";
+import {
+  useAppDispatch as useDispatch,
+  useAppSelector as useSelector,
+} from "@/redux/hooks";
+import { uploadImage, ACCEPTED_IMAGE_TYPES } from "@/lib/uploadImage";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Dialog,
@@ -265,6 +268,7 @@ export default function AccountRetailer() {
                           <Camera className="h-8 w-8 text-white" />
                           <input
                             type="file"
+                            accept={ACCEPTED_IMAGE_TYPES}
                             className="hidden"
                             onChange={handleImageChange}
                           />

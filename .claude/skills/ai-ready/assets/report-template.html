@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>AI-Ready 주간 리포트 — {{USER}} ({{PERIOD}})</title>
+<!-- ai-ready:meta — 다음 주 리포트가 전주 비교를 위해 파싱하는 점수 블록 (DB 불필요) -->
+<script type="application/json" id="ai-ready-meta">
+{"user":"{{USER}}","period":"{{PERIOD_ISO}}","total":{{TOTAL}},
+ "scores":{"workflow":{{S_WORKFLOW}},"direction":{{S_DIRECTION}},"delegation":{{S_DELEGATION}},"problem":{{S_PROBLEM}},"verify":{{S_VERIFY}}}}
+</script>
+<style>
+	body { font-family: 'Segoe UI', 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; background: #f4f6f9; margin: 0; padding: 32px; color: #1e293b; word-break: keep-all; }
+	.report { max-width: 880px; margin: 0 auto; }
+	.header { background: #1e293b; color: #fff; border-radius: 12px; padding: 24px 32px; display: flex; justify-content: space-between; align-items: center; }
+	.header h1 { margin: 0; font-size: 20px; }
+	.header .meta { font-size: 13px; color: #94a3b8; margin-top: 6px; }
+	.score-badge { text-align: center; }
+	.score-badge .total { font-size: 42px; font-weight: bold; }
+	.score-badge .total small { font-size: 16px; color: #94a3b8; }
+	.score-badge .stage { display: inline-block; background: #2563eb; border-radius: 12px; padding: 2px 12px; font-size: 13px; margin-top: 4px; }
+	.score-badge .trend { font-size: 13px; color: #4ade80; margin-top: 6px; }
+	.card { background: #fff; border-radius: 12px; padding: 24px 32px; margin-top: 20px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+	.card h2 { font-size: 16px; margin: 0 0 16px; border-left: 4px solid #2563eb; padding-left: 10px; }
+	.radar-wrap { display: flex; gap: 32px; align-items: center; flex-wrap: wrap; }
+	table.rubric { border-collapse: collapse; font-size: 14px; flex: 1; min-width: 320px; }
+	table.rubric th, table.rubric td { border-bottom: 1px solid #e2e8f0; padding: 9px 10px; text-align: left; }
+	table.rubric th { color: #64748b; font-weight: normal; font-size: 13px; }
+	table.rubric td.score { font-weight: bold; white-space: nowrap; }
+	.delta-up { color: #16a34a; font-size: 12px; }
+	.delta-down { color: #dc2626; font-size: 12px; }
+	.delta-flat { color: #94a3b8; font-size: 12px; }
+	.evidence { color: #475569; font-size: 13px; line-height: 1.6; }
+	.legend { font-size: 12px; color: #64748b; margin-top: 8px; text-align: center; }
+	.legend .this { color: #2563eb; font-weight: bold; }
+	.legend .last { color: #cbd5e1; font-weight: bold; }
+	.summary { font-size: 15px; line-height: 1.85; color: #334155; }
+	/* 세션 카드 */
+	.session { border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 20px; margin-bottom: 14px; }
+	.session .top { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 6px; }
+	.session .goal { font-size: 15px; font-weight: bold; }
+	.session .when { font-size: 13px; color: #64748b; white-space: nowrap; }
+	.badges { margin: 8px 0 10px; display: flex; gap: 6px; flex-wrap: wrap; }
+	.badge { font-size: 12px; border-radius: 10px; padding: 2px 10px; background: #f1f5f9; color: #475569; }
+	.badge.proj { background: #eff6ff; color: #2563eb; }
+	.badge.task { background: #f0fdf4; color: #16a34a; }
+	.badge.flow-full { background: #2563eb; color: #fff; }
+	.badge.flow-adhoc { background: #fef3c7; color: #b45309; }
+	.badge.outcome-done { background: #dcfce7; color: #15803d; }
+	.badge.outcome-part { background: #fef9c3; color: #a16207; }
+	.session dl { display: grid; grid-template-columns: 92px 1fr; gap: 5px 12px; margin: 0; font-size: 13.5px; line-height: 1.6; }
+	.session dt { color: #64748b; }
+	.session dd { margin: 0; color: #334155; }
+	.story { background: #f8fafc; border-left: 3px solid #94a3b8; border-radius: 0 8px 8px 0; padding: 10px 14px; margin-top: 10px; font-size: 13.5px; color: #475569; line-height: 1.75; }
+	.story b { color: #1e293b; }
+	/* 하이라이트 */
+	.quote { background: #eff6ff; border-left: 3px solid #2563eb; border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: 14px; color: #1e3a8a; line-height: 1.75; margin-bottom: 12px; }
+	.quote .src { display: block; font-size: 12px; color: #64748b; margin-top: 6px; }
+	/* 다음 주 */
+	ul.next { font-size: 14.5px; line-height: 1.9; color: #334155; padding-left: 20px; margin: 0; }
+	ul.next b { color: #1e293b; }
+	.footer { text-align: center; font-size: 12px; color: #94a3b8; margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="report">
+
+	<!-- ① 헤더 -->
+	<div class="header">
+		<div>
+			<h1>AI-Ready 주간 리포트 — {{USER}}</h1>
+			<div class="meta">{{PERIOD}} · 세션 {{SESSION_COUNT}}건 (총 {{TOTAL_HOURS}}h) · {{PROJECTS}}</div>
+		</div>
+		<div class="score-badge">
+			<div class="total">{{TOTAL}}<small> / 100</small></div>
+			<div class="stage">{{STAGE}}</div>
+			<div class="trend">{{TREND}}</div>
+		</div>
+	</div>
+
+	<!-- ② 루브릭 채점 -->
+	<div class="card">
+		<h2>루브릭 채점</h2>
+		<div class="radar-wrap">
+			<svg width="320" height="330" viewBox="0 0 300 310" role="img" aria-label="루브릭 레이더 차트">
+				<g stroke="#e2e8f0" fill="none">
+					<polygon points="150,128 170.9,143.2 162.9,167.8 137.1,167.8 129.1,143.2"/>
+					<polygon points="150,106 191.8,136.4 175.9,185.6 124.1,185.6 108.2,136.4"/>
+					<polygon points="150,84 212.8,129.6 188.8,203.4 111.2,203.4 87.2,129.6"/>
+					<polygon points="150,62 233.7,122.8 201.7,221.2 98.3,221.2 66.3,122.8"/>
+					<polygon points="150,40 254.6,116.0 214.7,239.0 85.3,239.0 45.4,116.0"/>
+				</g>
+				<g stroke="#e2e8f0">
+					<line x1="150" y1="150" x2="150" y2="40"/>
+					<line x1="150" y1="150" x2="254.6" y2="116.0"/>
+					<line x1="150" y1="150" x2="214.7" y2="239.0"/>
+					<line x1="150" y1="150" x2="85.3" y2="239.0"/>
+					<line x1="150" y1="150" x2="45.4" y2="116.0"/>
+				</g>
+				<!-- BEGIN:RADAR_LAST 전주 데이터 없으면 이 블록 전체 삭제 -->
+				<polygon points="{{RADAR_LAST_POINTS}}"
+					fill="rgba(148,163,184,.15)" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4 3"/>
+				<!-- END:RADAR_LAST -->
+				<polygon points="{{RADAR_THIS_POINTS}}"
+					fill="rgba(37,99,235,.18)" stroke="#2563eb" stroke-width="2"/>
+				<g fill="#2563eb">
+					<circle cx="{{RTX1}}" cy="{{RTY1}}" r="3.5"/><circle cx="{{RTX2}}" cy="{{RTY2}}" r="3.5"/>
+					<circle cx="{{RTX3}}" cy="{{RTY3}}" r="3.5"/><circle cx="{{RTX4}}" cy="{{RTY4}}" r="3.5"/>
+					<circle cx="{{RTX5}}" cy="{{RTY5}}" r="3.5"/>
+				</g>
+				<g font-size="12" fill="#334155" text-anchor="middle">
+					<text x="150" y="28">워크플로우 <tspan font-weight="bold">{{S_WORKFLOW}}</tspan></text>
+					<text x="264" y="106">지시 품질 <tspan font-weight="bold">{{S_DIRECTION}}</tspan></text>
+					<text x="228" y="262">위임 수준 <tspan font-weight="bold">{{S_DELEGATION}}</tspan></text>
+					<text x="72" y="262">문제해결 <tspan font-weight="bold">{{S_PROBLEM}}</tspan></text>
+					<text x="36" y="106">검증·준수 <tspan font-weight="bold">{{S_VERIFY}}</tspan></text>
+				</g>
+			</svg>
+			<table class="rubric">
+				<tr><th>영역</th><th>점수</th><th>전주</th><th>채점 근거</th></tr>
+				<tr><td>워크플로우 활용</td><td class="score">{{S_WORKFLOW}} / 20</td><td>{{D_WORKFLOW}}</td>
+					<td class="evidence">{{E_WORKFLOW}}</td></tr>
+				<tr><td>지시 품질</td><td class="score">{{S_DIRECTION}} / 20</td><td>{{D_DIRECTION}}</td>
+					<td class="evidence">{{E_DIRECTION}}</td></tr>
+				<tr><td>위임 수준</td><td class="score">{{S_DELEGATION}} / 20</td><td>{{D_DELEGATION}}</td>
+					<td class="evidence">{{E_DELEGATION}}</td></tr>
+				<tr><td>문제해결 협업</td><td class="score">{{S_PROBLEM}} / 20</td><td>{{D_PROBLEM}}</td>
+					<td class="evidence">{{E_PROBLEM}}</td></tr>
+				<tr><td>검증·규정 준수</td><td class="score">{{S_VERIFY}} / 20</td><td>{{D_VERIFY}}</td>
+					<td class="evidence">{{E_VERIFY}}</td></tr>
+			</table>
+		</div>
+		<div class="legend"><span class="this">━ 이번 주</span> &nbsp;·&nbsp; <span class="last">┄ 전주</span> &nbsp;·&nbsp; 축 눈금 4점(루브릭 1단계) 간격, 최대 20점</div>
+	</div>
+
+	<!-- ③ 주간 요약 -->
+	<div class="card">
+		<h2>주간 요약</h2>
+		<p class="summary">{{SUMMARY}}</p>
+	</div>
+
+	<!-- ④ 세션 타임라인 -->
+	<div class="card">
+		<h2>세션 타임라인 <span style="font-weight:normal;font-size:12px;color:#94a3b8">{{SESSION_COUNT}}건 중 주요 {{SHOWN_COUNT}}건 표시 · {{OMITTED_NOTE}}</span></h2>
+
+		<!-- BEGIN:SESSION_CARD 세션 수만큼 이 블록을 반복 -->
+		<div class="session">
+			<div class="top">
+				<span class="goal">{{SC_GOAL}}</span>
+				<span class="when">{{SC_WHEN}}</span>
+			</div>
+			<div class="badges">{{SC_BADGES}}</div>
+			<dl>
+				<dt>사용 스킬</dt><dd>{{SC_SKILLS}}</dd>
+				<dt>지시 패턴</dt><dd>{{SC_DIRECTION}}</dd>
+				<dt>위임</dt><dd>{{SC_DELEGATION}}</dd>
+			</dl>
+			<!-- BEGIN:SC_STORY 돌파 서사 없으면 이 블록 전체 삭제 -->
+			<div class="story">{{SC_STORY}}</div>
+			<!-- END:SC_STORY -->
+		</div>
+		<!-- END:SESSION_CARD -->
+	</div>
+
+	<!-- ⑤ AI 활용 하이라이트 -->
+	<div class="card">
+		<h2>AI 활용 하이라이트</h2>
+		<div class="quote">
+			{{QUOTE_TEXT}}
+			<span class="src">{{QUOTE_SRC}}</span>
+		</div>
+		<div class="quote" style="background:#f0fdf4;border-color:#16a34a;color:#14532d">
+			<b>이번 주 베스트 돌파:</b> {{BREAKTHROUGH_TEXT}}
+			<span class="src" style="color:#15803d">{{BREAKTHROUGH_SRC}}</span>
+		</div>
+	</div>
+
+	<!-- ⑥ 다음 주 시도해볼 것 -->
+	<div class="card">
+		<h2>다음 주 시도해볼 것 <span style="font-weight:normal;font-size:12px;color:#94a3b8">최저 영역({{LOWEST_AREA}}) 기준 자동 제안</span></h2>
+		<ul class="next">
+{{NEXT_ITEMS}}
+		</ul>
+	</div>
+
+	<div class="footer">ai-ready v1 · 생성 {{GENERATED}} · 소스: 세션 transcript {{SESSION_COUNT}}건 + git 교차 검증 · 이 리포트는 자기 발표 자료입니다</div>
+</div>
+</body>
+</html>
